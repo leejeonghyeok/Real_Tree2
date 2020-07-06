@@ -1,8 +1,10 @@
-package com.example.Real_Tree;
+package com.example.Real_Tree.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.Real_Tree.R;
 
 public class MainActivity extends AppCompatActivity {
 
