@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <style android:name="AppTheme" android:parent="Theme.MaterialComponents.Light.NoActionBar">
+            <!-- Customize your theme here. -->
+            <item android:name="colorPrimary">@color/colorPrimary</item>
+            <item android:name="colorPrimaryDark">@color/colorPrimaryDark</item>
+            <item android:name="colorAccent">@color/colorAccent</item>
+        </style>
+
     </application>
 
 </manifest>
