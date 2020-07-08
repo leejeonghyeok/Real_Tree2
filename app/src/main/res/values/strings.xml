@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Real_Tree</string>
     <string name="title_activity_map">Map</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="txt1">여기에 이렇게 한국어로 쓰면 한국어도 나오나요 계속해서 써보명 계속해서 나오네요</string>
 </resources>
