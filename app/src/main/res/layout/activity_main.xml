@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="Activity.MainActivity">
 
 
     <fragment
@@ -28,18 +31,21 @@
         app:contentInsetStart="0dp"
         app:fabAlignmentMode="center"
         android:clickable="false"
+        app:hideOnScroll="true"
         >
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:backgroundTint="@android:color/transparent"
             app:elevation="0dp"
             app:itemIconTint="@android:color/white"
             app:itemRippleColor="@android:color/white"
             app:itemTextColor="@android:color/white"
-            app:menu="@menu/nav_menu">
+            app:menu="@menu/nav_menu"
+            app:hideOnScroll="true"
+            >
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
