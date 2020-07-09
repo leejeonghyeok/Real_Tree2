@@ -20,4 +20,9 @@
         android:name="com.example.Real_Tree.fragment3"
         android:label="fragment_fragment3"
         tools:layout="@layout/fragment_fragment3" />
+    <fragment
+        android:id="@+id/fragment4"
+        android:name="com.example.Real_Tree.fragment4"
+        android:label="fragment_fragment4"
+        tools:layout="@layout/fragment_fragment4" />
 </navigation>
