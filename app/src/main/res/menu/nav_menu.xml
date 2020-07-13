@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="add"
+    <item android:title="Home"
         android:id="@+id/fragment1"
-        android:icon="@drawable/ic_baseline_add_24"/>
-    <item android:title="ses"
+        android:icon="@drawable/ic_baseline_home_24"/>
+    <item android:title="Map"
         android:id="@+id/fragment2"
-        android:icon="@drawable/ic_baseline_settings_24"/>
-    <item android:title="ino"
+        android:icon="@drawable/ic_baseline_map_24"/>
+    <item android:title="Data"
         android:id="@+id/fragment3"
         android:icon="@drawable/ic_baseline_info_24"/>
-    <item android:title="ihe"
-        android:id="@+id/fragment4"
-        android:icon="@drawable/ic_baseline_menu_24"/>
 </menu>
