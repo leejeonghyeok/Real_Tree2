@@ -8,17 +8,18 @@
     android:layout_height="match_parent"
     tools:context="Activity.MainActivity">
 
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
         >
 
         <fragment
             android:id="@+id/fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="676dp"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:clickable="false"
-        app:backgroundTint="?attr/colorPrimary"
+        app:backgroundTint="@color/colorWhite"
         app:contentInsetEnd="100dp"
         app:contentInsetStart="0dp"
         app:fabAlignmentMode="end"
@@ -46,9 +47,9 @@
             app:backgroundTint="@android:color/transparent"
             app:elevation="0dp"
             app:hideOnScroll="true"
-            app:itemIconTint="@android:color/white"
-            app:itemRippleColor="@android:color/white"
-            app:itemTextColor="@android:color/white"
+            app:itemIconTint="@android:color/holo_blue_dark"
+            app:itemRippleColor="@android:color/holo_blue_dark"
+            app:itemTextColor="@android:color/holo_blue_dark"
             app:menu="@menu/nav_menu">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
