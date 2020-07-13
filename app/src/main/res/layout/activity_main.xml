@@ -8,31 +8,37 @@
     android:layout_height="match_parent"
     tools:context="Activity.MainActivity">
 
-
-    <fragment
-        android:id="@+id/fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/my_nav" />
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
+        >
+
+        <fragment
+            android:id="@+id/fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="676dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/my_nav" />
+    </FrameLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="?attr/colorPrimary"
-        app:contentInsetEnd="0dp"
-        app:contentInsetStart="0dp"
-        app:fabAlignmentMode="center"
         android:clickable="false"
-        app:hideOnScroll="true"
-        >
+        app:backgroundTint="@color/colorWhite"
+        app:contentInsetEnd="100dp"
+        app:contentInsetStart="0dp"
+        app:fabAlignmentMode="end"
+        app:hideOnScroll="true">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
@@ -40,12 +46,11 @@
             android:layout_height="wrap_content"
             app:backgroundTint="@android:color/transparent"
             app:elevation="0dp"
-            app:itemIconTint="@android:color/white"
-            app:itemRippleColor="@android:color/white"
-            app:itemTextColor="@android:color/white"
-            app:menu="@menu/nav_menu"
             app:hideOnScroll="true"
-            >
+            app:itemIconTint="@android:color/holo_blue_dark"
+            app:itemRippleColor="@android:color/holo_blue_dark"
+            app:itemTextColor="@android:color/holo_blue_dark"
+            app:menu="@menu/nav_menu">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
