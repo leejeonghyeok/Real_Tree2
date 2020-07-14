@@ -16,17 +16,17 @@ import com.example.Real_Tree.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-    BottomNavigationView btnnavigationview;
-    NavController  navcontroller;
+    BottomNavigationView bnv;
+    NavController  nc;
     DrawerLayout drawerlayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnnavigationview = (BottomNavigationView)findViewById(R.id.bottomNavigation);
-        navcontroller= Navigation.findNavController(this,R.id.fragment);
-        NavigationUI.setupWithNavController(btnnavigationview,navcontroller);
-        final DrawerLayout drawerlayout = (DrawerLayout)findViewById(R.id.drawer);
+        drawerlayout = findViewById(R.id.drawerlayout);
+        bnv = (BottomNavigationView)findViewById(R.id.bottomNavigation);
+        nc= Navigation.findNavController(this,R.id.fragment);
+        NavigationUI.setupWithNavController(bnv,nc);
 
         findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
                 drawerlayout.openDrawer(GravityCompat.START);
             }
         });
-
-
 
 
     }

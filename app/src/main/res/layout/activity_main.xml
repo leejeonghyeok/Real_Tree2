@@ -9,7 +9,7 @@
     tools:context="Activity.MainActivity">
 
     <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/frameLayout3"
+        android:id="@+id/drawerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
@@ -72,11 +72,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView
-            android:id="@+id/drawer"
+            android:id="@+id/navigationlayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:animateLayoutChanges="false" />
+            android:layout_gravity="start|left"/>
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
