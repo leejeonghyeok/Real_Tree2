@@ -1,4 +1,4 @@
-package com.example.Real_Tree.Activity.AR;
+package Renderer;
 
 /*
  * Copyright 2017 Google Inc. All Rights Reserved.
@@ -24,8 +24,7 @@ import androidx.annotation.NonNull;
 
 import com.google.ar.core.Coordinates2d;
 import com.google.ar.core.Frame;
-//import com.example.Real_Tree.Activity.AR.ShaderUtil;
-// 여기가 왜 이런 색이...
+import Utils.ShaderUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -222,7 +221,6 @@ public class BackgroundRenderer {
         GLES20.glEnableVertexAttribArray(quadPositionParam);
         GLES20.glEnableVertexAttribArray(quadTexCoordParam);
 
-        // GPU로 넘기는 과정
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         // Disable vertex arrays
@@ -241,3 +239,4 @@ public class BackgroundRenderer {
                     -1.0f, -1.0f, -1.0f, +1.0f, +1.0f, -1.0f, +1.0f, +1.0f,
             };
 }
+
