@@ -14,15 +14,6 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,7 +21,7 @@ import android.view.View;
 
 import com.example.Real_Tree.R;
 import com.google.ar.core.ArCoreApk;
-import com.google.ar.core.Camera;
+//import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Session;
