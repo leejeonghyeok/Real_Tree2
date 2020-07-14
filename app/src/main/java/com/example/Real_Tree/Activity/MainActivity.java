@@ -14,11 +14,12 @@ import android.widget.Button;
 import com.example.Real_Tree.Activity.AR.ArActivity;
 import com.example.Real_Tree.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     NavController  nc;
-    Button arbtn;
+    FloatingActionButton btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +32,14 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bnv,nc);
 
         //AR 버튼
-        /*arbtn = (Button)findViewById(R.id.arbutton);
-        arbtn.setOnClickListener(new View.OnClickListener() {
-
+        btn = findViewById(R.id.arbutton);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intentAr = new Intent(MainActivity.this, ArActivity.class);
                 startActivity(intentAr);
             }
         });
-        */
+
     }
 }
