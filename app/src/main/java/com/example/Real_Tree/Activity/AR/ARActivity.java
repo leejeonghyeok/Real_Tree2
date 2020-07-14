@@ -36,6 +36,8 @@ import java.util.concurrent.BlockingQueue;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import Renderer.BackgroundRenderer;
+
 public class ARActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
 
     private boolean mUserRequestedInstall = false;

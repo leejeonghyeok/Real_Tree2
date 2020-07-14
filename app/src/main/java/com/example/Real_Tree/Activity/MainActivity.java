@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.Real_Tree.Activity.AR.ArActivity;
+import com.example.Real_Tree.Activity.AR.ARActivity;
 import com.example.Real_Tree.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentAr = new Intent(MainActivity.this, ArActivity.class);
+                Intent intentAr = new Intent(MainActivity.this, ARActivity.class);
                 startActivity(intentAr);
             }
         });
