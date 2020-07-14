@@ -64,7 +64,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/treearium"
-                    android:textSize="50sp"
+                    android:textSize="40sp"
                     android:textStyle="bold"
                     android:gravity="right"/>
 
@@ -75,7 +75,10 @@
             android:id="@+id/navigationlayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start|left"/>
+            android:layout_gravity="start|left"
+            >
+
+        </com.google.android.material.navigation.NavigationView>
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
