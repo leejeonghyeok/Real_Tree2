@@ -2,31 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="20dp"
-    >
+    android:padding="20dp">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/profileimage"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="281dp"
-        android:layout_marginBottom="21dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/brian"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/list"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:riv_oval="true">
-
-
-    </com.makeramen.roundedimageview.RoundedImageView>
-
+        app:riv_oval="true"/>
     <view
         android:id="@+id/supporter"
         android:layout_width="1dp"
@@ -40,9 +28,25 @@
     <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_height="wrap_content"
+        android:text="Brian Hwang"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/supporter"
+        app:layout_constraintStart_toEndOf="@id/profileimage"
+        />
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_marginStart="10dp"
         android:layout_height="wrap_content"
         android:text="Brian Hwang"
         android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/supporter"
+        app:layout_constraintStart_toEndOf="@id/profileimage"
         />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.Real_Tree.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -43,6 +45,15 @@ public class MainActivity extends AppCompatActivity {
                 } catch (ActivityNotFoundException e) {
                     System.out.println("error");
                 }
+            }
+        });
+
+        final DrawerLayout drawerlayout = (DrawerLayout)findViewById(R.id.drawerlayout);
+
+        findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerlayout.openDrawer(GravityCompat.START);
             }
         });
 

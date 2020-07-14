@@ -1,4 +1,4 @@
-package org.techtown.location;
+/*package org.techtown.location;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -200,7 +200,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         }
 
      */
-    }
+    //}
+    /*
     public void markeron(){
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -254,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                 return false;
             }
         });
-    }*/
+    }
 
 
     @Override
@@ -272,3 +273,4 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
     }
 }
+*/
