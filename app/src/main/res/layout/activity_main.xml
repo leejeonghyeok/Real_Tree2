@@ -54,27 +54,29 @@
 
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/menu"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/ic_baseline_menu_24" />
 
                 <TextView
-                    android:id="@+id/treeARium"
+                    android:id="@+id/appname"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="treeARium"
+                    android:text="@string/treearium"
                     android:textSize="50sp"
+                    android:textStyle="bold"
                     android:gravity="right"/>
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigationview"
+            android:id="@+id/drawer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            android:layout_gravity="start"
+            android:animateLayoutChanges="false" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
