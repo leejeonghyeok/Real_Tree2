@@ -6,45 +6,15 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
 
-    <LinearLayout
-        android:paddingTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="0dp"
-        android:orientation="horizontal">
+    >
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="1"
-            android:text="안녕하세요 황준용님\n 오늘은 어쩌고 저쩌고 합니다!"
-            android:textSize="18sp" />
-
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_baseline_search_24"
-            app:background="@android:color/transparent"
-            app:backgroundTint="@android:color/transparent" />
-
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_baseline_menu_24"
-            app:background="@android:color/transparent"
-            app:backgroundTint="@android:color/transparent" />
-
-    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="?actionBarSize"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
