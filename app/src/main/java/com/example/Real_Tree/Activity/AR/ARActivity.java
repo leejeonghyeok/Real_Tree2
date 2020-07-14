@@ -1,27 +1,23 @@
 package com.example.Real_Tree.Activity.AR;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
-import android.hardware.SensorManager;
 import android.opengl.Matrix;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.Real_Tree.R;
 import com.google.ar.core.ArCoreApk;
-//import com.google.ar.core.Camera;
+import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Session;
@@ -29,46 +25,46 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 
 import java.io.IOException;
-//import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import Renderer.BackgroundRenderer;
+import Renderer.PointCloudRenderer;
 
-public class ARActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
-
+public class ARActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
     private boolean mUserRequestedInstall = false;
     private boolean mViewportChanged = false;
     private int mViewportWidth = -1;
     private int mViewportHeight = -1;
 
-    //카메라 권한
+    //카메라 권한 관련
     private String[] REQUIRED_PERMISSSIONS = {Manifest.permission.CAMERA};
     private final int PERMISSION_REQUEST_CODE = 0; // PROTECTION_NORMAL
 
     private GLSurfaceView glView;
-    private BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
+
+    BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
+    PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
+
     private Session session;
     private Frame frame;
 
-    private BlockingQueue<MotionEvent> tapQueue = new ArrayBlockingQueue<>(16);
-    private long LastTapTime = 0;
-    //private ArrayList<float[]> cubePoses = new ArrayList<>(20);
+    private Button btn_record;
+    private boolean recording = false;
+    private int renderingMode = 0; // 0:start, 1:recording, 2:recorded 3:pickPoint
 
     private float[] viewMatrix = new float[16];
     private float[] projMatrix = new float[16];
-    private float[] modelMatrix = new float[16];
     private float[] vpMatrix = new float[16];
 
-    private int angle = 0;
+    //private float[] ray = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_ar);
         glView = findViewById(R.id.glView);
         glView.setPreserveEGLContextOnPause(true);
         glView.setEGLContextClientVersion(2);
@@ -76,20 +72,35 @@ public class ARActivity extends AppCompatActivity implements GLSurfaceView.Rende
         glView.setRenderer(this);
         glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
+        glView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+
+        btn_record = findViewById(R.id.btn_record);
+        btn_record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recording = !recording;
+                if(recording) {
+                    renderingMode = 1;
+                    Toast.makeText(getApplicationContext(), "collecting points....", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if(renderingMode == 1) pointCloudRenderer.filterPoints();
+                    renderingMode = 2;
+                    Toast.makeText(getApplicationContext(), "collecting finished!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         for(String permission : REQUIRED_PERMISSSIONS){
             if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, REQUIRED_PERMISSSIONS, PERMISSION_REQUEST_CODE);
             }
         }
-
-        glView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //Toast.makeText(getApplicationContext(), "Touched : " + cubePoses.size(), Toast.LENGTH_SHORT).show();
-                tapQueue.offer(event);
-                return false;
-            }
-        });
     }
 
     @Override
@@ -106,9 +117,10 @@ public class ARActivity extends AppCompatActivity implements GLSurfaceView.Rende
             session.pause();
         }
     }
-    @Override // annotation: 상위 클래스에서 정의됨
+
+    @Override
     protected void onResume() {
-        super.onResume(); //
+        super.onResume();
 
         if(session == null){
             try{
@@ -146,12 +158,12 @@ public class ARActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        GLES20.glClearColor(0.0f,0.0f,0.0f,1.0f);
+        GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         GLES20.glDisable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         try{
             backgroundRenderer.createOnGlThread(this);
-            //cubeRenderer = new CubeRenderer();
+            pointCloudRenderer.createOnGlThread(this);
         }catch (IOException e){
             e.getMessage();
         }
@@ -173,57 +185,37 @@ public class ARActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
         if(mViewportChanged){
             int displayRotation = getWindowManager().getDefaultDisplay().getRotation();
-            ///////
             session.setDisplayGeometry(displayRotation, mViewportWidth, mViewportHeight);
-            mViewportChanged = false;
         }
-
         try{
             session.setCameraTextureName(backgroundRenderer.getTextureId());
             frame = session.update();
+            Camera camera = frame.getCamera();
             backgroundRenderer.draw(frame);
 
-//            Camera camera = frame.getCamera();
-//            if(camera.getTrackingState() == TrackingState.TRACKING){
-//                camera.getViewMatrix(viewMatrix, 0); //카메라 위치 추측
-//                camera.getProjectionMatrix(projMatrix, 0, 0.1f, 100.0f); //Projection
-//                Matrix.multiplyMM(vpMatrix, 0, projMatrix,0,viewMatrix,0);
-//
-//                Matrix.setIdentityM(modelMatrix, 0);
-//                Matrix.rotateM(modelMatrix, 0, angle,1,1,1);
-//                angle++;
-//
-//                for(float[] t : cubePoses){
-//                    float[] temp = new float[16];
-//                    Matrix.setIdentityM(temp, 0);
-//                    Matrix.translateM(temp, 0, t[0], t[1], t[2]);
-//
-//                    Matrix.multiplyMM(temp,0, temp,0, modelMatrix, 0);
-//
-//                    Matrix.multiplyMM(temp,0,vpMatrix,0, temp,0);
-//                    //cubeRenderer.draw(temp);
-//                }
-//            }
-//            handleTap();
+            if(camera.getTrackingState() == TrackingState.TRACKING) {
+                camera.getViewMatrix(viewMatrix, 0);
+                camera.getProjectionMatrix(projMatrix, 0, 0.1f, 100.0f);
+                Matrix.multiplyMM(vpMatrix, 0, projMatrix, 0, viewMatrix, 0);
+                pointCloudRenderer.update(frame.acquirePointCloud(), recording);
+                Log.d("RMode", String.format("%b %d", recording, renderingMode));
+                switch (renderingMode) {
+                    case 0:
+                        pointCloudRenderer.draw(viewMatrix, projMatrix);
+                        break;
+                    case 1:
+                        pointCloudRenderer.draw_conf(viewMatrix, projMatrix);
+                        break;
+                    case 2:
+                        pointCloudRenderer.draw_final(viewMatrix, projMatrix);
+                        Log.d("numPoints", String.valueOf(pointCloudRenderer.finalPointBuffer.remaining()));
+                        break;
+                    case 3:
+                        pointCloudRenderer.draw_seedPoint(vpMatrix);
+                }
+            }
         }catch (CameraNotAvailableException e){
             finish();
         }
-    }
-
-    public void handleTap(){
-        MotionEvent tap = tapQueue.poll();
-        if(tap == null || LastTapTime == tap.getEventTime()) return;
-        /*
-        if(cubePoses.size() == 20){
-            cubePoses.remove(0);
-        }
-
-        cubePoses.add(new float[]{
-                (float) (frame.getCamera().getPose().tx() + (float)frame.getCamera().getPose().getZAxis()[0] * -0.3),
-                (float) (frame.getCamera().getPose().ty() + (float)frame.getCamera().getPose().getZAxis()[1] * -0.3),
-                (float) (frame.getCamera().getPose().tz() + (float)frame.getCamera().getPose().getZAxis()[2] * -0.3),
-        });
-        LastTapTime = tap.getEventTime();
-        */
     }
 }

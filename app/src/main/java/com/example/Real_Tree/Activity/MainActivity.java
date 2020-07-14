@@ -6,6 +6,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentAr = new Intent(MainActivity.this, ARActivity.class);
-                startActivity(intentAr);
+                try {
+                    startActivity(intentAr);
+                } catch (ActivityNotFoundException e) {
+                    System.out.println("error");
+                }
             }
         });
 
