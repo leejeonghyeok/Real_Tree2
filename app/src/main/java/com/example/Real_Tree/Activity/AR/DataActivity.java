@@ -16,6 +16,8 @@ public class DataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data);
 
+        // 이름, DBH, 위치는 미리 받아와 EditText에 init해줌
+        // location은 map이랑 나중에 연결시켜줘야 할 듯
         editName = (EditText)findViewById(R.id.editName);
         editDBH = (EditText)findViewById(R.id.editDBH);
         editLocation = (EditText)findViewById(R.id.editLocation);
