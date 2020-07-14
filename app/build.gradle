@@ -34,6 +34,7 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.ar:core:1.17.0'
+
+    implementation 'com.google.ar:core:1.18.0' //ar 코어 implementation
     implementation 'com.makeramen:roundedimageview:2.3.0'
 }

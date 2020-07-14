@@ -1,4 +1,4 @@
-package com.example.Real_Tree.Activity.AR;
+package Utils;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -92,3 +92,4 @@ public class ShaderUtil {
         }
     }
 }
+
