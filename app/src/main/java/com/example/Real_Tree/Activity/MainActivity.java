@@ -1,5 +1,11 @@
 package com.example.Real_Tree.Activity;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -7,15 +13,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-
-import com.example.Real_Tree.Activity.AR.ARActivity;
+import com.example.Real_Tree.Activity.AR.HelloArActivity;
 import com.example.Real_Tree.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentAr = new Intent(MainActivity.this, ARActivity.class);
+                Intent intentAr = new Intent(MainActivity.this, HelloArActivity.class);
                 try {
                     startActivity(intentAr);
                 } catch (ActivityNotFoundException e) {
