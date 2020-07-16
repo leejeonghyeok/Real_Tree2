@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Search"
-        android:id="@+id/search"
+    <item android:title="Whatever"
+        android:id="@+id/Whatever"
         android:icon="@drawable/ic_baseline_search_24"/>
-    <item android:title="More"
-        android:id="@+id/more"
-        android:icon="@drawable/ic_baseline_menu_24"/>
+    <item
+        android:id="@+id/hello"
+        android:icon="@drawable/ic_baseline_menu_24"
+        android:title="Hello"></item>
+    <item android:title="Settings">
+        <menu >
+            <item
+                android:id="@+id/saveImage"
+                android:title="saveImage"
+                app:actionLayout="@layout/switch_item"
+                app:showAsAction="always" />
+            <item
+                android:id="@+id/unit"
+                android:title="unit"
+                app:actionLayout="@layout/radio_button"
+                app:showAsAction="always"></item>
+        </menu>
+    </item>
+
+
+    <item android:title="Account">
+        <menu >
+            <item android:title="Logout"
+                android:id="@+id/Logout"
+                android:icon="@drawable/ic_baseline_search_24"/>
+        </menu>
+    </item>
+
 </menu>

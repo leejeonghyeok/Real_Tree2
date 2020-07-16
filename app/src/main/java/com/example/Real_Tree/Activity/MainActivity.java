@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     NavController  nc;
     FloatingActionButton btn;
-
+    DrawerLayout drawerLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +49,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final DrawerLayout drawerlayout = (DrawerLayout)findViewById(R.id.drawerlayout);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
 
         findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawerlayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
     }
+    @Override
+    public void onBackPressed() {
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
+        if(drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
+
