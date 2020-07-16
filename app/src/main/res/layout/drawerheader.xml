@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:riv_oval="true"/>
-    <view
+    <View
         android:id="@+id/supporter"
         android:layout_width="1dp"
         android:layout_height="1dp"
@@ -41,9 +41,9 @@
         android:layout_width="0dp"
         android:layout_marginStart="10dp"
         android:layout_height="wrap_content"
-        android:text="Brian Hwang"
+        android:text="brian11hwangb@gmail.com"
         android:textColor="@color/colorPrimary"
-        android:textSize="16sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@id/supporter"
         app:layout_constraintStart_toEndOf="@id/profileimage"
         />

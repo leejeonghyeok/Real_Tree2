@@ -75,7 +75,12 @@
             android:id="@+id/navigationlayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start|left"/>
+            android:layout_gravity="start|left"
+            app:menu="@menu/top_menu"
+            app:headerLayout="@layout/drawerheader"
+            >
+
+        </com.google.android.material.navigation.NavigationView>
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
@@ -108,7 +113,7 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/arbtn"
+        android:id="@+id/arbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_add_24"
