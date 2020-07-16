@@ -16,6 +16,7 @@
 
 package com.example.Real_Tree.Activity.AR;
 
+import android.content.Intent;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -54,7 +55,6 @@ import Utils.PointCollector;
 import helpers.CameraPermissionHelper;
 import helpers.DisplayRotationHelper;
 import helpers.FullScreenHelper;
-//import helpers.SnackbarHelper;
 import helpers.TrackingStateHelper;
 
 /**
@@ -67,6 +67,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
   private GLSurfaceView surfaceView;
+  //private PopupWindow mPopupWindow;
 
   private boolean installRequested;
 
@@ -81,6 +82,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
   private PointCollector collector = null;
   private boolean isRecording = false;
   private Button recButton = null;
+  private Button popup = null;
 
   private boolean isStaticView = false;
 
@@ -89,6 +91,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
     recButton = (Button)findViewById(R.id.recButton);
+    popup = (Button)findViewById(R.id.popup);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
@@ -134,6 +137,14 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
             }
           })).start();
         }
+      }
+    });
+
+    popup.setOnClickListener(new View.OnClickListener(){
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(HelloArActivity.this, PopupActivity.class);
+        startActivityForResult(intent, 1);
       }
     });
   }
