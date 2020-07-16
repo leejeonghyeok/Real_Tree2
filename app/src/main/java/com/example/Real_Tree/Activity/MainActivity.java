@@ -1,5 +1,9 @@
 package com.example.Real_Tree.Activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -7,18 +11,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
+import com.example.Real_Tree.Activity.AR.HelloArActivity;
 import com.example.Real_Tree.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     NavController  nc;
     DrawerLayout drawerlayout;
+    FloatingActionButton arbtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        findViewById(R.id.arbtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HelloArActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
