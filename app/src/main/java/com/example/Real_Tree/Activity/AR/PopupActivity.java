@@ -41,7 +41,7 @@ public class PopupActivity extends AppCompatActivity {
         }
         return true;
     }
-    @Override
+    @Override // 뒤로가기 방지
     public void onBackPressed(){
         return;
     }

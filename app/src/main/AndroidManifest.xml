@@ -22,8 +22,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.AR.PopupActivity"
-            android:theme="@style/popupTheme" android:screenOrientation="portrait"></activity>
-        <activity android:name=".Activity.AR.HelloArActivity" />
+            android:theme="@style/popupTheme" android:screenOrientation="unspecified"></activity>
+        <activity android:name=".Activity.AR.HelloArActivity"/>
         <activity
             android:name=".Activity.MapActivity"
             android:label="@string/title_activity_map" />
