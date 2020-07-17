@@ -49,13 +49,13 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import Renderer.BackgroundRenderer;
-import Renderer.PointCloudRenderer;
-import Utils.PointCollector;
-import helpers.CameraPermissionHelper;
-import helpers.DisplayRotationHelper;
-import helpers.FullScreenHelper;
-import helpers.TrackingStateHelper;
+import com.example.Real_Tree.Renderer.BackgroundRenderer;
+import com.example.Real_Tree.Renderer.PointCloudRenderer;
+import com.example.Real_Tree.Utils.PointCollector;
+import com.example.Real_Tree.helpers.CameraPermissionHelper;
+import com.example.Real_Tree.helpers.DisplayRotationHelper;
+import com.example.Real_Tree.helpers.FullScreenHelper;
+import com.example.Real_Tree.helpers.TrackingStateHelper;
 
 /**
  * This is a simple example that shows how to create an augmented reality (AR) application using the

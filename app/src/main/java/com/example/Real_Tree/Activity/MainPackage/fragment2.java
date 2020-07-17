@@ -1,4 +1,4 @@
-package com.example.Real_Tree;
+package com.example.Real_Tree.Activity.MainPackage;
 
 
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.Real_Tree.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 

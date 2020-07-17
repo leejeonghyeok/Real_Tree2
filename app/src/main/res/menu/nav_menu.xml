@@ -5,7 +5,7 @@
         android:id="@+id/fragment1"
         android:icon="@drawable/ic_baseline_home_24"/>
     <item android:title="Map"
-        android:id="@+id/fragment2"
+        android:id="@+id/fragment2_test"
         android:icon="@drawable/ic_baseline_map_24"/>
     <item android:title="Data"
         android:id="@+id/fragment3"
