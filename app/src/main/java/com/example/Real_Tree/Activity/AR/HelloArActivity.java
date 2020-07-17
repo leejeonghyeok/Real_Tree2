@@ -103,6 +103,9 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
 
+    Intent intent = new Intent(HelloArActivity.this, PopupActivity.class);
+    startActivityForResult(intent, 1);
+
     installRequested = false;
 
     recButton.setOnClickListener(new View.OnClickListener() {

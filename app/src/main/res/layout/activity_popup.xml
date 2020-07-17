@@ -7,9 +7,21 @@
     android:orientation="vertical"
     tools:context=".Activity.AR.PopupActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/explainview"
+        android:layout_width="127dp"
+        android:layout_height="wrap_content"
+        android:text="blahblah" />
+
     <Button
         android:id="@+id/okbtn"
-        android:layout_width="wrap_content"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="OK" />
 </LinearLayout>
