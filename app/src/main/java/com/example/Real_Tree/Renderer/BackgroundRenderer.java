@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package Renderer;
+package com.example.Real_Tree.Renderer;
 
 import android.content.Context;
 import android.opengl.GLES11Ext;
