@@ -62,7 +62,7 @@
                             android:layout_height="194dp"
                             android:contentDescription="content_description_media"
                             android:scaleType="centerCrop"
-                            app:srcCompat="@drawable/list" />
+                            app:srcCompat="@drawable/tree1" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -74,24 +74,27 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="title"
+                                android:text="국유림 명품숲 :인제_아침가리_숲"
                                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="secondary_text"
+                                android:text="7월의 #국유림 #명품숲 은?"
                                 android:textAppearance="?attr/textAppearanceBody2"
                                 android:textColor="?android:attr/textColorSecondary" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
                                 android:layout_marginTop="16dp"
-                                android:text="supporting_text"
+                                android:text="첩첩산중 속 아름다운 자연을 품고 있는 #아침가리숲 입니다.아침에 잠시 밭을 갈 정도의 해만 비치고 금방 져버릴만큼의 첩첩산중이라 이런 이름이 지어졌다고 하는데...👀알면 알수록 더 궁금한 곳 아닌가요?😎"
                                 android:textAppearance="?attr/textAppearanceBody2"
-                                android:textColor="?android:attr/textColorSecondary" />
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                />
 
                         </LinearLayout>
 
@@ -99,21 +102,15 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
+                            android:layout_gravity="right"
                             android:orientation="horizontal">
 
                             <com.google.android.material.button.MaterialButton
                                 style="?attr/borderlessButtonStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
-                                android:text="action_1" />
-
-                            <com.google.android.material.button.MaterialButton
-                                style="?attr/borderlessButtonStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="action_2" />
+                                android:layout_marginRight="8dp"
+                                android:text="더보기" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -121,10 +118,11 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card2"
+                    android:id="@+id/card1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
+                    android:layout_margin="8dp"
+                    >
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -132,12 +130,13 @@
                         android:orientation="vertical">
 
                         <!-- Media -->
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="194dp"
                             android:contentDescription="content_description_media"
                             android:scaleType="centerCrop"
-                            app:srcCompat="@drawable/treeicon" />
+                            app:srcCompat="@drawable/tree2" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -149,24 +148,27 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="title"
+                                android:text="#일상 숲: 무자극 힐링 싱그럽고 탐스러운 수국과 함께"
                                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="secondary_text"
+                                android:text="탐스러운 #수국 이 맞이해주는 태종사🏯"
                                 android:textAppearance="?attr/textAppearanceBody2"
                                 android:textColor="?android:attr/textColorSecondary" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
                                 android:layout_marginTop="16dp"
-                                android:text="supporting_text"
+                                android:text="영상으로 만나보는 건 어떨까요?😆 아름다운 수국이 활짝 웃고 있는 모습에 너도나도 힐링💚 #무자극영상 #눈으로보는ASRM #스케치영상 #힐링영상"
                                 android:textAppearance="?attr/textAppearanceBody2"
-                                android:textColor="?android:attr/textColorSecondary" />
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                />
 
                         </LinearLayout>
 
@@ -174,100 +176,164 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
+                            android:layout_gravity="right"
                             android:orientation="horizontal">
 
                             <com.google.android.material.button.MaterialButton
                                 style="?attr/borderlessButtonStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
-                                android:text="action_1" />
-
-                            <com.google.android.material.button.MaterialButton
-                                style="?attr/borderlessButtonStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="action_2" />
+                                android:layout_marginRight="8dp"
+                                android:text="더보기" />
                         </LinearLayout>
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card3"
+                android:id="@+id/card2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                >
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
+                    android:orientation="vertical">
+
+                    <!-- Media -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="194dp"
+                        android:contentDescription="content_description_media"
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/tree3" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                        <!-- Media -->
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="194dp"
-                            android:contentDescription="content_description_media"
-                            android:scaleType="centerCrop"
-                            app:srcCompat="@drawable/ic_launcher_background" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp">
-
-                            <!-- Title, secondary and supporting text -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="title"
-                                android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="secondary_text"
-                                android:textAppearance="?attr/textAppearanceBody2"
-                                android:textColor="?android:attr/textColorSecondary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="16dp"
-                                android:text="supporting_text"
-                                android:textAppearance="?attr/textAppearanceBody2"
-                                android:textColor="?android:attr/textColorSecondary" />
-
-                        </LinearLayout>
-
-                        <!-- Buttons -->
-                        <LinearLayout
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:orientation="horizontal">
+                            android:text="이건 몰랐을걸? 알아두면 유용한 산림상식"
+                            android:textAppearance="?attr/textAppearanceHeadline6" />
 
-                            <com.google.android.material.button.MaterialButton
-                                style="?attr/borderlessButtonStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
-                                android:text="action_1" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="국내에서 가장 #오래된_나무는?🌳"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:attr/textColorSecondary" />
 
-                            <com.google.android.material.button.MaterialButton
-                                style="?attr/borderlessButtonStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="action_2" />
-                        </LinearLayout>
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginTop="16dp"
+                            android:text="#세금을_내는_소나무 가 있다는데 진짜일까?🌲 몰라도 괜찮지만 알아두면 유용한 산림상식! 지금 알아보시죠👀"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            />
 
                     </LinearLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- Buttons -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="?attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:text="더보기" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>                <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Media -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="194dp"
+                        android:contentDescription="content_description_media"
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/tree1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <!-- Title, secondary and supporting text -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="국유림 명품숲 :인제_아침가리_숲"
+                            android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="7월의 #국유림 #명품숲 은?"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:attr/textColorSecondary" />
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginTop="16dp"
+                            android:text="첩첩산중 속 아름다운 자연을 품고 있는 #아침가리숲 입니다.아침에 잠시 밭을 갈 정도의 해만 비치고 금방 져버릴만큼의 첩첩산중이라 이런 이름이 지어졌다고 하는데...👀알면 알수록 더 궁금한 곳 아닌가요?😎"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            />
+
+                    </LinearLayout>
+
+                    <!-- Buttons -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="?attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:text="더보기" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
