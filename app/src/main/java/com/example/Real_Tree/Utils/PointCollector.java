@@ -1,5 +1,7 @@
 package com.example.Real_Tree.Utils;
 
+import android.util.Log;
+
 import com.google.ar.core.PointCloud;
 
 import java.nio.ByteBuffer;
@@ -13,6 +15,9 @@ import java.util.Map;
 public class PointCollector {
 
     Map<Integer, LinkedList<float[]>> allPoints;
+    public FloatBuffer filterPoints;
+    private float[] seedPoint;
+    public int seedPointID;
 
     public PointCollector(){
         allPoints = new HashMap<>();
@@ -46,7 +51,7 @@ public class PointCollector {
                 numPoints++;
             }
         }
-        FloatBuffer filterPoints = ByteBuffer.allocateDirect(numPoints * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        filterPoints = ByteBuffer.allocateDirect(numPoints * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
         for (Map.Entry<Integer, LinkedList<float[]>> entry : allPoints.entrySet()) {
             if(entry.getValue().size() > 3){
@@ -67,8 +72,10 @@ public class PointCollector {
             }
             /*
             if (list.size() < 5) {
-                float[] finalPoint = new float[]{mean_x, mean_y, mean_z};
-                filterPoints.put(id, finalPoint);
+                filterPoints.put(mean_x);
+                filterPoints.put(mean_y);
+                filterPoints.put(mean_z);
+                filterPoints.put(0);
                 continue;   // no more calculation
             }
             float distance_mean = 0.f;
@@ -112,11 +119,40 @@ public class PointCollector {
                 mean_x /= list.size();
                 mean_y /= list.size();
 
-                filterPoints.put(new float[]{mean_x, mean_y, mean_z});
+                filterPoints.put(mean_x);
+                filterPoints.put(mean_y);
+                filterPoints.put(mean_z);
+                filterPoints.put(0);
             }
             */
         }
         filterPoints.position(0);
         return filterPoints;
+}
+    public void pickPoint(float[] camera, float[] ray){ //  camera: 위치(x,y,z) , ray : ray의 방향벡터
+        float thresholdDistance = 0.01f; // 10cm = 0.1m * 0.1m = 0.01f
+        seedPoint = new float[]{0, 0, 0, Float.MAX_VALUE};
+
+        for(int i = 0; i<filterPoints.remaining(); i += 4){
+            float[] point = new float[] {filterPoints.get(i), filterPoints.get(i+1), filterPoints.get(i+2), filterPoints.get(i+3)};
+            float[] product = new float[]{point[0] - camera[0], point[1] - camera[1], point[2] - camera[2], 1.0f};
+
+            float distanceSq = (float)(Math.pow(product[0],2) + Math.pow(product[1],2) + Math.pow(product[2],2));// length between camera and point
+            float innerProduct = ray[0] * product[0] + ray[1] * product[1] + ray[2] * product[2];
+            distanceSq = distanceSq - (innerProduct * innerProduct);  //c^2 - a^2 = b^2
+
+            // determine candidate points
+            if(distanceSq < thresholdDistance && distanceSq < seedPoint[3]){
+                seedPoint[0] = point[0];
+                seedPoint[1] = point[1];
+                seedPoint[2] = point[2];
+                seedPoint[3] = distanceSq;
+                seedPointID = i/4;
+            }
+        }
+        Log.d("pickSeed", String.format("%.2f %.2f %.2f : %d", seedPoint[0], seedPoint[1],seedPoint[2],seedPointID));
+    }
+    public float[] getSeedArr(){
+        return new float[]{seedPoint[0], seedPoint[1], seedPoint[2],1.0f};
     }
 }
