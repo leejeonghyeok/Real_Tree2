@@ -62,8 +62,8 @@ import javax.microedition.khronos.opengles.GL10;
  * ARCore API. The application will display any detected planes and will allow the user to tap on a
  * plane to place a 3d model of the Android robot.
  */
-public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
-  private static final String TAG = HelloArActivity.class.getSimpleName();
+public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
+  private static final String TAG = ArActivity.class.getSimpleName();
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
   private GLSurfaceView surfaceView;
@@ -106,7 +106,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
 
-    Intent intent = new Intent(HelloArActivity.this, PopupActivity.class);
+    Intent intent = new Intent(ArActivity.this, PopupActivity.class);
     startActivityForResult(intent, 1);
 
     installRequested = false;
@@ -123,16 +123,16 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
           (new Thread(new Runnable() {
             @Override
             public void run() {
-              if (HelloArActivity.this.collector != null) {
-                final FloatBuffer points = HelloArActivity.this.collector.filterPoints();
-                HelloArActivity.this.surfaceView.queueEvent(new Runnable() {
+              if (ArActivity.this.collector != null) {
+                final FloatBuffer points = ArActivity.this.collector.filterPoints();
+                ArActivity.this.surfaceView.queueEvent(new Runnable() {
                   @Override
                   public void run() {
                     pointCloudRenderer.update(points);
                     isStaticView = true;
                   }
                 });
-                HelloArActivity.this.runOnUiThread(new Runnable() {
+                ArActivity.this.runOnUiThread(new Runnable() {
                   @Override
                   public void run() {
                     recButton.setText("Recording");
@@ -149,7 +149,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
     popup.setOnClickListener(new View.OnClickListener(){
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(HelloArActivity.this, PopupActivity.class);
+        Intent intent = new Intent(ArActivity.this, PopupActivity.class);
         startActivityForResult(intent, 1);
       }
     });
