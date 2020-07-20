@@ -128,8 +128,9 @@ public class PointCollector {
         }
         filterPoints.position(0);
         return filterPoints;
-}
-    public void pickPoint(float[] camera, float[] ray){ //  camera: 위치(x,y,z) , ray : ray의 방향벡터
+    }
+
+    public void pickPoint(float[] camera, float[] ray){ // camera: 위치(x,y,z), ray : ray의 방향벡터
         float thresholdDistance = 0.01f; // 10cm = 0.1m * 0.1m = 0.01f
         seedPoint = new float[]{0, 0, 0, Float.MAX_VALUE};
 
@@ -137,6 +138,7 @@ public class PointCollector {
             float[] point = new float[] {filterPoints.get(i), filterPoints.get(i+1), filterPoints.get(i+2), filterPoints.get(i+3)};
             float[] product = new float[]{point[0] - camera[0], point[1] - camera[1], point[2] - camera[2], 1.0f};
 
+            // pow: 제곱 함수
             float distanceSq = (float)(Math.pow(product[0],2) + Math.pow(product[1],2) + Math.pow(product[2],2));// length between camera and point
             float innerProduct = ray[0] * product[0] + ray[1] * product[1] + ray[2] * product[2];
             distanceSq = distanceSq - (innerProduct * innerProduct);  //c^2 - a^2 = b^2

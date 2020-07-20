@@ -4,14 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".Activity.AR.PopupActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <!--
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:lottie_fileName="successful.json"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
+        -->
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="172dp"
+        android:layout_height="165dp"
+        app:srcCompat="@drawable/brian" />
 
     <TextView
         android:id="@+id/explainview"
@@ -24,4 +35,5 @@
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="OK" />
+
 </LinearLayout>

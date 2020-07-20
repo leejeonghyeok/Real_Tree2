@@ -380,6 +380,7 @@ public class HelloArActivity extends AppCompatActivity implements GLSurfaceView.
     return false;
   }
 
+  // 추측: Local to World Coordinate
   float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {		// pointCloudActivity
     // ray[0~2] : camera pose
     // ray[3~5] : Unit vector of ray

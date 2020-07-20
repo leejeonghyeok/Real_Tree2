@@ -21,6 +21,11 @@ public class PopupActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_popup);
 
+//        LottieAnimationView lottie = (LottieAnimationView)findViewById(R.id.lottie);
+//        lottie.setAnimation("successful.json");
+//        lottie.loop(true);
+//        lottie.playAnimation();
+
         okBtn = (Button)findViewById(R.id.okbtn);
         okBtn.setOnClickListener(new View.OnClickListener(){
             @Override
