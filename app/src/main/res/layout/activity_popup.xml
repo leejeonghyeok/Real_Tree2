@@ -20,19 +20,19 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="172dp"
-        android:layout_height="165dp"
-        app:srcCompat="@drawable/brian" />
+        android:layout_width="283dp"
+        android:layout_height="381dp"
+        app:srcCompat="@drawable/popuptmp" />
 
-    <TextView
-        android:id="@+id/explainview"
-        android:layout_width="127dp"
-        android:layout_height="wrap_content"
-        android:text="blahblah" />
+<!--    <TextView-->
+<!--        android:id="@+id/explainview"-->
+<!--        android:layout_width="127dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="blahblah" />-->
 
     <Button
         android:id="@+id/okbtn"
-        android:layout_width="130dp"
+        android:layout_width="283dp"
         android:layout_height="wrap_content"
         android:text="OK" />
 
