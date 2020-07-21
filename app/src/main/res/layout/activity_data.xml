@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.AR.DataActivity">
+    tools:context="edu.skku.treearium.Activity.AR.DataActivity">
 
     <TextView
         android:id="@+id/EDIT"

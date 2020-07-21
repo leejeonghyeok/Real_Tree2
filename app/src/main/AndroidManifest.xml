@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.Real_Tree">
+    package="edu.skku.treearium">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -22,13 +22,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.AR.PopupActivity"
+        <activity android:name="edu.skku.treearium.Activity.AR.PopupActivity"
             android:theme="@style/popupTheme" android:screenOrientation="unspecified"></activity>
-        <activity android:name=".Activity.AR.ArActivity"/>
+        <activity android:name="edu.skku.treearium.Activity.AR.ArActivity"/>
         <activity
-            android:name=".Activity.MapActivity"
+            android:name="edu.skku.treearium.Activity.MapActivity"
             android:label="@string/title_activity_map" />
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name="edu.skku.treearium.Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

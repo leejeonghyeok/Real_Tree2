@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/fragment1"
-        android:name="com.example.Real_Tree.Activity.MainPackage.Fragment1"
+        android:name="edu.skku.treearium.Activity.MainPackage.Fragment1"
         android:label="fragment_1"
         tools:layout="@layout/fragment_1" />
     <fragment
         android:id="@+id/fragment3"
-        android:name="com.example.Real_Tree.Activity.MainPackage.fragment3"
+        android:name="edu.skku.treearium.Activity.MainPackage.fragment3"
         android:label="fragment_fragment3"
         tools:layout="@layout/fragment_fragment3" />
     <fragment
         android:id="@+id/fragment2_test"
-        android:name="com.example.Real_Tree.Activity.MainPackage.fragment2_test"
+        android:name="edu.skku.treearium.Activity.MainPackage.fragment2_test"
         android:label="fragment_fragment2_test"
         tools:layout="@layout/fragment_fragment2_test" />
 </navigation>

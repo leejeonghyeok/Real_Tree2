@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.MainPackage.fragment2">
+    tools:context="edu.skku.treearium.Activity.MainPackage.fragment2">
 
     <fragment
         android:id="@+id/map"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".Activity.AR.PopupActivity">
+    tools:context="edu.skku.treearium.Activity.AR.PopupActivity">
 
     <!--
     <com.airbnb.lottie.LottieAnimationView

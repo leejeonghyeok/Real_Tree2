@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.fragment3_fragment1"
+    tools:context="edu.skku.treearium.Activity.fragment3_fragment1"
     android:background="@color/colorPrimary"
     >
 
