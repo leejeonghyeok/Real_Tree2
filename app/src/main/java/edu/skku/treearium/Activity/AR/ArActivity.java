@@ -80,16 +80,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
   private Session session;
   private Frame frame;
-  private Camera camera;
 
   private PointCollector collector = null;
-  private PickSeed pickseed = null;
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
 
   private boolean isStaticView = false;
   private float[] ray = null;
+  private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/plane";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +117,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       public void onClick(View v) {
         isRecording = !isRecording;
         if(isRecording){
-          pickseed = new PickSeed();
           collector = new PointCollector();
           recButton.setText("Stop");
           isStaticView = false;
@@ -158,21 +156,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
-      // 클릭한 데서 Plane 찾는 것 같음...
-      float tx = event.getX();
-      float ty = event.getY();
-      // ray 생성
-      ray = screenPointToWorldRay(tx, ty, frame);
-      float[] rayDest = new float[]{
-              ray[0]+ray[3],
-              ray[1]+ray[4],
-              ray[2]+ray[5],
-      };
-      float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
-      pickseed.pickPoint(collector.filterPoints, ray, rayUnit);
-      //renderingMode = 3;
-      //z_dis = pointCloudRenderer.getSeedArr()[2];
-
+      if(collector != null && collector.filterPoints != null) {
+        // ray 생성
+        Camera camera = frame.getCamera();
+        ray = camera.getPose().getZAxis(); // Unit으로 줌
+        ray[0] = -ray[0];
+        ray[1] = -ray[1];
+        ray[2] = -ray[2];
+        float[] rayOrigin = camera.getPose().getTranslation(); // ray가 시작되는(카메라) 위치
+        int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
+      }
       return false;
     });
   }
@@ -212,7 +205,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         session.configure(config); // Update Configuration
 
       } catch (UnavailableArcoreNotInstalledException
-          | UnavailableUserDeclinedInstallationException e) {
+              | UnavailableUserDeclinedInstallationException e) {
         message = "Please install ARCore";
         exception = e;
       } catch (UnavailableApkTooOldException e) {
@@ -269,7 +262,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     super.onRequestPermissionsResult(requestCode, permissions, results);
     if (!CameraPermissionHelper.hasCameraPermission(this)) {
       Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG)
-          .show();
+              .show();
       if (!CameraPermissionHelper.shouldShowRequestPermissionRationale(this)) {
         // Permission denied with checking "Do not ask again".
         CameraPermissionHelper.launchPermissionSettings(this);
@@ -324,7 +317,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
       // camera framerate.
       frame = session.update();
-      camera = frame.getCamera();
+      Camera camera = frame.getCamera();
 
       // If frame is ready, render camera preview image to the GL surface.
       backgroundRenderer.draw(frame);
@@ -381,46 +374,5 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     }
     return false;
-  }
-
-  // 추측: Local to World Coordinate
-  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {		// pointCloudActivity
-    // ray[0~2] : camera pose
-    // ray[3~5] : Unit vector of ray
-    float[] ray_clip = new float[4];
-    ray_clip[0] = 2.0f * xPx / surfaceView.getMeasuredWidth() - 1.0f;
-    // +y is up (android UI Y is down):
-    ray_clip[1] = 1.0f - 2.0f * yPx / surfaceView.getMeasuredHeight();
-    ray_clip[2] = -1.0f; // +z is forwards (remember clip, not camera)
-    ray_clip[3] = 1.0f; // w (homogenous coordinates)
-
-    float[] ProMatrices = new float[32];  // {proj, inverse proj}
-    frame.getCamera().getProjectionMatrix(ProMatrices, 0, 0.1f, 100.0f);
-    Matrix.invertM(ProMatrices, 16, ProMatrices, 0);
-    float[] ray_eye = new float[4];
-    Matrix.multiplyMV(ray_eye, 0, ProMatrices, 16, ray_clip, 0);
-
-    ray_eye[2] = -1.0f;
-    ray_eye[3] = 0.0f;
-
-    float[] out = new float[6];
-    float[] ray_wor = new float[4];
-    float[] ViewMatrices = new float[32];
-
-    frame.getCamera().getViewMatrix(ViewMatrices, 0);
-    Matrix.invertM(ViewMatrices, 16, ViewMatrices, 0);
-    Matrix.multiplyMV(ray_wor, 0, ViewMatrices, 16, ray_eye, 0);
-
-    float size = (float)Math.sqrt(ray_wor[0] * ray_wor[0] + ray_wor[1] * ray_wor[1] + ray_wor[2] * ray_wor[2]);
-
-    out[3] = ray_wor[0] / size;
-    out[4] = ray_wor[1] / size;
-    out[5] = ray_wor[2] / size;
-
-    out[0] = frame.getCamera().getPose().tx();
-    out[1] = frame.getCamera().getPose().ty();
-    out[2] = frame.getCamera().getPose().tz();
-
-    return out;
   }
 }
