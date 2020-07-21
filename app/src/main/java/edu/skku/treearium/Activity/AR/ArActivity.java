@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.skku.treearium.Activity.AR;
+package com.example.Real_Tree.Activity.AR;
 
 import android.content.Intent;
 import android.opengl.GLES20;

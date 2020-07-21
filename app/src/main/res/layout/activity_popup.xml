@@ -13,7 +13,7 @@
         android:id="@+id/lottie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lottie_fileName="successful.json"
+        app:lottie_fileName="tree.json"
         app:lottie_loop="true"
         app:lottie_autoPlay="true" />
         -->
@@ -23,12 +23,6 @@
         android:layout_width="283dp"
         android:layout_height="381dp"
         app:srcCompat="@drawable/popuptmp" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/explainview"-->
-<!--        android:layout_width="127dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="blahblah" />-->
 
     <Button
         android:id="@+id/okbtn"
