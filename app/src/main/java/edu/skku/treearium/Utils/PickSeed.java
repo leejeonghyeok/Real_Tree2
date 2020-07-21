@@ -1,4 +1,4 @@
-package com.example.Real_Tree.Utils;
+package edu.skku.treearium.Utils;
 
 import android.util.Log;
 

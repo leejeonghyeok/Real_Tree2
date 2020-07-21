@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "124317871620",
+    "firebase_url": "https://treearium.firebaseio.com",
+    "project_id": "treearium",
+    "storage_bucket": "treearium.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124317871620:android:628a0704dafcc92e80cf51",
+        "android_client_info": {
+          "package_name": "edu.skku.treeARium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124317871620-gm8ctnvsh6v45nb23f2h5ij95gnnhvbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7t7N1Dy6LOOhPWIePSdAduoCImZcVzW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124317871620-gm8ctnvsh6v45nb23f2h5ij95gnnhvbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124317871620:android:eb123083662003d480cf51",
+        "android_client_info": {
+          "package_name": "edu.skku.treearium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124317871620-gm8ctnvsh6v45nb23f2h5ij95gnnhvbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7t7N1Dy6LOOhPWIePSdAduoCImZcVzW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124317871620-gm8ctnvsh6v45nb23f2h5ij95gnnhvbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

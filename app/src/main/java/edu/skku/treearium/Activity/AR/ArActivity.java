@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.Real_Tree.Activity.AR;
+package edu.skku.treearium.Activity.AR;
 
 import android.content.Intent;
 import android.opengl.GLES20;
@@ -36,6 +36,7 @@ import edu.skku.treearium.helpers.CameraPermissionHelper;
 import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
 import edu.skku.treearium.helpers.TrackingStateHelper;
+import edu.skku.treearium.Utils.PickSeed;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
@@ -82,6 +83,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Camera camera;
 
   private PointCollector collector = null;
+  private PickSeed pickseed = null;
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
@@ -116,6 +118,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       public void onClick(View v) {
         isRecording = !isRecording;
         if(isRecording){
+          pickseed = new PickSeed();
           collector = new PointCollector();
           recButton.setText("Stop");
           isStaticView = false;
@@ -166,7 +169,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               ray[2]+ray[5],
       };
       float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
-      collector.pickPoint(ray, rayUnit);
+      pickseed.pickPoint(collector.filterPoints, ray, rayUnit);
       //renderingMode = 3;
       //z_dis = pointCloudRenderer.getSeedArr()[2];
 
