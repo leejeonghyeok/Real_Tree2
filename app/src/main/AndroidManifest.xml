@@ -24,7 +24,9 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.AR.PopupActivity"
             android:theme="@style/popupTheme" android:screenOrientation="unspecified"></activity>
-        <activity android:name=".Activity.AR.ArActivity"/>
+        <activity android:name=".Activity.AR.ArActivity"
+            android:configChanges="screenSize|orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.MapActivity"
             android:label="@string/title_activity_map" />

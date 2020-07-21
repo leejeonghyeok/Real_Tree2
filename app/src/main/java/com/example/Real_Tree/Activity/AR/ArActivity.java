@@ -17,6 +17,7 @@
 package com.example.Real_Tree.Activity.AR;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -26,11 +27,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.Real_Tree.R;
 import com.example.Real_Tree.Renderer.BackgroundRenderer;
 import com.example.Real_Tree.Renderer.PointCloudRenderer;
+import com.example.Real_Tree.Utils.PickSeed;
 import com.example.Real_Tree.Utils.PointCollector;
 import com.example.Real_Tree.helpers.CameraPermissionHelper;
 import com.example.Real_Tree.helpers.DisplayRotationHelper;
@@ -82,6 +85,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Camera camera;
 
   private PointCollector collector = null;
+  private PickSeed pickseed = null;
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
@@ -117,6 +121,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         isRecording = !isRecording;
         if(isRecording){
           collector = new PointCollector();
+          pickseed = new PickSeed();
           recButton.setText("Stop");
           isStaticView = false;
         } else {
@@ -159,6 +164,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       float tx = event.getX();
       float ty = event.getY();
       // ray 생성
+//      ray = new float[]{
+//              camera.getPose().getXAxis(),
+//              camera.getPose().getYAxis(),
+//              camera.getPose().getZAxis(),
+//      };
+      // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Pose
       ray = screenPointToWorldRay(tx, ty, frame);
       float[] rayDest = new float[]{
               ray[0]+ray[3],
@@ -166,12 +177,17 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               ray[2]+ray[5],
       };
       float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
-      collector.pickPoint(ray, rayUnit);
+      pickseed.pickPoint(collector.filterPoints, ray, rayUnit);
       //renderingMode = 3;
       //z_dis = pointCloudRenderer.getSeedArr()[2];
 
       return false;
     });
+  }
+
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
   }
 
   @Override
@@ -380,8 +396,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     return false;
   }
 
-  // 추측: Local to World Coordinate
-  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {		// pointCloudActivity
+  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {  // pointCloudActivity
     // ray[0~2] : camera pose
     // ray[3~5] : Unit vector of ray
     float[] ray_clip = new float[4];
