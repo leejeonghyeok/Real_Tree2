@@ -17,6 +17,7 @@
 package edu.skku.treearium.Activity.AR;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import edu.skku.treearium.R;
@@ -168,6 +170,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       return false;
     });
+  }
+
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
   }
 
   @Override
