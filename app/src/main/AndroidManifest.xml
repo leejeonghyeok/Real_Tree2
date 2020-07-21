@@ -32,7 +32,9 @@
 
         <activity android:name="edu.skku.treearium.Activity.AR.PopupActivity"
             android:theme="@style/popupTheme" android:screenOrientation="unspecified"></activity>
-        <activity android:name="edu.skku.treearium.Activity.AR.ArActivity"/>
+        <activity android:name="edu.skku.treearium.Activity.AR.ArActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="screenSize|orientation" />
         <activity android:name="edu.skku.treearium.Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

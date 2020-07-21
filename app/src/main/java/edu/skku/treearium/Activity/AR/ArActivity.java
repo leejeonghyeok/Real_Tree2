@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +38,10 @@ import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
 import edu.skku.treearium.helpers.TrackingStateHelper;
 import edu.skku.treearium.Utils.PickSeed;
+
+import com.curvsurf.fsweb.FindSurfaceRequester;
+import com.curvsurf.fsweb.RequestForm;
+import com.curvsurf.fsweb.ResponseForm;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
@@ -59,6 +62,8 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * This is a simple example that shows how to create an augmented reality (AR) application using the
@@ -165,10 +170,43 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ray[0] = -ray[0];
         ray[1] = -ray[1];
         ray[2] = -ray[2];
+
         float[] rayOrigin = camera.getPose().getTranslation(); // ray가 시작되는(카메라) 위치
+        rayOrigin[0] += ray[0];
+        rayOrigin[1] += ray[1];
+        rayOrigin[2] += ray[2];
+
         int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
+        if(pickIndex >= 0) {
+          (new Thread(new Runnable() {
+            @Override
+            public void run() {
+              RequestForm rf = new RequestForm();
+
+              rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
+              rf.setPointDataDescription(0.05f, 0.01f); //accuracy, meanDistance
+              rf.setTargetROI(pickIndex, Math.max(PickSeed.p2 * 0.25f, 0.1f));//seedIndex,touchRadius
+              rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
+              FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
+              // Request Find Surface
+              try {
+                Log.d("PlaneFinder", "request");
+                ResponseForm resp = fsr.request(rf, collector.filterPoints);
+                if (resp != null && resp.isSuccess()) {
+                  ResponseForm.PlaneParam param = resp.getParamAsPlane();
+                  Log.d("PlaneFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode())));
+                } else {
+                  Log.d("PlaneFinder", "request fail");
+                }
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+          })).start();
+          return false;
+        }
       }
-      return false;
+      return true;
     });
   }
 
