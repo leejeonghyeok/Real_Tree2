@@ -2,7 +2,6 @@ package edu.skku.treearium.Activity.MainPackage;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -19,15 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import edu.skku.treearium.Activity.MainActivity;
-import edu.skku.treearium.Activity.MapActivity;
-import edu.skku.treearium.helpers.LocationHelper;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -35,11 +29,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import edu.skku.treearium.R;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
-
-import java.util.concurrent.LinkedTransferQueue;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
