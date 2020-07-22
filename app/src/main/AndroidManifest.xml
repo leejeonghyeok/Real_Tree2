@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
 
     <uses-feature android:name="android.hardware.camera.ar" />
     <uses-feature
@@ -28,17 +28,21 @@
         <uses-library android:name="com.google.android.maps" />
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/>
-
-        <activity android:name="edu.skku.treearium.Activity.AR.PopupActivity"
-            android:theme="@style/popupTheme" android:screenOrientation="unspecified"></activity>
-        <activity android:name="edu.skku.treearium.Activity.AR.ArActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="screenSize|orientation" />
-        <activity android:name="edu.skku.treearium.Activity.MainActivity">
+            android:required="false" />
+        <activity
+            android:name=".Activity.MainActivity" />
+        <activity
+            android:name=".Activity.AR.PopupActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/popupTheme" />
+        <activity
+            android:name=".Activity.AR.ArActivity"
+            android:configChanges="screenSize|orientation"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                //시작화면
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
