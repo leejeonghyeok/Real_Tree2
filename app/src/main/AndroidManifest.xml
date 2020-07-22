@@ -24,13 +24,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Activity.MainPackage.loginActivity"></activity>
 
         <uses-library android:name="com.google.android.maps" />
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-        <activity
-            android:name=".Activity.MainActivity" />
+
+        <activity android:name=".Activity.MainActivity" />
         <activity
             android:name=".Activity.AR.PopupActivity"
             android:screenOrientation="unspecified"
@@ -42,7 +43,7 @@
         <activity android:name=".Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                //시작화면
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
