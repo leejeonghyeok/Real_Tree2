@@ -7,7 +7,6 @@ import java.nio.FloatBuffer;
 // 이름 PointUtil 로 바꾸기
 public class PickSeed {
 
-    public static float p2 = 0.0f;
     public static int pickPoint(FloatBuffer filterPoints, float[] camera, float[] ray){ // camera: 위치(x,y,z), ray : ray의 방향벡터
 
         //float thresholdDistance = 0.01f; // 10cm = 0.1m * 0.1m = 0.01f
@@ -25,7 +24,6 @@ public class PickSeed {
 
             // determine candidate points
             if(distanceSq < minDistanceSq){ // distanceSq < thresholdDistance &&
-                p2 = filterPoints.get(i+2);
                 minDistanceSq = distanceSq;
                 seedPointID = i/4;
             }

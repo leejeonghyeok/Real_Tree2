@@ -33,6 +33,14 @@
       android:layout_centerVertical="true"
       android:text="Recording" />
 
+  <!--
+  <Button
+      android:id="@+id/confirm"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:text="CONFIRM" />
+-->
   <Button
       android:id="@+id/popup"
       android:layout_width="wrap_content"
