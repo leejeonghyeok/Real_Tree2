@@ -59,6 +59,7 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -75,7 +76,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
   private GLSurfaceView surfaceView;
-  //private PopupWindow mPopupWindow;
 
   private boolean installRequested;
 
@@ -92,6 +92,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
+  //private float dbh = 10;
 
   private boolean isStaticView = false;
   private float[] ray = null;
@@ -119,85 +120,78 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     installRequested = false;
 
-    recButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        isRecording = !isRecording;
-        if(isRecording){
-          collector = new PointCollector();
-          recButton.setText("Stop");
-          isStaticView = false;
-        } else {
-          (new Thread(new Runnable() {
-            @Override
-            public void run() {
-              if (ArActivity.this.collector != null) {
-                final FloatBuffer points = ArActivity.this.collector.filterPoints();
-                ArActivity.this.surfaceView.queueEvent(new Runnable() {
-                  @Override
-                  public void run() {
-                    pointCloudRenderer.update(points);
-                    isStaticView = true;
-                  }
-                });
-                ArActivity.this.runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                    recButton.setText("Recording");
-                    recButton.setClickable(true);
-                  }
-                });
-              }
+    recButton.setOnClickListener(v -> {
+      isRecording = !isRecording;
+      if(isRecording){
+        collector = new PointCollector();
+        recButton.setText("Stop");
+        isStaticView = false;
+      } else {
+        (new Thread(new Runnable() {
+          @Override
+          public void run() {
+            if (ArActivity.this.collector != null) {
+              final FloatBuffer points = ArActivity.this.collector.filterPoints();
+              ArActivity.this.surfaceView.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                  pointCloudRenderer.update(points);
+                  isStaticView = true;
+                }
+              });
+              ArActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                  recButton.setText("Recording");
+                  recButton.setClickable(true);
+                }
+              });
             }
-          })).start();
-        }
+          }
+        })).start();
       }
     });
 
-    popup.setOnClickListener(new View.OnClickListener(){
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(ArActivity.this, PopupActivity.class);
-        startActivityForResult(intent, 1);
-      }
+    popup.setOnClickListener(v -> {
+      Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
+      startActivityForResult(intent12, 1);
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
       if(collector != null && collector.filterPoints != null) {
         // ray 생성
         Camera camera = frame.getCamera();
-        ray = camera.getPose().getZAxis(); // Unit으로 줌
+        ray = camera.getPose().getZAxis(); // by unit
         ray[0] = -ray[0];
         ray[1] = -ray[1];
         ray[2] = -ray[2];
 
-        float[] rayOrigin = camera.getPose().getTranslation(); // ray가 시작되는(카메라) 위치
+        // camera location
+        float[] rayOrigin = camera.getPose().getTranslation();
 
         int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
-        if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) { // 이렇게 쓰면 되는건가...
-          (new Thread(new Runnable() {
-            @Override
-            public void run() {
-              RequestForm rf = new RequestForm();
+        if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
+          (new Thread(() -> {
+            RequestForm rf = new RequestForm();
 
-              rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
-              rf.setPointDataDescription(0.05f, 0.01f); //accuracy, meanDistance
-              rf.setTargetROI(pickIndex, Math.max(PickSeed.p2 * 0.25f, 0.1f));//seedIndex,touchRadius
-              rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
-              FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
-              // Request Find Surface
-              try {
-                Log.d("PlaneFinder", "request");
-                ResponseForm resp = fsr.request(rf, collector.filterPoints);
-                if (resp != null && resp.isSuccess()) {
-                  ResponseForm.PlaneParam param = resp.getParamAsPlane();
-                  Log.d("PlaneFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode())));
-                } else {
-                  Log.d("PlaneFinder", "request fail");
-                }
-              } catch (Exception e) {
-                e.printStackTrace();
+            rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
+            rf.setPointDataDescription(0.05f, 0.01f); //accuracy, meanDistance
+            rf.setTargetROI(pickIndex, 0.1f);//seedIndex,touchRadius //PickSeed.p2 * 0.25f
+            rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
+            FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
+            // Request Find Surface
+            try {
+              Log.d("PlaneFinder", "request");
+              ResponseForm resp = fsr.request(rf, collector.filterPoints);
+              if (resp != null && resp.isSuccess()) {
+                ResponseForm.PlaneParam param = resp.getParamAsPlane();
+                Log.d("PlaneFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
+                        ", Normal Vector: "+Arrays.toString(resp.getParamAsPlane().n));
+              } else {
+                Log.d("PlaneFinder", "request fail");
               }
+            } catch (Exception e) {
+              e.printStackTrace();
             }
           })).start();
           return false;
@@ -406,15 +400,5 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Avoid crashing the application due to unhandled exceptions.
       Log.e(TAG, "Exception on the OpenGL thread", t);
     }
-  }
-
-  /** Checks if we detected at least one plane. */
-  private boolean hasTrackingPlane() {
-    for (Plane plane : session.getAllTrackables(Plane.class)) {
-      if (plane.getTrackingState() == TrackingState.TRACKING) {
-        return true;
-      }
-    }
-    return false;
   }
 }
