@@ -172,9 +172,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ray[2] = -ray[2];
 
         float[] rayOrigin = camera.getPose().getTranslation(); // ray가 시작되는(카메라) 위치
-        rayOrigin[0] += ray[0];
-        rayOrigin[1] += ray[1];
-        rayOrigin[2] += ray[2];
 
         int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
         if(pickIndex >= 0) {
