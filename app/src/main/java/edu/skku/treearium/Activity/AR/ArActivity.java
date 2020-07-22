@@ -46,7 +46,6 @@ import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
-import com.google.ar.core.Plane;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
@@ -66,11 +65,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static java.lang.Integer.parseInt;
 
-/**
- * This is a simple example that shows how to create an augmented reality (AR) application using the
- * ARCore API. The application will display any detected planes and will allow the user to tap on a
- * plane to place a 3d model of the Android robot.
- */
 public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
   private static final String TAG = ArActivity.class.getSimpleName();
 
@@ -79,7 +73,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private boolean installRequested;
 
-  //private final SnackbarHelper messageSnackbarHelper = new SnackbarHelper();
   private DisplayRotationHelper displayRotationHelper;
   private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(this);
 
@@ -175,7 +168,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             RequestForm rf = new RequestForm();
 
             rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
-            rf.setPointDataDescription(0.05f, 0.01f); //accuracy, meanDistance
+            rf.setPointDataDescription(0.05f, 0.01f); //accuracy: 5cm, meanDistance
             rf.setTargetROI(pickIndex, 0.1f);//seedIndex,touchRadius //PickSeed.p2 * 0.25f
             rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
             FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
@@ -185,10 +178,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               ResponseForm resp = fsr.request(rf, collector.filterPoints);
               if (resp != null && resp.isSuccess()) {
                 ResponseForm.PlaneParam param = resp.getParamAsPlane();
+                // Normal Vector should be [0, 1, 0]
                 Log.d("PlaneFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Normal Vector: "+Arrays.toString(resp.getParamAsPlane().n));
+//                Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
+//                        ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(param.b) + ", Normal Vector: "+Arrays.toString(param.t));
               } else {
-                Log.d("PlaneFinder", "request fail");
+                Log.d("CylinderFinder", "request fail");
               }
             } catch (Exception e) {
               e.printStackTrace();
