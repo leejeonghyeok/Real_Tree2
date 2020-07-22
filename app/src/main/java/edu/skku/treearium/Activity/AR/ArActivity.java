@@ -174,7 +174,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float[] rayOrigin = camera.getPose().getTranslation(); // ray가 시작되는(카메라) 위치
 
         int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
-        if(pickIndex >= 0) {
+        if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) { // 이렇게 쓰면 되는건가...
           (new Thread(new Runnable() {
             @Override
             public void run() {
