@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -89,7 +90,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private boolean isStaticView = false;
   private float[] ray = null;
-  private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/plane";
+  private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -153,36 +154,55 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setOnTouchListener((v, event) ->{
       if(collector != null && collector.filterPoints != null) {
         // ray 생성
+        float tx = event.getX();
+        float ty = event.getY();
+        // ray 생성
+        ray = screenPointToWorldRay(tx, ty, frame);
+        float[] rayOrigin = new float[]{
+                ray[0]+ray[3],
+                ray[1]+ray[4],
+                ray[2]+ray[5],
+        };
+
         Camera camera = frame.getCamera();
-        ray = camera.getPose().getZAxis(); // by unit
-        ray[0] = -ray[0];
-        ray[1] = -ray[1];
-        ray[2] = -ray[2];
+//        ray = camera.getPose().getZAxis(); // by unit
+//        ray[0] = -ray[0];
+//        ray[1] = -ray[1];
+//        ray[2] = -ray[2];
+//
+//        // camera location
+//        float[] rayOrigin = camera.getPose().getTranslation();
 
-        // camera location
-        float[] rayOrigin = camera.getPose().getTranslation();
+        float[] projmtx = new float[16];
+        camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
+        float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
 
-        int pickIndex = PickSeed.pickPoint(collector.filterPoints, ray, rayOrigin);
+        FloatBuffer targetPoints = collector.filterPoints;
+        targetPoints.rewind();
+        int pickIndex = PickSeed.pickPoint(targetPoints, ray, rayOrigin);
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           (new Thread(() -> {
             RequestForm rf = new RequestForm();
 
             rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
-            rf.setPointDataDescription(0.05f, 0.01f); //accuracy: 5cm, meanDistance
-            rf.setTargetROI(pickIndex, 0.1f);//seedIndex,touchRadius //PickSeed.p2 * 0.25f
+            rf.setPointDataDescription(unitRadius * 0.2f, unitRadius * 0.4f); //accuracy, meanDistance
+            rf.setTargetROI(pickIndex, unitRadius);//seedIndex,touchRadius
             rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
             FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
             // Request Find Surface
             try {
-              Log.d("PlaneFinder", "request");
-              ResponseForm resp = fsr.request(rf, collector.filterPoints);
+              Log.d("CylinderFinder", "request");
+              ResponseForm resp = fsr.request(rf, targetPoints);
               if (resp != null && resp.isSuccess()) {
-                ResponseForm.PlaneParam param = resp.getParamAsPlane();
+                ResponseForm.CylinderParam param = resp.getParamAsCylider();
                 // Normal Vector should be [0, 1, 0]
-                Log.d("PlaneFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
-                        ", Normal Vector: "+Arrays.toString(resp.getParamAsPlane().n));
-//                Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
-//                        ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(param.b) + ", Normal Vector: "+Arrays.toString(param.t));
+                float[] tmp = new float[]{param.b[0] - param.t[0], param.b[1] - param.t[1], param.b[2] - param.t[2]};
+                float dist = (float)Math.sqrt( tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2] );
+                tmp[0] /= dist;
+                tmp[1] /= dist;
+                tmp[2] /= dist;
+                Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
+                        ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp));
               } else {
                 Log.d("CylinderFinder", "request fail");
               }
@@ -396,5 +416,45 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Avoid crashing the application due to unhandled exceptions.
       Log.e(TAG, "Exception on the OpenGL thread", t);
     }
+  }
+
+  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {		// pointCloudActivity
+    // ray[0~2] : camera pose
+    // ray[3~5] : Unit vector of ray
+    float[] ray_clip = new float[4];
+    ray_clip[0] = 2.0f * xPx / surfaceView.getMeasuredWidth() - 1.0f;
+    // +y is up (android UI Y is down):
+    ray_clip[1] = 1.0f - 2.0f * yPx / surfaceView.getMeasuredHeight();
+    ray_clip[2] = -1.0f; // +z is forwards (remember clip, not camera)
+    ray_clip[3] = 1.0f; // w (homogenous coordinates)
+
+    float[] ProMatrices = new float[32];  // {proj, inverse proj}
+    frame.getCamera().getProjectionMatrix(ProMatrices, 0, 0.1f, 100.0f);
+    Matrix.invertM(ProMatrices, 16, ProMatrices, 0);
+    float[] ray_eye = new float[4];
+    Matrix.multiplyMV(ray_eye, 0, ProMatrices, 16, ray_clip, 0);
+
+    ray_eye[2] = -1.0f;
+    ray_eye[3] = 0.0f;
+
+    float[] out = new float[6];
+    float[] ray_wor = new float[4];
+    float[] ViewMatrices = new float[32];
+
+    frame.getCamera().getViewMatrix(ViewMatrices, 0);
+    Matrix.invertM(ViewMatrices, 16, ViewMatrices, 0);
+    Matrix.multiplyMV(ray_wor, 0, ViewMatrices, 16, ray_eye, 0);
+
+    float size = (float)Math.sqrt(ray_wor[0] * ray_wor[0] + ray_wor[1] * ray_wor[1] + ray_wor[2] * ray_wor[2]);
+
+    out[3] = ray_wor[0] / size;
+    out[4] = ray_wor[1] / size;
+    out[5] = ray_wor[2] / size;
+
+    out[0] = frame.getCamera().getPose().tx();
+    out[1] = frame.getCamera().getPose().ty();
+    out[2] = frame.getCamera().getPose().tz();
+
+    return out;
   }
 }
