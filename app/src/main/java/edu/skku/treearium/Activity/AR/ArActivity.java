@@ -163,7 +163,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ray = screenPointToWorldRay(tx, ty, frame);
         float[] rayOrigin = new float[]{
                 ray[0]+ray[3],
-               ray[1]+ray[4],
+                ray[1]+ray[4],
                 ray[2]+ray[5],
         };
 
