@@ -186,7 +186,6 @@ public class PointCloudRenderer {
     ByteBuffer bb = ByteBuffer.allocateDirect(4 * 4);
     bb.order(ByteOrder.nativeOrder());
     seedBuffer = bb.asFloatBuffer();
-    Log.d("PPPPPPPP", String.format("%f %f %f", seedPoint[0], seedPoint[1], seedPoint[2]));
     seedBuffer.put(seedPoint);
     seedBuffer.position(0);
 

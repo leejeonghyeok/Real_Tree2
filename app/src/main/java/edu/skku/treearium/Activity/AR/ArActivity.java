@@ -156,37 +156,31 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     surfaceView.setOnTouchListener((v, event) ->{
       if(collector != null && collector.filterPoints != null) {
-        // ray 생성
+
         float tx = event.getX();
         float ty = event.getY();
         // ray 생성
         ray = screenPointToWorldRay(tx, ty, frame);
-        float[] rayOrigin = new float[]{
-                ray[0]+ray[3],
-                ray[1]+ray[4],
-                ray[2]+ray[5],
-        };
+        float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
 
-          Camera camera = frame.getCamera();
+        Camera camera = frame.getCamera();
 //        ray = camera.getPose().getZAxis(); // by unit
 //        ray[0] = -ray[0];
 //        ray[1] = -ray[1];
 //        ray[2] = -ray[2];
-
-        // camera location
-        //float[] rayOrigin = camera.getPose().getTranslation();
+//
+//        // camera location
+//        float[] rayOrigin = camera.getPose().getTranslation();
 
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
 
-        //int pickIndex = PointUtil.pickPoint(collector.filterPoints, ray, rayOrigin);
-
         drawSeedState = !drawSeedState;
 
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
-        int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
+        int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayUnit);
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           (new Thread(() -> {
             RequestForm rf = new RequestForm();
@@ -411,7 +405,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         if(drawSeedState && PointUtil.getSeedPoint() != null){
           float[] seedPoint = PointUtil.getSeedPoint();
-          Log.d("drawSeed", String.format("%f %f %f", seedPoint[0], seedPoint[1], seedPoint[2]) );
 
           pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
         }
