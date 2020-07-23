@@ -23,11 +23,15 @@ public class PointUtil {
             // faster than pow
             float distanceSq = product[0] * product[0] + product[1] * product[1] + product[2] * product[2]; // dot( product, product )
             float innerProduct = ray[0] * product[0] + ray[1] * product[1] + ray[2] * product[2]; // dot( ray, product )
-            distanceSq = distanceSq - (innerProduct * innerProduct);  //c^2 - a^2 = b^2
 
-            if(innerProduct > 1){
+            Log.d("CylinderFinder", String.valueOf(distanceSq));
+
+
+            if(innerProduct > 2 && innerProduct < 0){
                 continue;
             }
+
+            distanceSq = distanceSq - (innerProduct * innerProduct);  //c^2 - a^2 = b^2
 
             // determine candidate points
             if(distanceSq < minDistanceSq){ // distanceSq < thresholdDistance &&
