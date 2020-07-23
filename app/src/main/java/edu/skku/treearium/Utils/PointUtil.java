@@ -4,8 +4,8 @@ import android.util.Log;
 
 import java.nio.FloatBuffer;
 
-// 이름 PointUtil 로 바꾸기
-public class PickSeed {
+
+public class PointUtil {
 
     public static int pickPoint(FloatBuffer filterPoints, float[] camera, float[] ray){ // camera: 위치(x,y,z), ray : ray의 방향벡터
 

@@ -20,6 +20,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import com.google.ar.core.PointCloud;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 /** Renders a point cloud. */
@@ -43,12 +45,17 @@ public class PointCloudRenderer {
   private int modelViewProjectionUniform;
   private int colorUniform;
   private int pointSizeUniform;
+  private int bUseSolidColor;
 
   private int numPoints = 0;
 
   // Keep track of the last point cloud rendered to avoid updating the VBO if point cloud
   // was not changed.  Do this using the timestamp since we can't compare PointCloud objects.
   private long lastTimestamp = 0;
+
+  private float[] seedPoint;
+  public int seedPointID;
+  private FloatBuffer seedBuffer;
 
   public PointCloudRenderer() {}
 
@@ -83,6 +90,7 @@ public class PointCloudRenderer {
     colorUniform = GLES20.glGetUniformLocation(programName, "u_Color");
     modelViewProjectionUniform = GLES20.glGetUniformLocation(programName, "u_ModelViewProjection");
     pointSizeUniform = GLES20.glGetUniformLocation(programName, "u_PointSize");
+    bUseSolidColor = GLES20.glGetUniformLocation(programName, "bUseSolidColor");
 
     ShaderUtil.checkGLError(TAG, "program  params");
   }
@@ -167,5 +175,26 @@ public class PointCloudRenderer {
     GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
     ShaderUtil.checkGLError(TAG, "Draw");
+  }
+
+  public void draw_seedPoint(float[] vpMatrix, float[] seedPoint){
+    GLES20.glUseProgram(programName);
+    GLES20.glEnableVertexAttribArray(positionAttribute);
+
+    ByteBuffer bb = ByteBuffer.allocateDirect(4 * 4);
+    bb.order(ByteOrder.nativeOrder());
+    seedBuffer = bb.asFloatBuffer();
+    seedBuffer.put(seedPoint);
+    seedBuffer.position(0);
+
+    GLES20.glVertexAttribPointer(positionAttribute, 4, GLES20.GL_FLOAT, false, 16, seedBuffer);
+    GLES20.glUniformMatrix4fv(modelViewProjectionUniform, 1, false, vpMatrix, 0);
+    GLES20.glUniform1f(pointSizeUniform, 30.0f);
+    GLES20.glUniform1i(bUseSolidColor,1);
+
+    GLES20.glUniform4f(colorUniform, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    GLES20.glDrawArrays(GLES20.GL_POINTS, 0, seedBuffer.remaining()/4);
+    GLES20.glDisableVertexAttribArray(positionAttribute);
   }
 }

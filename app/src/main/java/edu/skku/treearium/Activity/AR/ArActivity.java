@@ -34,11 +34,12 @@ import edu.skku.treearium.R;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
 import edu.skku.treearium.Utils.PointCollector;
+import edu.skku.treearium.Utils.PointUtil;
 import edu.skku.treearium.helpers.CameraPermissionHelper;
 import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
 import edu.skku.treearium.helpers.TrackingStateHelper;
-import edu.skku.treearium.Utils.PickSeed;
+
 
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
@@ -86,9 +87,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
-  //private float dbh = 10;
+
 
   private boolean isStaticView = false;
+  private boolean drawSeedState = false;
   private float[] ray = null;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
@@ -125,7 +127,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           @Override
           public void run() {
             if (ArActivity.this.collector != null) {
-              final FloatBuffer points = ArActivity.this.collector.filterPoints();
+              final FloatBuffer points = ArActivity.this.collector.doFilter();
               ArActivity.this.surfaceView.queueEvent(new Runnable() {
                 @Override
                 public void run() {
@@ -177,9 +179,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
 
+        //int pickIndex = PointUtil.pickPoint(collector.filterPoints, ray, rayOrigin);
+        //float seedPos = collector.filterPoints.get(pickIndex);
+        //drawSeedState = !drawSeedState;
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
-        int pickIndex = PickSeed.pickPoint(targetPoints, ray, rayOrigin);
+        int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           (new Thread(() -> {
             RequestForm rf = new RequestForm();
@@ -373,6 +378,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
       // If frame is ready, render camera preview image to the GL surface.
       backgroundRenderer.draw(frame);
+      if(drawSeedState){
+        //pointCloudRenderer.draw_seedPoint();
+      }
 
       // Keep the screen unlocked while tracking, but allow it to lock when tracking stops.
       trackingStateHelper.updateKeepScreenOnFlag(camera.getTrackingState());
@@ -403,7 +411,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       if(!isStaticView) {
         try (PointCloud pointCloud = frame.acquirePointCloud()) {
           if (isRecording && collector != null) {
-            collector.getPoints(pointCloud);
+            collector.doCollect(pointCloud);
           }
           pointCloudRenderer.update(pointCloud);
           pointCloudRenderer.draw(viewmtx, projmtx);
