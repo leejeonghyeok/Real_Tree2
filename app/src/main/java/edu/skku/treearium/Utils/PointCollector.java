@@ -20,7 +20,7 @@ public class PointCollector {
         allPoints = new HashMap<>();
     }
 
-    public void getPoints(PointCloud pointCloud){ //collect, accumulate
+    public void doCollect(PointCloud pointCloud){ //collect, accumulate
 
         IntBuffer intbuffer = pointCloud.getIds();
         FloatBuffer floatbuffer = pointCloud.getPoints();
@@ -40,7 +40,7 @@ public class PointCollector {
         }
     }
 
-    public FloatBuffer filterPoints() {
+    public FloatBuffer doFilter() {
 
         int numPoints = 0;
         for (Map.Entry<Integer, LinkedList<float[]>> entry : allPoints.entrySet()) {

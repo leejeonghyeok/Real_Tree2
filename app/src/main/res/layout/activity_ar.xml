@@ -13,27 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.skku.treearium.Activity.AR.ArActivity">
-
-  <android.opengl.GLSurfaceView
-      android:id="@+id/surfaceview"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_gravity="top"
-      />
-
-  <Button
-      android:id="@+id/recButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentEnd="true"
-      android:layout_centerVertical="true"
-      android:text="Recording" />
 
   <!--
   <Button
@@ -43,20 +28,49 @@
       android:layout_alignParentEnd="true"
       android:text="CONFIRM" />
 -->
+
+  <android.opengl.GLSurfaceView
+      android:id="@+id/surfaceview"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <Button
+      android:id="@+id/recButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Recording"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.929" />
+
   <Button
       android:id="@+id/popup"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="POPUP" />
+      android:text="POPUP"
+      app:layout_constraintBottom_toBottomOf="@+id/surfaceview"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.498"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/surfaceview"
+      app:layout_constraintVertical_bias="0.023" />
 
   <ImageView
       android:id="@+id/imageView3"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_centerInParent="true"
-      app:srcCompat="@drawable/ic_baseline_center_focus_strong_24"
+      android:layout_centerHorizontal="true"
+      android:layout_centerVertical="true"
+      android:foreground="@drawable/ic_baseline_center_focus_strong_24"
       android:scaleX="1.3"
       android:scaleY="1.3"
-      />
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
