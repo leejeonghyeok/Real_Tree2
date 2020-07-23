@@ -23,13 +23,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Activity.MainPackage.loginActivity"></activity>
-
         <uses-library android:name="com.google.android.maps" />
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
+        <activity
+            android:name=".Activity.login.LoginActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".Activity.login.RegisterActivity"
+            android:noHistory="true" />
         <activity android:name=".Activity.MainActivity" />
         <activity
             android:name=".Activity.AR.PopupActivity"
@@ -39,7 +42,7 @@
             android:name=".Activity.AR.ArActivity"
             android:configChanges="screenSize|orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activity.SplashActivity">
+        <activity android:name=".Activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

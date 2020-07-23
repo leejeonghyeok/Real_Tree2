@@ -24,7 +24,7 @@ import edu.skku.treearium.helpers.LocationHelper;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-// 정혁이는 이걸 받을수 있을것인가
+
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnv;
     NavController  nc;
