@@ -1,6 +1,8 @@
-package edu.skku.treearium.Activity;
+package edu.skku.treearium.Activity.login;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+
 import edu.skku.treearium.R;
 
 import android.content.Intent;
@@ -16,7 +18,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                Intent i = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }
