@@ -48,6 +48,7 @@ import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
+import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
@@ -162,26 +163,27 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ray = screenPointToWorldRay(tx, ty, frame);
         float[] rayOrigin = new float[]{
                 ray[0]+ray[3],
-                ray[1]+ray[4],
+               ray[1]+ray[4],
                 ray[2]+ray[5],
         };
 
-        Camera camera = frame.getCamera();
+          Camera camera = frame.getCamera();
 //        ray = camera.getPose().getZAxis(); // by unit
 //        ray[0] = -ray[0];
 //        ray[1] = -ray[1];
 //        ray[2] = -ray[2];
-//
-//        // camera location
-//        float[] rayOrigin = camera.getPose().getTranslation();
+
+        // camera location
+        //float[] rayOrigin = camera.getPose().getTranslation();
 
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
 
         //int pickIndex = PointUtil.pickPoint(collector.filterPoints, ray, rayOrigin);
-        //float seedPos = collector.filterPoints.get(pickIndex);
-        //drawSeedState = !drawSeedState;
+
+        drawSeedState = !drawSeedState;
+
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
         int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
@@ -367,38 +369,26 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     // the video background can be properly adjusted.
     displayRotationHelper.updateSessionIfNeeded(session);
 
-    try {
-      session.setCameraTextureName(backgroundRenderer.getTextureId());
-
-      // Obtain the current frame from ARSession. When the configuration is set to
+    try {// Obtain the current frame from ARSession. When the configuration is set to
       // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
       // camera framerate.
+      session.setCameraTextureName(backgroundRenderer.getTextureId());
       frame = session.update();
       Camera camera = frame.getCamera();
 
       // If frame is ready, render camera preview image to the GL surface.
       backgroundRenderer.draw(frame);
-      if(drawSeedState){
-        //pointCloudRenderer.draw_seedPoint();
-      }
-
-      // Keep the screen unlocked while tracking, but allow it to lock when tracking stops.
-      trackingStateHelper.updateKeepScreenOnFlag(camera.getTrackingState());
-
-      // If not tracking, don't draw 3D objects, show tracking failure reason instead.
-      if (camera.getTrackingState() == TrackingState.PAUSED) {
-        //messageSnackbarHelper.showMessage(
-        //    this, TrackingStateHelper.getTrackingFailureReasonString(camera));
-        return;
-      }
 
       // Get projection matrix.
-      float[] projmtx = new float[16];
-      camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
-
       // Get camera matrix and draw.
+      // Get multiple of proj matrix and view matrix
+      float[] projmtx = new float[16];
       float[] viewmtx = new float[16];
+      float[] vpMatrix = new float[16];
+      camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
       camera.getViewMatrix(viewmtx, 0);
+
+      Matrix.multiplyMM(vpMatrix,0, projmtx, 0, viewmtx,0);
 
       // Compute lighting from average intensity of the image.
       // The first three components are color scaling factors.
@@ -418,6 +408,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       } else {
         pointCloudRenderer.draw(viewmtx, projmtx);
+
+        if(drawSeedState && PointUtil.getSeedPoint() != null){
+          float[] seedPoint = PointUtil.getSeedPoint();
+          Log.d("drawSeed", String.format("%f %f %f", seedPoint[0], seedPoint[1], seedPoint[2]) );
+
+          pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
+        }
       }
 
     } catch (Throwable t) {

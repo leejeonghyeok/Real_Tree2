@@ -6,6 +6,9 @@ import java.nio.FloatBuffer;
 
 
 public class PointUtil {
+    private static float[] seedPointArr = {0.1234f,0.1234f,0.1234f};
+
+    public PointUtil() {}
 
     public static int pickPoint(FloatBuffer filterPoints, float[] camera, float[] ray){ // camera: 위치(x,y,z), ray : ray의 방향벡터
 
@@ -22,13 +25,29 @@ public class PointUtil {
             float innerProduct = ray[0] * product[0] + ray[1] * product[1] + ray[2] * product[2]; // dot( ray, product )
             distanceSq = distanceSq - (innerProduct * innerProduct);  //c^2 - a^2 = b^2
 
+            if(innerProduct > 1){
+                continue;
+            }
+
             // determine candidate points
             if(distanceSq < minDistanceSq){ // distanceSq < thresholdDistance &&
                 minDistanceSq = distanceSq;
                 seedPointID = i/4;
             }
         }
+
+        //filterPoints.rewind();
+        seedPointArr[0] = filterPoints.get(4* seedPointID + 0);
+        seedPointArr[1] = filterPoints.get(4* seedPointID + 1);
+        seedPointArr[2] = filterPoints.get(4* seedPointID + 2);
+
         Log.d("pickSeed", String.format("%d", seedPointID));
         return seedPointID;
+    }
+
+
+    public static float[] getSeedPoint() {
+        Log.d("settingS", String.format("%f %f %f", seedPointArr[0], seedPointArr[1], seedPointArr[2]));
+        return seedPointArr;
     }
 }

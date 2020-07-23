@@ -18,6 +18,8 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.util.Log;
+
 import com.google.ar.core.PointCloud;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -184,17 +186,18 @@ public class PointCloudRenderer {
     ByteBuffer bb = ByteBuffer.allocateDirect(4 * 4);
     bb.order(ByteOrder.nativeOrder());
     seedBuffer = bb.asFloatBuffer();
+    Log.d("PPPPPPPP", String.format("%f %f %f", seedPoint[0], seedPoint[1], seedPoint[2]));
     seedBuffer.put(seedPoint);
     seedBuffer.position(0);
 
-    GLES20.glVertexAttribPointer(positionAttribute, 4, GLES20.GL_FLOAT, false, 16, seedBuffer);
+    GLES20.glVertexAttribPointer(positionAttribute, 3, GLES20.GL_FLOAT, false, 12, seedBuffer);
     GLES20.glUniformMatrix4fv(modelViewProjectionUniform, 1, false, vpMatrix, 0);
     GLES20.glUniform1f(pointSizeUniform, 30.0f);
     GLES20.glUniform1i(bUseSolidColor,1);
 
     GLES20.glUniform4f(colorUniform, 1.0f, 0.0f, 0.0f, 1.0f);
 
-    GLES20.glDrawArrays(GLES20.GL_POINTS, 0, seedBuffer.remaining()/4);
+    GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
     GLES20.glDisableVertexAttribArray(positionAttribute);
   }
 }
