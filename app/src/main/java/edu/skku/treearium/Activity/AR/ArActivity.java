@@ -411,7 +411,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         if(drawSeedState && PointUtil.getSeedPoint() != null){
           float[] seedPoint = PointUtil.getSeedPoint();
-          Log.d("drawSeed", String.format("%f %f %f", seedPoint[0], seedPoint[1], seedPoint[2]) );
 
           pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
         }

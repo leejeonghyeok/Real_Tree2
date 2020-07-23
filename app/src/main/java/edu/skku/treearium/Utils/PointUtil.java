@@ -47,7 +47,6 @@ public class PointUtil {
 
 
     public static float[] getSeedPoint() {
-        Log.d("settingS", String.format("%f %f %f", seedPointArr[0], seedPointArr[1], seedPointArr[2]));
         return seedPointArr;
     }
 }
