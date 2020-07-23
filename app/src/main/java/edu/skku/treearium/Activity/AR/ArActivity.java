@@ -161,11 +161,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float ty = event.getY();
         // ray 생성
         ray = screenPointToWorldRay(tx, ty, frame);
-        float[] rayDest = new float[]{
-                ray[0]+ray[3],
-                ray[1]+ray[4],
-                ray[2]+ray[5],
-        };
         float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
 
         Camera camera = frame.getCamera();
