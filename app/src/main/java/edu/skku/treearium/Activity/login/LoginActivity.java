@@ -30,52 +30,54 @@ public class LoginActivity extends AppCompatActivity {
     TextView register;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateLisnter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mFirebaseAuth = FirebaseAuth.getInstance();
-        id= findViewById(R.id.et_email);
-        password=findViewById(R.id.et_password);
+        id = findViewById(R.id.et_email);
+        password = findViewById(R.id.et_password);
         loginbtn = findViewById(R.id.btn_login);
         register = findViewById(R.id.toRegister);
-        mAuthStateLisnter= new FirebaseAuth.AuthStateListener(){
+
+
+        mAuthStateLisnter = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                if(mFirebaseUser!=null) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }
-                else
+                if (mFirebaseUser != null) {
+                    //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                } else
                     Toast.makeText(LoginActivity.this, "Please Login", Toast.LENGTH_SHORT).show();
             }
         };
+
+
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = id.getText().toString();
                 String pswrd = password.getText().toString();
-                if(email.isEmpty()){
+                if (email.isEmpty()) {
                     id.setError("Please insert Email");
                     id.requestFocus();
-                }
-                else if(pswrd.isEmpty()){
+                } else if (pswrd.isEmpty()) {
                     password.setError("Please insert Password");
                     password.requestFocus();
-                }
-                else if (!(pswrd.isEmpty()&&email.isEmpty())){
-                    mFirebaseAuth.signInWithEmailAndPassword(email,pswrd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                } else if (!(pswrd.isEmpty() && email.isEmpty())) {
+                    mFirebaseAuth.signInWithEmailAndPassword(email, pswrd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Login Failed, Try again!", Toast.LENGTH_SHORT).show();
                             } else {
+                                loginbtn.setEnabled(false);
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             }
                         }
                     });
-                }
-                else
+                } else
                     Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
             }
         });
@@ -86,9 +88,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         mFirebaseAuth.addAuthStateListener(mAuthStateLisnter);
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loginbtn.setEnabled(true);
+    }
+
 }

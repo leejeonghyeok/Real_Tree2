@@ -42,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
             registerbtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     String email = id.getText().toString();
                     String pswrd = password.getText().toString();
                     String repswrd = repassword.getText().toString();
@@ -62,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "Retype password different", Toast.LENGTH_SHORT).show();
                         }
                         else {
+                            registerbtn.setEnabled(false);
                             mFirebaseAuth.createUserWithEmailAndPassword(email, pswrd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -87,4 +89,10 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        registerbtn.setEnabled(true);
+    }
     }
