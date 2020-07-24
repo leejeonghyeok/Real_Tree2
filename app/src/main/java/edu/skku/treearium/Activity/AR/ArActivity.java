@@ -170,8 +170,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         final float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
-
         drawSeedState = !drawSeedState;
+        Log.d("UnitRadius__", Float.toString(unitRadius));
 
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
@@ -185,6 +185,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float[] seedPoint = PointUtil.getSeedPoint();
 
         float seedZLength = ray[0] * (seedPoint[0] - rayOrigin[0]) + ray[1] * (seedPoint[1] - rayOrigin[1]) + ray[2] * (seedPoint[2] - rayOrigin[2]);
+        seedZLength = Math.abs(seedZLength);
+
+        Log.d("seedZLength__", Float.toString(seedZLength));
         float roiRadius = unitRadius * seedZLength;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
