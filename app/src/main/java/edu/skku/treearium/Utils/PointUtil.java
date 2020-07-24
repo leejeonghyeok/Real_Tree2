@@ -31,7 +31,7 @@ public class PointUtil {
             if(distanceSq > 1 || distanceSq < 0){
                 continue;
             }
-            Log.d("PointUtil", "distance: "+String.valueOf(distanceSq));
+            //Log.d("PointUtil", "distance: "+String.valueOf(distanceSq));
 
             // determine candidate points
             if(tmp < min + 0.01) {

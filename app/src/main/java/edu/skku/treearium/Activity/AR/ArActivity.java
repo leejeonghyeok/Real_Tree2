@@ -16,11 +16,14 @@
 
 package edu.skku.treearium.Activity.AR;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +32,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import edu.skku.treearium.R;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
@@ -39,7 +44,6 @@ import edu.skku.treearium.helpers.CameraPermissionHelper;
 import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
 import edu.skku.treearium.helpers.TrackingStateHelper;
-
 
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
@@ -75,9 +79,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private GLSurfaceView surfaceView;
 
   private boolean installRequested;
+  private String[] REQUIRED_PERMISSSIONS = {Manifest.permission.CAMERA};
+  private final int PERMISSION_REQUEST_CODE = 0; // PROTECTION_NORMAL
 
   private DisplayRotationHelper displayRotationHelper;
-  private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(this);
 
   private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
@@ -88,7 +93,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private Button recButton = null;
   private Button popup = null;
-
 
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
@@ -124,26 +128,17 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         recButton.setText("Stop");
         isStaticView = false;
       } else {
-        (new Thread(new Runnable() {
-          @Override
-          public void run() {
-            if (ArActivity.this.collector != null) {
-              final FloatBuffer points = ArActivity.this.collector.doFilter();
-              ArActivity.this.surfaceView.queueEvent(new Runnable() {
-                @Override
-                public void run() {
-                  pointCloudRenderer.update(points);
-                  isStaticView = true;
-                }
-              });
-              ArActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                  recButton.setText("Recording");
-                  recButton.setClickable(true);
-                }
-              });
-            }
+        (new Thread(() -> {
+          if (ArActivity.this.collector != null) {
+            ArActivity.this.collector.filterPoints = ArActivity.this.collector.doFilter();
+            ArActivity.this.surfaceView.queueEvent(() -> {
+              pointCloudRenderer.update(ArActivity.this.collector.filterPoints);
+              isStaticView = true;
+            });
+            ArActivity.this.runOnUiThread(() -> {
+              recButton.setText("Recording");
+              recButton.setClickable(true);
+            });
           }
         })).start();
       }
@@ -161,7 +156,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float ty = event.getY();
         // ray 생성
         ray = screenPointToWorldRay(tx, ty, frame);
-        float[] rayUnit = new float[] {ray[3],ray[4],ray[5]};
+        float[] rayOrigin = new float[] {ray[3],ray[4],ray[5]};
 
         Camera camera = frame.getCamera();
 //        ray = camera.getPose().getZAxis(); // by unit
@@ -174,27 +169,41 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
-        float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
+        final float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
 
         drawSeedState = !drawSeedState;
 
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
-        int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayUnit);
+        for(int i=0; i<targetPoints.capacity()/4; i++){
+          Log.d("PointsBuffer", collector.filterPoints.get(4 * i)
+                  +" "+ collector.filterPoints.get(4 * i + 1)
+                  +" "+ collector.filterPoints.get(4 * i + 2));
+        }
+
+        int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
+        float[] seedPoint = PointUtil.getSeedPoint();
+
+        float seedZLength = ray[0] * (seedPoint[0] - rayOrigin[0]) + ray[1] * (seedPoint[1] - rayOrigin[1]) + ray[2] * (seedPoint[2] - rayOrigin[2]);
+        float roiRadius = unitRadius * seedZLength;
+        Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
+
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           (new Thread(() -> {
             RequestForm rf = new RequestForm();
 
-            rf.setPointBufferDescription(collector.filterPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
-            rf.setPointDataDescription(unitRadius * 0.2f, unitRadius * 0.4f); //accuracy, meanDistance
-            rf.setTargetROI(pickIndex, unitRadius);//seedIndex,touchRadius
+            rf.setPointBufferDescription(targetPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
+            rf.setPointDataDescription(roiRadius * 0.2f, roiRadius * 0.4f); //accuracy, meanDistance
+            rf.setTargetROI(pickIndex, roiRadius);//seedIndex,touchRadius
             rf.setAlgorithmParameter(RequestForm.SearchLevel.NORMAL, RequestForm.SearchLevel.NORMAL);//LatExt, RadExp
             FindSurfaceRequester fsr = new FindSurfaceRequester(REQUEST_URL, true);
             // Request Find Surface
             try {
               Log.d("CylinderFinder", "request");
+              targetPoints.rewind();
               ResponseForm resp = fsr.request(rf, targetPoints);
               if (resp != null && resp.isSuccess()) {
+
                 ResponseForm.CylinderParam param = resp.getParamAsCylider();
                 // Normal Vector should be [0, 1, 0]
                 float[] tmp = new float[]{param.b[0] - param.t[0], param.b[1] - param.t[1], param.b[2] - param.t[2]};
@@ -203,7 +212,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tmp[1] /= dist;
                 tmp[2] /= dist;
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
-                        ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp));
+                        ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
+                        ", RMS: "+resp.getRMS());
               } else {
                 Log.d("CylinderFinder", "request fail");
               }
@@ -211,11 +221,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               e.printStackTrace();
             }
           })).start();
-          return false;
         }
       }
-      return true;
+      return false;
     });
+
+    for(String permission : REQUIRED_PERMISSSIONS){
+      if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSSIONS, PERMISSION_REQUEST_CODE);
+      }
+    }
   }
 
   @Override
@@ -397,7 +412,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           if (isRecording && collector != null) {
             collector.doCollect(pointCloud);
           }
-          pointCloudRenderer.update(pointCloud);
+          //pointCloudRenderer.update(pointCloud);
           pointCloudRenderer.draw(viewmtx, projmtx);
         }
       } else {
@@ -416,7 +431,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     }
   }
 
-  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {		// pointCloudActivity
+  float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {
     // ray[0~2] : camera pose
     // ray[3~5] : Unit vector of ray
     float[] ray_clip = new float[4];
