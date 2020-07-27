@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:text="NAME"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editText1"
@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:text="SPECIES"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editText2"
@@ -78,7 +78,7 @@
             android:layout_weight="1"
             android:text="DBH(m)"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editText3"
@@ -102,7 +102,7 @@
             android:layout_weight="1"
             android:text="HEIGHT(m)"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editText4"
