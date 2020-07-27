@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Logout: {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(MainActivity.this , LoginActivity.class));
+                this.finish();
                 break;
             }
             case R.id.hello: {
@@ -144,30 +145,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigationlayout);
         navigationView.setNavigationItemSelectedListener(this);
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.top_menu, menu);
-//        return true;
-//    }
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) { // top menu navigation
-//
-//        switch (item.getItemId()) {
-//            case R.id.Logout:
-//                FirebaseAuth.getInstance().signOut();
-//                startActivity(new Intent(MainActivity.this , LoginActivity.class));
-//                return true;
-//
-//            case R.id.hello:
-//                Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show();
-//                return true;
-//
-//            default:
-//                return super.onOptionsItemSelected(item);
-//
-//        }
-//    }
 
 
 
