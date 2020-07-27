@@ -74,4 +74,7 @@ dependencies {
 
     // FindSurface
     implementation files('libs/FSReq.jar')
+
+    //CameraButton
+    implementation 'com.hluhovskyi.camerabutton:camerabutton-rxjava2:2.0.1'
 }

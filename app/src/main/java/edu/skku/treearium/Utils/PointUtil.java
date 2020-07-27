@@ -6,7 +6,7 @@ import java.nio.FloatBuffer;
 
 
 public class PointUtil {
-    private static float[] seedPointArr = {0.1234f,0.1234f,0.1234f};
+    private static float[] seedPointArr = {0.0f, 0.0f, 0.0f};
 
     public PointUtil() {}
 
@@ -50,7 +50,11 @@ public class PointUtil {
         Log.d("pickSeed", String.format("%d", seedPointID));
         return seedPointID;
     }
-
+    public static void resetSeedPoint() {
+        seedPointArr[0] = 0.0f;
+        seedPointArr[1] = 0.0f;
+        seedPointArr[2] = 0.0f;
+    }
 
     public static float[] getSeedPoint() {
         return seedPointArr;
