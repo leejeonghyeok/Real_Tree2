@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,22 +22,26 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import edu.skku.treearium.Activity.AR.ArActivity;
+import edu.skku.treearium.Activity.login.LoginActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.helpers.LocationHelper;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bnv;
     NavController  nc;
     FloatingActionButton btn;
     DrawerLayout drawerLayout;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setNavigationViewListener();
         //네비게이션 바
         bnv = (BottomNavigationView)findViewById(R.id.bottomNavigation);
         nc = Navigation.findNavController(this,R.id.fragment);
@@ -63,6 +70,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+            case R.id.Logout: {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this , LoginActivity.class));
+                break;
+            }
+            case R.id.hello: {
+                Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show();
+                break;
+            }
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerlayout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public static class App extends Application {
@@ -113,5 +139,38 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    private void setNavigationViewListener() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationlayout);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.top_menu, menu);
+//        return true;
+//    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) { // top menu navigation
+//
+//        switch (item.getItemId()) {
+//            case R.id.Logout:
+//                FirebaseAuth.getInstance().signOut();
+//                startActivity(new Intent(MainActivity.this , LoginActivity.class));
+//                return true;
+//
+//            case R.id.hello:
+//                Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show();
+//                return true;
+//
+//            default:
+//                return super.onOptionsItemSelected(item);
+//
+//        }
+//    }
+
+
+
+
 }
 
