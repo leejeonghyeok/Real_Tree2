@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,12 +94,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private PointCollector collector = null;
   private boolean isRecording = false;
-  private Button recButton = null;
   private Button popup = null;
   private Button confirm = null;
   private Button flashBtn = null;
   private CameraButton recBtn = null;
 
+  private boolean bflashOn = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
   private float[] ray = null;
@@ -110,8 +109,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
-    recButton = (Button)findViewById(R.id.recButton);
     popup = (Button)findViewById(R.id.popup);
+    flashBtn = (Button)findViewById(R.id.flashBtn);
+    recBtn = (CameraButton)findViewById(R.id.recBtn);
     confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
@@ -129,11 +129,28 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     installRequested = false;
 
-    recButton.setOnClickListener(v -> {
+    popup.setOnClickListener(v -> {
+      Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
+      startActivityForResult(intent12, 1);
+    });
+
+//    flashBtn.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        bflashOn = !bflashOn;
+//        if(bflashOn) {
+//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_on_24));
+//        }else {
+//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_off_24));
+//        }
+//      }
+//    });
+
+    recBtn.setOnClickListener(v -> {
       isRecording = !isRecording;
       if(isRecording){
         collector = new PointCollector();
-        recButton.setText("Stop");
+        Toast.makeText(getApplicationContext(), "Recoding...", Toast.LENGTH_LONG).show();
         isStaticView = false;
       } else {
         (new Thread(() -> {
@@ -144,17 +161,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               isStaticView = true;
             });
             ArActivity.this.runOnUiThread(() -> {
-              recButton.setText("Recording");
-              recButton.setClickable(true);
+              Toast.makeText(getApplicationContext(), "Recoding Finished...", Toast.LENGTH_LONG).show();
             });
           }
         })).start();
       }
-    });
-
-    popup.setOnClickListener(v -> {
-      Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
-      startActivityForResult(intent12, 1);
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
@@ -171,7 +182,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         final float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
-        drawSeedState = !drawSeedState;
+
+        drawSeedState = true;
+
         Log.d("UnitRadius__", Float.toString(unitRadius));
 
         FloatBuffer targetPoints = collector.filterPoints;
@@ -433,11 +446,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Visualize tracked points.
       // Use try-with-resources to automatically release the point cloud.
       if(!isStaticView) {
+        PointUtil.resetSeedPoint();
         try (PointCloud pointCloud = frame.acquirePointCloud()) {
           if (isRecording && collector != null) {
             collector.doCollect(pointCloud);
           }
-          //pointCloudRenderer.update(pointCloud);
+          pointCloudRenderer.update(pointCloud);
           pointCloudRenderer.draw(viewmtx, projmtx);
         }
       } else {
