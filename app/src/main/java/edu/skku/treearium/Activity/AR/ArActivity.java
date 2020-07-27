@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -137,17 +136,17 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       startActivityForResult(intent12, 1);
     });
 
-    flashBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        bflashOn = !bflashOn;
-        if(bflashOn) {
-          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_on_24));
-        }else {
-          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_off_24));
-        }
-      }
-    });
+//    flashBtn.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        bflashOn = !bflashOn;
+//        if(bflashOn) {
+//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_on_24));
+//        }else {
+//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_off_24));
+//        }
+//      }
+//    });
 
     recBtn.setOnClickListener(v -> {
       isRecording = !isRecording;
@@ -165,14 +164,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             });
             ArActivity.this.runOnUiThread(() -> {
               recButton.setText("Recording");
-              recButton.setClickable(true);
             });
           }
         })).start();
       }
     });
-
-
 
     surfaceView.setOnTouchListener((v, event) ->{
       if(collector != null && collector.filterPoints != null) {
@@ -188,8 +184,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float[] projmtx = new float[16];
         camera.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
         final float unitRadius = (float) (0.8 / Math.max(projmtx[0], projmtx[5]));
-        //drawSeedState = !drawSeedState;
+
         drawSeedState = true;
+
         Log.d("UnitRadius__", Float.toString(unitRadius));
 
         FloatBuffer targetPoints = collector.filterPoints;
