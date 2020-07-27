@@ -59,6 +59,30 @@
       app:layout_constraintTop_toTopOf="@+id/surfaceview"
       app:layout_constraintVertical_bias="0.023" />
 
+  <com.hluhovskyi.camerabutton.CameraButton
+      android:id="@+id/recBtn"
+      android:layout_width="@dimen/cb_layout_width_default"
+      android:layout_height="@dimen/cb_layout_height_default"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.498"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.842" />
+
+  <Button
+      android:id="@+id/flashBtn"
+      android:layout_width="36dp"
+      android:layout_height="37dp"
+      android:background="#00FFFFFF"
+      android:foreground="@drawable/ic_baseline_flash_off_24"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.802"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.93" />
+
   <ImageView
       android:id="@+id/imageView3"
       android:layout_width="wrap_content"
@@ -72,19 +96,5 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
-
-  <androidx.constraintlayout.widget.Guideline
-      android:id="@+id/guideline"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      app:layout_constraintGuide_end="330dp" />
-
-  <androidx.constraintlayout.widget.Guideline
-      android:id="@+id/guideline2"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      app:layout_constraintGuide_begin="327dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
