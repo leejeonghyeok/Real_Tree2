@@ -59,7 +59,6 @@
       app:layout_constraintTop_toTopOf="@+id/surfaceview"
       app:layout_constraintVertical_bias="0.023" />
 
-  <!--
   <com.hluhovskyi.camerabutton.CameraButton
       android:id="@+id/recBtn"
       android:layout_width="@dimen/cb_layout_width_default"
@@ -70,7 +69,6 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.842" />
-      -->
 
   <Button
       android:id="@+id/flashBtn"
