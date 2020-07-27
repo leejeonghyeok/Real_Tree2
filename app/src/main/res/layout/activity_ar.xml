@@ -37,17 +37,6 @@
       app:layout_constraintTop_toTopOf="parent" />
 
   <Button
-      android:id="@+id/recButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Recording"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.929" />
-
-  <Button
       android:id="@+id/popup"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -68,20 +57,20 @@
       app:layout_constraintHorizontal_bias="0.498"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.842" />
+      app:layout_constraintVertical_bias="0.973" />
 
   <Button
       android:id="@+id/flashBtn"
       android:layout_width="36dp"
-      android:layout_height="37dp"
+      android:layout_height="36dp"
       android:background="#00FFFFFF"
       android:foreground="@drawable/ic_baseline_flash_off_24"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.802"
+      app:layout_constraintHorizontal_bias="0.824"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.93" />
+      app:layout_constraintVertical_bias="0.917" />
 
   <ImageView
       android:id="@+id/imageView3"

@@ -94,7 +94,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private PointCollector collector = null;
   private boolean isRecording = false;
-  private Button recButton = null;
   private Button popup = null;
   private Button confirm = null;
   private Button flashBtn = null;
@@ -112,7 +111,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     setContentView(R.layout.activity_ar);
     popup = (Button)findViewById(R.id.popup);
     flashBtn = (Button)findViewById(R.id.flashBtn);
-    recButton = (Button)findViewById(R.id.recButton);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
     confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
@@ -152,7 +150,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       isRecording = !isRecording;
       if(isRecording){
         collector = new PointCollector();
-        recButton.setText("Stop");
+        Toast.makeText(getApplicationContext(), "Recoding...", Toast.LENGTH_LONG).show();
         isStaticView = false;
       } else {
         (new Thread(() -> {
@@ -163,7 +161,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               isStaticView = true;
             });
             ArActivity.this.runOnUiThread(() -> {
-              recButton.setText("Recording");
+              Toast.makeText(getApplicationContext(), "Recoding Finished...", Toast.LENGTH_LONG).show();
             });
           }
         })).start();
