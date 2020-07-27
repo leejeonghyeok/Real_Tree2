@@ -48,7 +48,7 @@ public class PointCollector {
                 numPoints++;
             }
         }
-        filterPoints = ByteBuffer.allocateDirect(numPoints * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        FloatBuffer filteredPoints = ByteBuffer.allocateDirect(numPoints * 4 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
         for (Map.Entry<Integer, LinkedList<float[]>> entry : allPoints.entrySet()) {
             if (entry.getValue().size() > 3) {
@@ -63,10 +63,10 @@ public class PointCollector {
                 mean_y /= entry.getValue().size();
 
                 if (entry.getValue().size() < 5) {
-                    filterPoints.put(mean_x);
-                    filterPoints.put(mean_y);
-                    filterPoints.put(mean_z);
-                    filterPoints.put(0);
+                    filteredPoints.put(mean_x);
+                    filteredPoints.put(mean_y);
+                    filteredPoints.put(mean_z);
+                    filteredPoints.put(0);
                     continue; // no more calculation
                 }
 
@@ -83,10 +83,10 @@ public class PointCollector {
 
                 // variance가 0일 때
                 if (variance == 0) {
-                    filterPoints.put(mean_x);
-                    filterPoints.put(mean_y);
-                    filterPoints.put(mean_z);
-                    filterPoints.put(0);
+                    filteredPoints.put(mean_x);
+                    filteredPoints.put(mean_y);
+                    filteredPoints.put(mean_z);
+                    filteredPoints.put(0);
                     continue; // no more calculation
                 } else {
                     Iterator<float[]> iter = entry.getValue().iterator();
@@ -113,14 +113,14 @@ public class PointCollector {
                     mean_x /= entry.getValue().size();
                     mean_y /= entry.getValue().size();
 
-                    filterPoints.put(mean_x);
-                    filterPoints.put(mean_y);
-                    filterPoints.put(mean_z);
-                    filterPoints.put(0);
+                    filteredPoints.put(mean_x);
+                    filteredPoints.put(mean_y);
+                    filteredPoints.put(mean_z);
+                    filteredPoints.put(0);
                 }
             }
         }
-        filterPoints.position(0);
-        return filterPoints;
+        filteredPoints.position(0);
+        return filteredPoints;
     }
 }
