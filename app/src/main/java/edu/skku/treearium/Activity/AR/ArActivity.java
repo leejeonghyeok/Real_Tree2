@@ -297,7 +297,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           })).start();
           while(isCylinder) {
             try {
-              TimeUnit.SECONDS.sleep(1);
+              TimeUnit.SECONDS.sleep((long) 0.05);
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
