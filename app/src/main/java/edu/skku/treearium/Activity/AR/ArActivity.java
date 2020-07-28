@@ -17,6 +17,7 @@
 package edu.skku.treearium.Activity.AR;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -67,6 +68,7 @@ import com.hluhovskyi.camerabutton.CameraButton;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -89,6 +91,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
   private Session session;
   private Frame frame;
+  volatile float dbh = -1;
 
   private PointCollector collector = null;
   private boolean isRecording = false;
@@ -97,11 +100,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
+  private boolean isCylinder = true;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
   private float[] ray = null;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -113,7 +118,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
-
 
     // Set up renderer.
     surfaceView.setPreserveEGLContextOnPause(true);
@@ -143,7 +147,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     });
 
-
     recBtn.setOnClickListener(v -> {
       isRecording = !isRecording;
       if(isRecording){
@@ -171,6 +174,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
+      dbh = -1.0f;
+      isCylinder = true;
       if(collector != null && collector.filterPoints != null) {
 
         float tx = event.getX();
@@ -230,41 +235,67 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
+                dbh = param.r;
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
-                        ", RMS: "+resp.getRMS());
+                        ", RMS: "+resp.getRMS()+", DBH: "+dbh);
+                isCylinder = false;
               } else {
                 Log.d("CylinderFinder", "request fail");
+                isCylinder = false;
               }
             } catch (Exception e) {
               e.printStackTrace();
             }
           })).start();
+          while(isCylinder) {
+            try {
+              TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          if(dbh > 0.0f) {
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                    ArActivity.this, R.style.BottomSheetDialogTheme
+            );
+            View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                    .inflate(
+                            R.layout.layout_bottom_sheet,
+                            (LinearLayout) findViewById(R.id.bottomSheetContainer)
+                    );
+            bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+              bottomSheetDialog.dismiss();
+            });
+            bottomSheetDialog.setContentView(bottomSheetView);
+            bottomSheetDialog.show();
+          }
         }
       }
       return false;
     });
 
-    confirm.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-          ArActivity.this, R.style.BottomSheetDialogTheme
-        );
-        View bottomSheetView = LayoutInflater.from(getApplicationContext())
-                .inflate(
-                        R.layout.layout_bottom_sheet,
-                        (LinearLayout)findViewById(R.id.bottomSheetContainer)
-                );
-        bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-          Toast.makeText(ArActivity.this, "Confirmed!", Toast.LENGTH_SHORT).show();
-          bottomSheetDialog.dismiss();
-        });
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-      }
-    });
+//    confirm.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        if(dbh > 0.0f) {
+//          final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+//                  ArActivity.this, R.style.BottomSheetDialogTheme
+//          );
+//          View bottomSheetView = LayoutInflater.from(getApplicationContext())
+//                  .inflate(
+//                          R.layout.layout_bottom_sheet,
+//                          (LinearLayout) findViewById(R.id.bottomSheetContainer)
+//                  );
+//          bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+//            Toast.makeText(ArActivity.this, "Confirmed!: "+dbh, Toast.LENGTH_SHORT).show();
+//            bottomSheetDialog.dismiss();
+//          });
+//          bottomSheetDialog.setContentView(bottomSheetView);
+//          bottomSheetDialog.show();
+//        }
+//      }
+//    });
 
     for(String permission : REQUIRED_PERMISSSIONS){
       if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
