@@ -51,6 +51,7 @@ import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
@@ -88,6 +89,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
+
+  private View arLayout;
   private Session session;
   private Frame frame;
   private Thread httpTh;
@@ -97,6 +100,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Button confirm = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
+
 
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
@@ -108,6 +112,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
+
+    arLayout = findViewById(R.id.arLayout);
     popup = (Button)findViewById(R.id.popup);
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
@@ -140,7 +146,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       @Override
       public void onClick(View v) {
         collector = new PointCollector();
-        Toast.makeText(getApplicationContext(), "Reset", Toast.LENGTH_LONG).show();
+        Snackbar.make(arLayout, "Reset", Snackbar.LENGTH_LONG).show();
         isStaticView = false;
       }
     });
@@ -150,7 +156,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       isRecording = !isRecording;
       if(isRecording){
         collector = new PointCollector();
-        Toast.makeText(getApplicationContext(), "Recoding...", Toast.LENGTH_LONG).show();
+        Snackbar.make(arLayout, "Collecting", Snackbar.LENGTH_LONG).show();
         isStaticView = false;
         resetBtn.setEnabled(true);
         resetBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_sharp_sync_25));
@@ -165,7 +171,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               isStaticView = true;
             });
             ArActivity.this.runOnUiThread(() -> {
-              Toast.makeText(getApplicationContext(), "Recoding Finished", Toast.LENGTH_LONG).show();
+              Snackbar.make(arLayout, "Collecting Finished", Snackbar.LENGTH_LONG).show();
             });
           }
         })).start();
@@ -247,21 +253,24 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           httpTh.start();
         }
 
-        if(httpTh.isInterrupted()){
-          final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-                  ArActivity.this, R.style.BottomSheetDialogTheme
-          );
-          View bottomSheetView = LayoutInflater.from(getApplicationContext())
-                  .inflate(
-                          R.layout.layout_bottom_sheet,
-                          (LinearLayout)findViewById(R.id.bottomSheetContainer)
-                  );
-          bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-            Toast.makeText(ArActivity.this, "Confirmed!", Toast.LENGTH_SHORT).show();
-            bottomSheetDialog.dismiss();
-          });
-          bottomSheetDialog.setContentView(bottomSheetView);
-          bottomSheetDialog.show();
+        if(httpTh.isAlive()){
+          Snackbar.make(arLayout, "Please Wait", Snackbar.LENGTH_LONG).show();
+          if(httpTh.isInterrupted()){
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                    ArActivity.this, R.style.BottomSheetDialogTheme
+            );
+            View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                    .inflate(
+                            R.layout.layout_bottom_sheet,
+                            (LinearLayout)findViewById(R.id.bottomSheetContainer)
+                    );
+            bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+              Snackbar.make(arLayout, "Confirmed!", Snackbar.LENGTH_LONG).show();
+              bottomSheetDialog.dismiss();
+            });
+            bottomSheetDialog.setContentView(bottomSheetView);
+            bottomSheetDialog.show();
+          }
         }
       }
       return false;
