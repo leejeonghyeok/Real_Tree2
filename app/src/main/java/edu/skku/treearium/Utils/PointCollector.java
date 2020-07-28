@@ -1,5 +1,7 @@
 package edu.skku.treearium.Utils;
 
+import android.util.Log;
+
 import com.google.ar.core.PointCloud;
 
 import java.nio.ByteBuffer;
@@ -123,4 +125,5 @@ public class PointCollector {
         filteredPoints.position(0);
         return filteredPoints;
     }
+
 }
