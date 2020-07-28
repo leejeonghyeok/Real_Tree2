@@ -18,21 +18,28 @@ package edu.skku.treearium.Activity.AR;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -49,6 +56,7 @@ import edu.skku.treearium.helpers.FullScreenHelper;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.ar.core.ArCoreApk;
@@ -63,11 +71,19 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.type.LatLng;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -105,7 +121,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean drawSeedState = false;
   private float[] ray = null;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
+  //firebase
+  FirebaseAuth mFirebaseAuth;
+  FirebaseFirestore fstore;
+  String userID;
+  LocationManager locationManager;
+  String latitude, longitude;
+  GeoPoint location;
 
+  private static final int REQUEST_LOCATION = 1;
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -127,10 +151,33 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
 
+    //firebase
+    mFirebaseAuth = FirebaseAuth.getInstance();
+    fstore = FirebaseFirestore.getInstance();
+    userID= mFirebaseAuth.getCurrentUser().getUid();
+
     Intent intent = new Intent(ArActivity.this, PopupActivity.class);
     startActivityForResult(intent, 1);
 
     installRequested = false;
+
+//    LocationManager nManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//
+//    if (ActivityCompat.checkSelfPermission(
+//            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+//    }
+//    else {
+//      Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//      if (locationGPS != null) {
+//        double lat = locationGPS.getLatitude();
+//        double longi = locationGPS.getLongitude();
+//        location = new GeoPoint(lat, longi);
+//      } else {
+//        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+//      }
+//    }
 
     popup.setOnClickListener(v -> {
       Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
@@ -264,7 +311,26 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             R.layout.layout_bottom_sheet,
                             (LinearLayout) findViewById(R.id.bottomSheetContainer)
                     );
+            EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
+            mbottomdbh.setText(String.valueOf(dbh*100));
+
+
             bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+              DocumentReference documentReference = fstore.collection("tree").document(userID);
+              Map<String,Map<String,Object>> user = new HashMap<>();
+              Map<String,Object> tree = new HashMap<>();
+              tree.put("treeName",bottomSheetView.findViewById(R.id.bottomname).toString());
+              tree.put("treeSpecies",bottomSheetView.findViewById(R.id.bottomspecies).toString());
+              tree.put("treeDBH",bottomSheetView.findViewById(R.id.bottomdbh).toString());
+              tree.put("treeHeight",bottomSheetView.findViewById(R.id.bottomheight).toString());
+              //tree.put("treeLocation",location);
+              tree.put("treeTime",ServerValue.TIMESTAMP);
+              user.put(ServerValue.TIMESTAMP.toString(),tree);
+              documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                }
+              });
               bottomSheetDialog.dismiss();
             });
             bottomSheetDialog.setContentView(bottomSheetView);
@@ -303,6 +369,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     }
   }
+
 
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
