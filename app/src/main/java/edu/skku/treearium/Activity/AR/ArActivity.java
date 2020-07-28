@@ -17,6 +17,7 @@
 package edu.skku.treearium.Activity.AR;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -89,7 +90,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
   private Session session;
   private Frame frame;
-
+  private Thread httpTh;
   private PointCollector collector = null;
   private boolean isRecording = false;
   private Button popup = null;
@@ -102,6 +103,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private float[] ray = null;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -207,8 +209,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float roiRadius = unitRadius * seedZLength;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
+
+
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
-          (new Thread(() -> {
+          httpTh = new Thread(() -> {
             RequestForm rf = new RequestForm();
 
             rf.setPointBufferDescription(targetPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
@@ -239,32 +243,30 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             } catch (Exception e) {
               e.printStackTrace();
             }
-          })).start();
+          });
+          httpTh.start();
+        }
+
+        if(httpTh.isInterrupted()){
+          final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                  ArActivity.this, R.style.BottomSheetDialogTheme
+          );
+          View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                  .inflate(
+                          R.layout.layout_bottom_sheet,
+                          (LinearLayout)findViewById(R.id.bottomSheetContainer)
+                  );
+          bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+            Toast.makeText(ArActivity.this, "Confirmed!", Toast.LENGTH_SHORT).show();
+            bottomSheetDialog.dismiss();
+          });
+          bottomSheetDialog.setContentView(bottomSheetView);
+          bottomSheetDialog.show();
         }
       }
       return false;
     });
 
-    confirm.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-          ArActivity.this, R.style.BottomSheetDialogTheme
-        );
-        View bottomSheetView = LayoutInflater.from(getApplicationContext())
-                .inflate(
-                        R.layout.layout_bottom_sheet,
-                        (LinearLayout)findViewById(R.id.bottomSheetContainer)
-                );
-        bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-          Toast.makeText(ArActivity.this, "Confirmed!", Toast.LENGTH_SHORT).show();
-          bottomSheetDialog.dismiss();
-        });
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-      }
-    });
 
     for(String permission : REQUIRED_PERMISSSIONS){
       if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
