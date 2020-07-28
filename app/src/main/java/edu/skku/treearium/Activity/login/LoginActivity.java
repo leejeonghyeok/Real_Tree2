@@ -66,13 +66,13 @@ public class LoginActivity extends AppCompatActivity {
                     password.setError("Please insert Password");
                     password.requestFocus();
                 } else if (!(pswrd.isEmpty() && email.isEmpty())) {
+                    loginbtn.setEnabled(false);
                     mFirebaseAuth.signInWithEmailAndPassword(email, pswrd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Login Failed, Try again!", Toast.LENGTH_SHORT).show();
                             } else {
-                                loginbtn.setEnabled(false);
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             }
                         }

@@ -77,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                             mFirebaseAuth.createUserWithEmailAndPassword(email, pswrd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+                                    registerbtn.setEnabled(false);
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(RegisterActivity.this, "Error!", Toast.LENGTH_SHORT).show();
                                     } else {
@@ -88,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                            @Override
                                            public void onSuccess(Void aVoid) {
-                                               registerbtn.setEnabled(false);                                           }
+                                           }
                                        });
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                     }
