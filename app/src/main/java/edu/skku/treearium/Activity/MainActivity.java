@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,16 +26,25 @@ import edu.skku.treearium.Activity.login.LoginActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.helpers.LocationHelper;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bnv;
     NavController  nc;
     FloatingActionButton btn;
     DrawerLayout drawerLayout;
+    FirebaseFirestore fstore;
+    FirebaseAuth mFirebaseAuth;
+    String userID;
+    TextView musername, museremail;
     private FirebaseAuth.AuthStateListener mAuthListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +69,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        fstore = FirebaseFirestore.getInstance();
+        userID= mFirebaseAuth.getCurrentUser().getUid();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationlayout);
+        View headerView = navigationView.getHeaderView(0);
+        museremail=(TextView) headerView.findViewById(R.id.userdraweremail);
+        musername=(TextView) headerView.findViewById(R.id.userdrawername);
+        DocumentReference docRef = fstore.collection("users").document(userID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        musername.setText(document.getString("fName"));
+                        museremail.setText(document.getString("email"));
+                    }
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
 
         findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {

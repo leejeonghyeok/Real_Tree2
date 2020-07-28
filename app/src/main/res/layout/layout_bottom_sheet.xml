@@ -11,10 +11,12 @@
     <TextView
         android:id="@+id/treeText"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:textColor="#8FC838"
         android:text="TREE INFORMATION"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
         android:textAlignment="center"
         android:textSize="36sp" />
 
@@ -24,99 +26,161 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/nameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/bottomnameask"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:textAlignment="textStart"
             android:text="NAME"
-            android:textAlignment="center"
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editText1"
-            android:layout_width="267dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            android:id="@+id/bottomname"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom"
+            android:padding="15dp"
+            android:hint="@string/your_name"
             android:inputType="textPersonName"
-            android:text="name"
-            android:textSize="24sp" />
-    </LinearLayout>
+            android:textSize="15sp" />
 
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/speciesText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SPECIES"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+            android:id="@+id/bottomspeciesask"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+            android:text="Species"
 
+            />
         <EditText
-            android:id="@+id/editText2"
-            android:layout_width="267dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom"
+            android:padding="15dp"
+            android:id="@+id/bottomspecies"
+            android:hint="Species"
             android:inputType="textPersonName"
-            android:text="name"
-            android:textSize="24sp" />
-    </LinearLayout>
+            android:textSize="15sp" />
 
-    <LinearLayout
+    </LinearLayout> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/bottomdbhask"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
+        android:textAlignment="textStart"
+        android:text="DBH"
+        android:textSize="18sp"
+        />
+    <EditText
+        android:id="@+id/bottomdbh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/et_custom"
+        android:padding="15dp"
+        android:hint="DBH"
+        android:inputType="textPersonName"
+        android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/dbhText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="DBH(m)"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+</LinearLayout> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/editText3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="numberSigned" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/bottomheightask"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
+        android:textAlignment="textStart"
+        android:text="Height"
+        android:textSize="18sp"
+        />
+    <EditText
+        android:id="@+id/bottomheight"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal">
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/et_custom"
+        android:padding="15dp"
+        android:hint="Height"
+        android:inputType="textPersonName"
+        android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/heightText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="HEIGHT(m)"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+</LinearLayout> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/editText4"
-            android:layout_width="248dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="numberSigned" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/bottomlocationask"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
+        android:textAlignment="textStart"
+        android:text="Location"
+        android:textSize="18sp"
+        />
+    <EditText
+        android:id="@+id/bottomlocation"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/et_custom"
+        android:padding="15dp"
+        android:hint="Location"
+        android:inputType="textPersonName"
+        android:textSize="15sp" />
 
+</LinearLayout>
     <Button
         android:id="@+id/confirm"
         android:layout_width="match_parent"
-        android:layout_height="69dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
         android:text="CONFIRM"
         android:textSize="24sp" />
 </LinearLayout>

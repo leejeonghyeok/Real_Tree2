@@ -26,4 +26,6 @@
     <string name="register">Register</string>
     <string name="re_type_password">Re-type Password</string>
     <string name="your_name">Full Name</string>
+    <string name="user_name">USER NAME</string>
+    <string name="user_email">user@user.com</string>
 </resources>
