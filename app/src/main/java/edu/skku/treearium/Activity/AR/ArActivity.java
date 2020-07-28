@@ -44,7 +44,6 @@ import edu.skku.treearium.Utils.PointUtil;
 import edu.skku.treearium.helpers.CameraPermissionHelper;
 import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
-import edu.skku.treearium.helpers.TrackingStateHelper;
 
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
@@ -54,10 +53,8 @@ import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
-import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Session;
-import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
@@ -96,8 +93,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private Button popup = null;
   private Button confirm = null;
-  private Button flashBtn = null;
+  private Button resetBtn = null;
   private CameraButton recBtn = null;
+  private Button longBtn = null;
 
   private boolean bflashOn = false;
   private boolean isStaticView = false;
@@ -110,11 +108,14 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
     popup = (Button)findViewById(R.id.popup);
-    flashBtn = (Button)findViewById(R.id.flashBtn);
+    resetBtn = (Button)findViewById(R.id.resetBtn);
+    resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
+    longBtn = (Button)findViewById(R.id.longBtn);
     confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
+
 
     // Set up renderer.
     surfaceView.setPreserveEGLContextOnPause(true);
@@ -134,17 +135,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       startActivityForResult(intent12, 1);
     });
 
-//    flashBtn.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View v) {
-//        bflashOn = !bflashOn;
-//        if(bflashOn) {
-//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_on_24));
-//        }else {
-//          flashBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_baseline_flash_off_24));
-//        }
-//      }
-//    });
+
+    resetBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        collector = new PointCollector();
+        Toast.makeText(getApplicationContext(), "Reset", Toast.LENGTH_LONG).show();
+        isStaticView = false;
+      }
+    });
+
 
     recBtn.setOnClickListener(v -> {
       isRecording = !isRecording;
@@ -152,7 +152,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         collector = new PointCollector();
         Toast.makeText(getApplicationContext(), "Recoding...", Toast.LENGTH_LONG).show();
         isStaticView = false;
+        resetBtn.setEnabled(true);
+        resetBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_sharp_sync_25));
       } else {
+        resetBtn.setEnabled(false);
+        resetBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_sharp_sync_24));
         (new Thread(() -> {
           if (ArActivity.this.collector != null) {
             ArActivity.this.collector.filterPoints = ArActivity.this.collector.doFilter();
@@ -161,7 +165,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               isStaticView = true;
             });
             ArActivity.this.runOnUiThread(() -> {
-              Toast.makeText(getApplicationContext(), "Recoding Finished...", Toast.LENGTH_LONG).show();
+              Toast.makeText(getApplicationContext(), "Recoding Finished", Toast.LENGTH_LONG).show();
             });
           }
         })).start();
@@ -334,6 +338,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         Log.e(TAG, "Exception creating session", exception);
         return;
       }
+
     }
 
     // Note that order matters - see the note in onPause(), the reverse applies here.
