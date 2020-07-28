@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheetContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,6 +8,34 @@
     android:orientation="vertical"
     android:elevation="5dp"
     >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rotation="90"
+            app:srcCompat="@drawable/ic_arrow_left"
+            />
+
+
+        <TextView
+            android:id="@+id/moreinfobottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="더보기"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/treeText"
@@ -16,7 +45,6 @@
         android:textColor="#8FC838"
         android:text="TREE INFORMATION"
         android:layout_marginBottom="10dp"
-        android:padding="15dp"
         android:textAlignment="center"
         android:textSize="36sp" />
 
@@ -28,7 +56,7 @@
         <TextView
             android:id="@+id/bottomnameask"
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
@@ -40,7 +68,7 @@
         <EditText
             android:id="@+id/bottomname"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
@@ -59,7 +87,7 @@
         <TextView
             android:id="@+id/bottomspeciesask"
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
@@ -71,7 +99,7 @@
             />
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
@@ -90,7 +118,7 @@
     <TextView
         android:id="@+id/bottomdbhask"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -102,7 +130,7 @@
     <EditText
         android:id="@+id/bottomdbh"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -120,7 +148,7 @@
     <TextView
         android:id="@+id/bottomheightask"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -132,7 +160,7 @@
     <EditText
         android:id="@+id/bottomheight"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -150,7 +178,7 @@
     <TextView
         android:id="@+id/bottomlocationask"
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -162,7 +190,7 @@
     <EditText
         android:id="@+id/bottomlocation"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"

@@ -49,6 +49,7 @@ import edu.skku.treearium.helpers.TrackingStateHelper;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
