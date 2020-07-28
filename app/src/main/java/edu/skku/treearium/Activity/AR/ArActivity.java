@@ -95,9 +95,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Button confirm = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
-  private Button longBtn = null;
 
-  private boolean bflashOn = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
   private float[] ray = null;
@@ -111,7 +109,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
-    longBtn = (Button)findViewById(R.id.longBtn);
     confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
