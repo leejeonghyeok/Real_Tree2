@@ -46,58 +46,11 @@ public class fragment2_test extends Fragment{
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map=googleMap;
-            /*LatLng Def=new LatLng(37.56,126.97);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions .position(Def)
-                    .title("서울역")
-                    .snippet("Seoul Station");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            markerOptions.draggable(false);
-            googleMap.addMarker(markerOptions).showInfoWindow();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(Def, 18);
-            googleMap.animateCamera(cameraUpdate);*/
-            //startLocationService(getContext(),googleMap);
-
-
-            /*googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng point) {
-                    MarkerOptions mapoptions = new MarkerOptions();
-                    mapoptions.title("좌표");
-                    Double latitude2 = point.latitude;
-                    Double longitude2 = point.longitude;
-                    mapoptions.snippet("나무 좌표 lat : " + latitude2 + "\nlong : " + longitude2);
-                    mapoptions.position(new LatLng(latitude2, longitude2));
-                    BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.treeicon);
-                    Bitmap b = bitmapdraw.getBitmap();
-                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, 200, 200, false);
-                    mapoptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
-                    googleMap.addMarker(mapoptions);
-                }
-            });*/
         }
     };
-
-
-
-
-
-
     static Marker currentMarker=null;
-//    static GoogleMap map;
-
-
-
-
 
     private void startLocationService() {
-
-        //MainActivity m=new MainActivity();
-        //Context context=MainActivity.App.getContext();
-
-
-
         Context context=this.getContext();
         LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 

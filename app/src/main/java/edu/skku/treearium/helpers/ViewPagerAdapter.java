@@ -32,11 +32,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public void addFrag(Fragment fragment) {
         mFragmentList.add(fragment);
-        mFragmentTitleList.add("");
     }
 
     public void addFrag(Fragment fragment, String title) {
         mFragmentList.add(fragment);
-        mFragmentTitleList.add(title);
     }
 }

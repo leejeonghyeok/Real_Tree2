@@ -21,16 +21,18 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -51,7 +53,7 @@ import edu.skku.treearium.helpers.FullScreenHelper;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
-import com.google.android.gms.common.util.concurrent.HandlerExecutor;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
@@ -67,11 +69,20 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.type.LatLng;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -97,8 +108,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Session session;
   private Thread httpTh;
   private Frame frame;
+  volatile float dbh = -1;
+
   private PointCollector collector = null;
   private Button popup = null;
+  private Button confirm = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
@@ -108,6 +122,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean drawSeedState = false;
   private float[] ray = null;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
+
+  //firebase
+  FirebaseAuth mFirebaseAuth;
+  FirebaseFirestore fstore;
+  String userID;
+  LocationManager locationManager;
+  String latitude, longitude;
+  GeoPoint location;
+
+  private static final int REQUEST_LOCATION = 1;
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -120,9 +144,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
+    confirmBtn = (Button)findViewById(R.id.confirm)
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
-
 
     // Set up renderer.
     surfaceView.setPreserveEGLContextOnPause(true);
@@ -132,10 +156,33 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
 
+    //firebase
+    mFirebaseAuth = FirebaseAuth.getInstance();
+    fstore = FirebaseFirestore.getInstance();
+    userID= mFirebaseAuth.getCurrentUser().getUid();
+
     Intent intent = new Intent(ArActivity.this, PopupActivity.class);
     startActivityForResult(intent, 1);
 
     installRequested = false;
+
+//    LocationManager nManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//
+//    if (ActivityCompat.checkSelfPermission(
+//            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+//    }
+//    else {
+//      Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//      if (locationGPS != null) {
+//        double lat = locationGPS.getLatitude();
+//        double longi = locationGPS.getLongitude();
+//        location = new GeoPoint(lat, longi);
+//      } else {
+//        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+//      }
+//    }
 
     popup.setOnClickListener(v -> {
       Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
@@ -151,7 +198,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         isStaticView = false;
       }
     });
-
 
     recBtn.setOnClickListener(v -> {
       isRecording = !isRecording;
@@ -180,6 +226,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
+      dbh = -1.0f;
       if(collector != null && collector.filterPoints != null) {
 
         float tx = event.getX();
@@ -216,7 +263,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float roiRadius = unitRadius * seedZLength;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
-
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           httpTh = new Thread(() -> {
             isFound = false;
@@ -241,6 +287,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
+                dbh = param.r;
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
@@ -286,6 +333,28 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       return false;
     });
+
+//    confirm.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        if(dbh > 0.0f) {
+//          final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+//                  ArActivity.this, R.style.BottomSheetDialogTheme
+//          );
+//          View bottomSheetView = LayoutInflater.from(getApplicationContext())
+//                  .inflate(
+//                          R.layout.layout_bottom_sheet,
+//                          (LinearLayout) findViewById(R.id.bottomSheetContainer)
+//                  );
+//          bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+//            Toast.makeText(ArActivity.this, "Confirmed!: "+dbh, Toast.LENGTH_SHORT).show();
+//            bottomSheetDialog.dismiss();
+//          });
+//          bottomSheetDialog.setContentView(bottomSheetView);
+//          bottomSheetDialog.show();
+//        }
+//      }
+//    });
 
     for(String permission : REQUIRED_PERMISSSIONS){
       if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
