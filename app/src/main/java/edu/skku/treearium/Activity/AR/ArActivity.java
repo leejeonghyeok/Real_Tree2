@@ -21,13 +21,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
 import android.location.LocationManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +52,6 @@ import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.ArCoreApk;
@@ -74,7 +71,6 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.type.LatLng;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
@@ -82,7 +78,6 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -112,7 +107,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private PointCollector collector = null;
   private Button popup = null;
-  private Button confirm = null;
+  private Button confirmBtn = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
@@ -144,7 +139,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
-    confirmBtn = (Button)findViewById(R.id.confirm)
+    confirmBtn = (Button)findViewById(R.id.confirmBtn);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
@@ -287,11 +282,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
-                dbh = param.r;
+
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
-
+                dbh = param.r;
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -309,8 +304,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
-            if(isFound){
+            if(isFound && dbh > 0.0f){
               Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
+
               final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                       ArActivity.this, R.style.BottomSheetDialogTheme
               );
@@ -319,8 +315,25 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                               R.layout.layout_bottom_sheet,
                               (LinearLayout)findViewById(R.id.bottomSheetContainer)
                       );
-              bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-                Snackbar.make(arLayout, "Confirmed!", Snackbar.LENGTH_LONG).show();
+              EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
+              mbottomdbh.setText(String.valueOf(dbh*100));
+
+              bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
+                DocumentReference documentReference = fstore.collection("tree").document(userID);
+                Map<String, Map<String,Object>> user = new HashMap<>();
+                Map<String,Object> tree = new HashMap<>();
+                tree.put("treeName",bottomSheetView.findViewById(R.id.bottomname).toString());
+                tree.put("treeSpecies",bottomSheetView.findViewById(R.id.bottomspecies).toString());
+                tree.put("treeDBH",bottomSheetView.findViewById(R.id.bottomdbh).toString());
+                tree.put("treeHeight",bottomSheetView.findViewById(R.id.bottomheight).toString());
+                //tree.put("treeLocation",location);
+                tree.put("treeTime", ServerValue.TIMESTAMP);
+                user.put(ServerValue.TIMESTAMP.toString(),tree);
+                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                  @Override
+                  public void onSuccess(Void aVoid) {
+                  }
+                });
                 bottomSheetDialog.dismiss();
               });
               bottomSheetDialog.setContentView(bottomSheetView);
