@@ -353,28 +353,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       return false;
     });
 
-//    confirm.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View v) {
-//        if(dbh > 0.0f) {
-//          final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-//                  ArActivity.this, R.style.BottomSheetDialogTheme
-//          );
-//          View bottomSheetView = LayoutInflater.from(getApplicationContext())
-//                  .inflate(
-//                          R.layout.layout_bottom_sheet,
-//                          (LinearLayout) findViewById(R.id.bottomSheetContainer)
-//                  );
-//          bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-//            Toast.makeText(ArActivity.this, "Confirmed!: "+dbh, Toast.LENGTH_SHORT).show();
-//            bottomSheetDialog.dismiss();
-//          });
-//          bottomSheetDialog.setContentView(bottomSheetView);
-//          bottomSheetDialog.show();
-//        }
-//      }
-//    });
-
     for(String permission : REQUIRED_PERMISSSIONS){
       if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSSIONS, PERMISSION_REQUEST_CODE);
