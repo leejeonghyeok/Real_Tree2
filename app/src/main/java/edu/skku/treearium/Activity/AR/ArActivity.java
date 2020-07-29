@@ -25,6 +25,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,7 @@ import edu.skku.treearium.helpers.FullScreenHelper;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
+import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
@@ -92,16 +95,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private View arLayout;
   private Session session;
-  private Frame frame;
   private Thread httpTh;
+  private Frame frame;
   private PointCollector collector = null;
-  private boolean isRecording = false;
   private Button popup = null;
-  private Button confirm = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
-
+  private boolean isFound = false;
+  private boolean isRecording = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
   private float[] ray = null;
@@ -118,7 +120,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
-    confirm = (Button)findViewById(R.id.confirm);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
@@ -216,9 +217,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
 
-
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
           httpTh = new Thread(() -> {
+            isFound = false;
             RequestForm rf = new RequestForm();
 
             rf.setPointBufferDescription(targetPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
@@ -243,6 +244,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
+
+                isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
               }
@@ -251,31 +254,38 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             }
           });
           httpTh.start();
-        }
 
-        if(httpTh.isAlive()){
-          Snackbar.make(arLayout, "Please Wait", Snackbar.LENGTH_LONG).show();
-          if(httpTh.isInterrupted()){
-            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-                    ArActivity.this, R.style.BottomSheetDialogTheme
-            );
-            View bottomSheetView = LayoutInflater.from(getApplicationContext())
-                    .inflate(
-                            R.layout.layout_bottom_sheet,
-                            (LinearLayout)findViewById(R.id.bottomSheetContainer)
-                    );
-            bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
-              Snackbar.make(arLayout, "Confirmed!", Snackbar.LENGTH_LONG).show();
-              bottomSheetDialog.dismiss();
-            });
-            bottomSheetDialog.setContentView(bottomSheetView);
-            bottomSheetDialog.show();
-          }
+          ArActivity.this.runOnUiThread(() -> {
+            Snackbar.make(arLayout, "Please Wait...", Snackbar.LENGTH_LONG).show();
+            try {
+              httpTh.join();
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            if(isFound){
+              Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
+              final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                      ArActivity.this, R.style.BottomSheetDialogTheme
+              );
+              View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                      .inflate(
+                              R.layout.layout_bottom_sheet,
+                              (LinearLayout)findViewById(R.id.bottomSheetContainer)
+                      );
+              bottomSheetView.findViewById(R.id.confirm).setOnClickListener(v1 -> {
+                Snackbar.make(arLayout, "Confirmed!", Snackbar.LENGTH_LONG).show();
+                bottomSheetDialog.dismiss();
+              });
+              bottomSheetDialog.setContentView(bottomSheetView);
+              bottomSheetDialog.show();
+            }else{
+              Snackbar.make(arLayout, "PickSeed Again", Snackbar.LENGTH_LONG).show();
+            }
+          });
         }
       }
       return false;
     });
-
 
     for(String permission : REQUIRED_PERMISSSIONS){
       if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
