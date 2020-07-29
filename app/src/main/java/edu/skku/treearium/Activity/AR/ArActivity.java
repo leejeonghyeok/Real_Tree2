@@ -322,10 +322,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 DocumentReference documentReference = fstore.collection("tree").document(userID);
                 Map<String, Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
-                tree.put("treeName",bottomSheetView.findViewById(R.id.bottomname).toString());
-                tree.put("treeSpecies",bottomSheetView.findViewById(R.id.bottomspecies).toString());
-                tree.put("treeDBH",bottomSheetView.findViewById(R.id.bottomdbh).toString());
-                tree.put("treeHeight",bottomSheetView.findViewById(R.id.bottomheight).toString());
+                //
+                EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
+                EditText edit2 = bottomSheetView.findViewById(R.id.bottomspecies);
+                EditText edit3 = bottomSheetView.findViewById(R.id.bottomdbh);
+                EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
+                //
+                tree.put("treeName", edit1.getText().toString());
+                tree.put("treeSpecies",edit2.getText().toString());
+                tree.put("treeDBH", edit3.getText().toString());
+                tree.put("treeHeight", edit4.getText().toString());
                 //tree.put("treeLocation",location);
                 tree.put("treeTime", ServerValue.TIMESTAMP);
                 user.put(ServerValue.TIMESTAMP.toString(),tree);
