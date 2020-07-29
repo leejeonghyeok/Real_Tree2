@@ -12,7 +12,9 @@
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
 
     <uses-feature android:name="android.hardware.camera.ar" />
-    <uses-feature android:glEsVersion="0x00030000" android:required="true"/>
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -20,12 +22,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar"
-        >
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Activity.AR.CylinderActivity"></activity>
+
         <uses-library android:name="com.google.android.maps" />
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
         <activity
             android:name=".Activity.login.LoginActivity"
             android:noHistory="true" />
@@ -34,18 +38,15 @@
             android:noHistory="true" />
         <activity
             android:name=".Activity.MainActivity"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.AR.PopupActivity"
             android:theme="@style/popupTheme" />
         <activity
             android:name=".Activity.AR.ArActivity"
             android:configChanges="screenSize|orientation"
-            android:screenOrientation="portrait"
-            />
-        <activity
-            android:name=".Activity.login.SplashActivity">
+            android:screenOrientation="portrait" />
+        <activity android:name=".Activity.login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -16,6 +16,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/arLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.skku.treearium.Activity.AR.ArActivity">
@@ -33,8 +34,7 @@
       android:layout_height="wrap_content"
       android:text="POPUP"
       app:layout_constraintBottom_toBottomOf="@+id/surfaceview"
-      app:layout_constraintEnd_toStartOf="@+id/confirm"
-      app:layout_constraintHorizontal_bias="0.847"
+      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="@+id/surfaceview"
       app:layout_constraintVertical_bias="0.023" />
@@ -62,17 +62,5 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.861" />
-
-  <Button
-      android:id="@+id/confirm"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="32dp"
-      android:text="CONFIRM"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.023" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
