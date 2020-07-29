@@ -29,9 +29,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +42,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
@@ -85,7 +89,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static java.lang.Integer.parseInt;
 
-public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
+public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
   private static final String TAG = ArActivity.class.getSimpleName();
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
@@ -311,24 +315,26 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                       ArActivity.this, R.style.BottomSheetDialogTheme
               );
-              View bottomSheetView = LayoutInflater.from(getApplicationContext())
-                      .inflate(
+              View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
                               R.layout.layout_bottom_sheet,
                               (LinearLayout)findViewById(R.id.bottomSheetContainer)
                       );
               EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
-              mbottomdbh.setText(String.valueOf(dbh*200));
+              Spinner dropdown = bottomSheetView.findViewById(R.id.bottomspecies);
+              String[] items = new String[]{"은행","이팝", "배롱", "배롱","무궁화", "느티", "벚", "단풍", "백합", "메타","단풍","기타"};
+              ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+              adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+              dropdown.setAdapter(adapter);
 
+              mbottomdbh.setText(String.valueOf(dbh*200));
               bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
-                //DocumentReference documentReference = fstore.collection("tree").document(userID);
                 Map<String,Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
                 EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
-                EditText edit2 = bottomSheetView.findViewById(R.id.bottomspecies);
                 EditText edit3 = bottomSheetView.findViewById(R.id.bottomdbh);
                 EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
                 tree.put("treeName", edit1.getText().toString());
-                tree.put("treeSpecies",edit2.getText().toString());
+                tree.put("treeSpecies",dropdown.getSelectedItem().toString());
                 tree.put("treeDBH", edit3.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
                 //tree.put("treeLocation",location);
@@ -600,4 +606,5 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     return out;
   }
+
 }
