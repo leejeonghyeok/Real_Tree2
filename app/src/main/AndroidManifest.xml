@@ -23,7 +23,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Activity.AR.CylinderActivity"></activity>
 
         <uses-library android:name="com.google.android.maps" />
         <uses-library
