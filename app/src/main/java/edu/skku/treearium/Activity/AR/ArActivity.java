@@ -71,6 +71,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.SetOptions;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
@@ -316,26 +317,25 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                               (LinearLayout)findViewById(R.id.bottomSheetContainer)
                       );
               EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
-              mbottomdbh.setText(String.valueOf(dbh*100));
+              mbottomdbh.setText(String.valueOf(dbh*200));
 
               bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
-                DocumentReference documentReference = fstore.collection("tree").document(userID);
-                Map<String, Map<String,Object>> user = new HashMap<>();
+                //DocumentReference documentReference = fstore.collection("tree").document(userID);
+                Map<String,Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
-                //
                 EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
                 EditText edit2 = bottomSheetView.findViewById(R.id.bottomspecies);
                 EditText edit3 = bottomSheetView.findViewById(R.id.bottomdbh);
                 EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
-                //
                 tree.put("treeName", edit1.getText().toString());
                 tree.put("treeSpecies",edit2.getText().toString());
                 tree.put("treeDBH", edit3.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
                 //tree.put("treeLocation",location);
-                tree.put("treeTime", ServerValue.TIMESTAMP);
-                user.put(ServerValue.TIMESTAMP.toString(),tree);
-                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                Long tsLong = System.currentTimeMillis()/1000;
+                String ts = (tsLong).toString();
+                user.put(ts,tree);
+                fstore.collection("tree").document(userID).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                   @Override
                   public void onSuccess(Void aVoid) {
                   }
@@ -344,7 +344,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               });
               bottomSheetDialog.setContentView(bottomSheetView);
               bottomSheetDialog.show();
-            }else{
+            }
+            else{
               Snackbar.make(arLayout, "PickSeed Again", Snackbar.LENGTH_LONG).show();
             }
           });
