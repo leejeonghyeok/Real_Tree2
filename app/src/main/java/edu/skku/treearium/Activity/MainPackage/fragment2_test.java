@@ -32,25 +32,39 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import edu.skku.treearium.R;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class fragment2_test extends Fragment{
     GoogleMap map;
+    private DatabaseReference mDatabase;
 
-
+    List<Marker> mMarkerList = new ArrayList<>();
+    List<LatLng> mPointList = new ArrayList<>();
+    //Marker trmark=null;
     public OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map=googleMap;
         }
+
     };
+
+
+
     static Marker currentMarker=null;
 
+
     private void startLocationService() {
+
         Context context=this.getContext();
         LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
@@ -67,9 +81,9 @@ public class fragment2_test extends Fragment{
             }
 
             if (location != null) {
-
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
+                LatLng currentp=new LatLng(latitude,longitude);
             }
 
             GPSListener gpsListener = new GPSListener();
@@ -88,13 +102,17 @@ public class fragment2_test extends Fragment{
     class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
+
+            //onLop.latitude=location.getLatitude();
+            //onLop.longitude=location.getLongitude();
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
+            LatLng onLop=new LatLng(latitude,longitude);
 
-            String message = "내 위치 -> Latitude : " + latitude + "\nLongitude:" + longitude;
+            String message = "내 위치 -> Latitude : " + onLop.latitude + "\nLongitude:" + onLop.longitude;
             Log.d("Map", message);
 
-            showCurrentLocation(latitude, longitude);
+            showCurrentLocation(onLop.latitude, onLop.longitude);
             markeron();
 
         }
@@ -130,20 +148,23 @@ public class fragment2_test extends Fragment{
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         currentMarker=map.addMarker(markerOptions);
 
+
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(curPoint, 17);
 
         map.moveCamera(cameraUpdate);
     }
     private void markeron(){
         Context context=this.getContext();
+        //Marker trmark=null;
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
                 MarkerOptions mapoptions=new MarkerOptions();
-                mapoptions.title("좌표");
+                mapoptions.title("~~나무");
                 Double latitude2=point.latitude;
                 Double longitude2=point.longitude;
-                mapoptions.snippet("나무 좌표 lat : "+latitude2+"\nlong : "+longitude2);
+
+                mapoptions.snippet("DBH : ~~~ cm" );
                 mapoptions.position(new LatLng(latitude2,longitude2));
                 BitmapDrawable bitmapdraw=(BitmapDrawable) context.getResources().getDrawable(R.drawable.treeicon);
                 Bitmap b=bitmapdraw.getBitmap();
@@ -151,27 +172,28 @@ public class fragment2_test extends Fragment{
                 mapoptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 map.animateCamera(CameraUpdateFactory.newLatLng(point));
                 Marker trmark=map.addMarker(mapoptions);
+                mMarkerList.add(trmark);
+                mPointList.add(point);
+
+            }
+        });
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng point2) {
+                int i;
+                for (i = 0; i < mPointList.size(); i++)
+                {
+                    if(mPointList.get(i)==point2)
+                    {
+                        mMarkerList.get(i).remove();
+                        mPointList.remove(i);
+                        mMarkerList.remove(i);
+                    }
+                }
             }
         });
     }
 
-    /*public void setDefaultLocation() {
-
-        LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
-        String markerTitle = "위치정보 가져올 수 없음";
-        String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(DEFAULT_LOCATION);
-        markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
-        markerOptions.draggable(false);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = map.addMarker(markerOptions);
-
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 17);
-        map.moveCamera(cameraUpdate);
-    }*/
 
     @Nullable
     @Override
