@@ -116,7 +116,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private PointCollector collector = null;
   private Button popup = null;
-  private Button confirmBtn = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
@@ -148,7 +147,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
-    confirmBtn = (Button)findViewById(R.id.confirmBtn);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
