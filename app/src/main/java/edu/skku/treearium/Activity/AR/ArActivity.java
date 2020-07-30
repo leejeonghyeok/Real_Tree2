@@ -106,7 +106,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
-  //private final ObjectRenderer virtualObject = new ObjectRenderer();
+  private final ObjectRenderer virtualObject = new ObjectRenderer();
 
   private View arLayout;
   private Session session;
@@ -135,6 +135,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   GeoPoint location;
 
   private static final int REQUEST_LOCATION = 1;
+
+  // Temporary matrix allocated here to reduce number of allocations for each frame.
+  private final float[] anchorMatrix = new float[16];
+  // Anchors created from taps used for object placing with a given color.
+  private static final float[] DEFAULT_COLOR = new float[] {0f, 0f, 0f, 0f};
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -262,7 +267,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         seedZLength = Math.abs(seedZLength);
 
         Log.d("seedZLength__", Float.toString(seedZLength));
-        float roiRadius = unitRadius * seedZLength;
+        float roiRadius = unitRadius * seedZLength / 5;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
@@ -563,6 +568,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
           pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
         }
+      }
+      float scaleFactor = 1.0f;
+      // 평균낸 거 넣기만 하면 되나?
+      //coloredAnchor.anchor.getPose().toMatrix(anchorMatrix, 0);
+      if(dbh > 0.0f){
+        //virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
+        //virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
       }
 
     } catch (Throwable t) {
