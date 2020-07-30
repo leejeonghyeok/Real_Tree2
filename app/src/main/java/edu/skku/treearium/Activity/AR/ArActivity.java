@@ -63,7 +63,10 @@ import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
+import com.google.ar.core.Plane;
+import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
+import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
@@ -136,7 +139,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private static final int REQUEST_LOCATION = 1;
 
-  private float[] anchorPoints = null;
+  private Pose anchorPoints = null;
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
   // Anchors created from taps used for object placing with a given color.
@@ -300,9 +303,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
                 dbh = param.r;
-                anchorPoints = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2,
-                        (param.b[2]+param.t[2])/2, (param.b[3]+param.t[3])/2, (param.b[4]+param.t[4])/2,
-                        (param.b[5]+param.t[5])/2, (param.b[6]+param.t[6])/2, (param.b[7]+param.t[7])/2};
+                anchorPoints = Pose.makeTranslation(param.b);
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -500,8 +501,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(/*context=*/ this);
       pointCloudRenderer.createOnGlThread(/*context=*/ this);
-      //virtualObject.createOnGlThread(/*context=*/ this, "models/andy.obj", "models/andy.png");
-      //virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
+      virtualObject.createOnGlThread(/*context=*/ this, "models/andy.obj", "models/andy.png");
+      virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
 
     } catch (IOException e) {
       Log.e(TAG, "Failed to read an asset file", e);
@@ -575,11 +576,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       float scaleFactor = 1.0f;
       // 평균낸 거 넣기만 하면 되나?
-//      anchorPoints.toMatrix(anchorMatrix, 0);
-//      if(isFound && dbh > 0.0f){
-//        virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
-//        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
-//      }
+      if(isFound && dbh > 0.0f){
+        anchorPoints.toMatrix(anchorMatrix, 0);
+        virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
+        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
+      }
 
     } catch (Throwable t) {
       // Avoid crashing the application due to unhandled exceptions.
