@@ -197,6 +197,7 @@ public class ObjectRenderer {
         }
         indices.rewind();
 
+
         int[] buffers = new int[2];
         GLES20.glGenBuffers(2, buffers, 0);
         vertexBufferId = buffers[0];

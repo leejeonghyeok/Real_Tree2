@@ -142,8 +142,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Pose anchorPoints = null;
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
-  // Anchors created from taps used for object placing with a given color.
-  private static final float[] DEFAULT_COLOR = new float[] {0f, 0f, 0f, 0f};
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -579,7 +577,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       if(isFound && dbh > 0.0f){
         anchorPoints.toMatrix(anchorMatrix, 0);
         virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
-        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
+        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
       }
 
     } catch (Throwable t) {

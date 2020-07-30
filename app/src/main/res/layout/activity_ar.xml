@@ -32,7 +32,7 @@
       android:id="@+id/popup"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="POPUP"
+      android:text="도움말"
       app:layout_constraintBottom_toBottomOf="@+id/surfaceview"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
