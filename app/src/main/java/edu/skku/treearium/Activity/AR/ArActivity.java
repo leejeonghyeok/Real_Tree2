@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,9 +41,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
+import edu.skku.treearium.Renderer.ObjectRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
 import edu.skku.treearium.Utils.PointCollector;
 import edu.skku.treearium.Utils.PointUtil;
@@ -58,17 +57,13 @@ import com.curvsurf.fsweb.ResponseForm;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
-import com.google.ar.core.Plane;
-import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
-import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
@@ -76,8 +71,6 @@ import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
@@ -85,7 +78,6 @@ import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,12 +107,14 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Session session;
   private Thread httpTh;
   private Frame frame;
-  volatile float dbh = -1;
 
   private PointCollector collector = null;
+  private CylinderVars cylinderVars = null;
+
   private Button popup = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
+  private Pose anchorPoints = null;
 
   private boolean isFound = false;
   private boolean isRecording = false;
@@ -139,7 +133,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private static final int REQUEST_LOCATION = 1;
 
-  private Pose anchorPoints = null;
+
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
 
@@ -235,7 +229,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
-      dbh = -1.0f;
       if(collector != null && collector.filterPoints != null) {
 
         float tx = event.getX();
@@ -300,8 +293,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
-                dbh = param.r;
-                anchorPoints = Pose.makeTranslation(new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2});
+
+                float[] centerPose = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2};
+                anchorPoints = Pose.makeTranslation(centerPose);
+
+                cylinderVars = new CylinderVars(param.r, tmp, centerPose);
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -319,7 +315,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
-            if(isFound && dbh > 0.0f){
+            if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
               Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
               final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
@@ -336,7 +332,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
               dropdown.setAdapter(adapter);
 
-              mbottomdbh.setText(String.valueOf(dbh*200));
+              mbottomdbh.setText(String.valueOf(ArActivity.this.cylinderVars.getDbh()*200));
               bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
                 Map<String,Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
@@ -574,7 +570,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       float scaleFactor = 1.0f;
       // 평균낸 거 넣기만 하면 되나?
-      if(isFound && dbh > 0.0f){
+      if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
         anchorPoints.toMatrix(anchorMatrix, 0);
         virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
         virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
