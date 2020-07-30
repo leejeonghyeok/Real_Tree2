@@ -76,7 +76,7 @@ void main() {
     // Apply SRGB gamma before writing the fragment color.
     color.rgb = pow(color, vec3(kGamma));
     // Apply average pixel intensity and color shift
-    color *= colorShift * (averagePixelIntensity / kMiddleGrayGamma);
+    //color *= colorShift * (averagePixelIntensity / kMiddleGrayGamma);
     gl_FragColor.rgb = color;
     gl_FragColor.a = objectColor.a;
 }

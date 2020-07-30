@@ -301,7 +301,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
                 dbh = param.r;
-                anchorPoints = Pose.makeTranslation(param.b);
+                anchorPoints = Pose.makeTranslation(new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2});
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
