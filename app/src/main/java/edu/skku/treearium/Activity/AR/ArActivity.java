@@ -136,6 +136,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private static final int REQUEST_LOCATION = 1;
 
+  private float[] anchorPoints = null;
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
   // Anchors created from taps used for object placing with a given color.
@@ -267,7 +268,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         seedZLength = Math.abs(seedZLength);
 
         Log.d("seedZLength__", Float.toString(seedZLength));
-        float roiRadius = unitRadius * seedZLength / 5;
+        float roiRadius = unitRadius * seedZLength / 2;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
@@ -299,6 +300,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
                 dbh = param.r;
+                anchorPoints = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2,
+                        (param.b[2]+param.t[2])/2, (param.b[3]+param.t[3])/2, (param.b[4]+param.t[4])/2,
+                        (param.b[5]+param.t[5])/2, (param.b[6]+param.t[6])/2, (param.b[7]+param.t[7])/2};
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -571,11 +575,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       float scaleFactor = 1.0f;
       // 평균낸 거 넣기만 하면 되나?
-      //coloredAnchor.anchor.getPose().toMatrix(anchorMatrix, 0);
-      if(dbh > 0.0f){
-        //virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
-        //virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
-      }
+//      anchorPoints.toMatrix(anchorMatrix, 0);
+//      if(isFound && dbh > 0.0f){
+//        virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
+//        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba, DEFAULT_COLOR);
+//      }
 
     } catch (Throwable t) {
       // Avoid crashing the application due to unhandled exceptions.
