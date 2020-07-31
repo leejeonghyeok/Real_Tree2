@@ -590,7 +590,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
       if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
-        virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh());
+        virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
         virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
       }
 
