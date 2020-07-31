@@ -516,8 +516,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(/*context=*/ this);
       pointCloudRenderer.createOnGlThread(/*context=*/ this);
-      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/andy.png");
+      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/arrow.png");
       virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
+      virtualObject.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending);
 
     } catch (IOException e) {
       Log.e(TAG, "Failed to read an asset file", e);
@@ -590,8 +591,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
       if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        //GLES20.glFrontFace(GLES20.GL_CCW);
+
         virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
         virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
+
+        GLES20.glDisable(GLES20.GL_CULL_FACE);
       }
 
     } catch (Throwable t) {
