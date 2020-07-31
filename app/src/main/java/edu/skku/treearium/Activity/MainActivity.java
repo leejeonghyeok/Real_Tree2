@@ -41,9 +41,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavController  nc;
     FloatingActionButton btn;
     DrawerLayout drawerLayout;
-    FirebaseFirestore fstore;
+    public static FirebaseFirestore fstore;
     FirebaseAuth mFirebaseAuth;
     String userID;
+    public static String finalUserId;
     TextView musername, museremail;
     private FirebaseAuth.AuthStateListener mAuthListener;
     @Override
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (document.exists()) {
                         musername.setText(document.getString("fName"));
                         museremail.setText(document.getString("email"));
+                        finalUserId=userID;
                     }
                 }
                 else {

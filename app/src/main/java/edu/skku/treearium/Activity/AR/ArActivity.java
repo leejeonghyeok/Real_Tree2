@@ -21,6 +21,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -88,6 +90,9 @@ import java.util.Map;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.geolist;
 import static java.lang.Integer.parseInt;
 
 public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
@@ -135,7 +140,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   String userID;
   LocationManager locationManager;
   String latitude, longitude;
-  GeoPoint location;
+  public static GeoPoint locationA;
 
   private static final int REQUEST_LOCATION = 1;
 
@@ -199,6 +204,34 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 //        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
 //      }
 //    }
+    LocationManager nManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+    if (ActivityCompat.checkSelfPermission(
+            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+    }
+    else {
+      Location locationGPS = nManager.getLastKnownLocation(GPS_PROVIDER);
+      if (locationGPS != null) {
+        double lat = locationGPS.getLatitude();
+        double longi = locationGPS.getLongitude();
+        //location = new GeoPoint(lat, longi);
+      }
+      else
+      {
+        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+      }
+
+    }
+    GPSSListener gpsListener = new GPSSListener();
+
+    long minTime = 1000;
+    float minDistance = 0;
+
+    nManager.requestLocationUpdates(GPS_PROVIDER, minTime, minDistance, gpsListener);
+    nManager.requestLocationUpdates(NETWORK_PROVIDER, minTime, minDistance, gpsListener);
+
 
     popup.setOnClickListener(v -> {
       popupActivity.startDialog();
@@ -380,7 +413,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tree.put("treeSpecies",dropdown.getSelectedItem().toString());
                 tree.put("treeDBH", edit3.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
-                //tree.put("treeLocation",location);
+                tree.put("treeLocation",locationA);
+                geolist.add(locationA);
+
                 Long tsLong = System.currentTimeMillis()/1000;
                 String ts = (tsLong).toString();
                 user.put(ts,tree);
@@ -663,4 +698,33 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     return out;
   }
 
+  private class GPSSListener implements LocationListener
+  {
+    @Override
+    public void onLocationChanged(Location location2) {
+      Double latitude = location2.getLatitude();
+      Double longitude = location2.getLongitude();
+      //LatLng onLop=new LatLng(latitude,longitude);
+      locationA=new GeoPoint(latitude,longitude);
+
+      String message = "내 위치 -> Latitude : " + latitude + "\nLongitude:" + longitude;
+      Log.d("Map", message);
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+  }
 }

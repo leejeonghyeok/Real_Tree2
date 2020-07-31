@@ -190,7 +190,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
         android:padding="15dp"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         android:text="확인"
         android:textSize="24sp" />
 </LinearLayout>
