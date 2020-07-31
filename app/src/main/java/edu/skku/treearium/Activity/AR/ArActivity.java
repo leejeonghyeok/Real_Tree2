@@ -42,6 +42,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import edu.skku.treearium.R;
+import edu.skku.treearium.Utils.MatrixUtil;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
 import edu.skku.treearium.Renderer.ObjectRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
@@ -114,13 +115,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Button popup = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
-  private Pose anchorPoints = null;
 
   private boolean isFound = false;
   private boolean isRecording = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
   private float[] ray = null;
+  private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
   //firebase
@@ -132,7 +133,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   GeoPoint location;
 
   private static final int REQUEST_LOCATION = 1;
-
 
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
@@ -158,6 +158,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setRenderer(this);
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
+
+    modelMatrix[3] = 0.0f;
+    modelMatrix[7] = 0.0f;
+    modelMatrix[11] = 0.0f;
+    modelMatrix[15] = 1.0f;
 
     //firebase
     mFirebaseAuth = FirebaseAuth.getInstance();
@@ -245,15 +250,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         drawSeedState = true;
 
-        Log.d("UnitRadius__", Float.toString(unitRadius));
-
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
-        for(int i=0; i<targetPoints.capacity()/4; i++){
-          Log.d("PointsBuffer", collector.filterPoints.get(4 * i)
-                  +" "+ collector.filterPoints.get(4 * i + 1)
-                  +" "+ collector.filterPoints.get(4 * i + 2));
-        }
 
         int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
         float[] seedPoint = PointUtil.getSeedPoint();
@@ -261,6 +259,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float seedZLength = ray[0] * (seedPoint[0] - rayOrigin[0]) + ray[1] * (seedPoint[1] - rayOrigin[1]) + ray[2] * (seedPoint[2] - rayOrigin[2]);
         seedZLength = Math.abs(seedZLength);
 
+        Log.d("UnitRadius__", Float.toString(unitRadius));
         Log.d("seedZLength__", Float.toString(seedZLength));
         float roiRadius = unitRadius * seedZLength / 2;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
@@ -283,21 +282,43 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               if (resp != null && resp.isSuccess()) {
 
                 ResponseForm.CylinderParam param = resp.getParamAsCylider();
+
                 // Normal Vector should be [0, 1, 0]
                 float[] tmp = new float[]{param.b[0] - param.t[0], param.b[1] - param.t[1], param.b[2] - param.t[2]};
                 float dist = (float)Math.sqrt( tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2] );
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
+                modelMatrix[4] = tmp[0];
+                modelMatrix[5] = tmp[1];
+                modelMatrix[6] = tmp[2];
 
+                float[] centerPose = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2};
+                modelMatrix[12] = centerPose[0];
+                modelMatrix[13] = centerPose[1];
+                modelMatrix[14] = centerPose[2];
+
+                float[] x = MatrixUtil.crossMatrix(modelMatrix[4], modelMatrix[5], modelMatrix[6],
+                        rayOrigin[0], rayOrigin[1], rayOrigin[2]);
+                modelMatrix[0] = x[0];
+                modelMatrix[1] = x[1];
+                modelMatrix[2] = x[2];
+                float[] z = MatrixUtil.crossMatrix(modelMatrix[0], modelMatrix[1], modelMatrix[2],
+                        modelMatrix[4], modelMatrix[5], modelMatrix[6]);
+                modelMatrix[8] = z[0];
+                modelMatrix[9] = z[1];
+                modelMatrix[10] = z[2];
+
+                Log.d("modelMatrix: ", modelMatrix[0]+" "+modelMatrix[4]+" "+modelMatrix[8]+" "+modelMatrix[12]);
+                Log.d("modelMatrix: ", modelMatrix[1]+" "+modelMatrix[5]+" "+modelMatrix[9]+" "+modelMatrix[13]);
+                Log.d("modelMatrix: ",modelMatrix[2]+" "+modelMatrix[6]+" "+modelMatrix[10]+" "+modelMatrix[14]);
+                Log.d("modelMatrix: ",modelMatrix[3]+" "+modelMatrix[7]+" "+modelMatrix[11]+" "+modelMatrix[15]);
+
+                cylinderVars = new CylinderVars(param.r, tmp, centerPose);
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
-
-                float[] centerPose = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2};
-                anchorPoints = Pose.makeTranslation(centerPose);
-
-                cylinderVars = new CylinderVars(param.r, tmp, centerPose);
+                Log.d("Cylinder", String.valueOf(cylinderVars.getDbh()));
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -495,7 +516,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(/*context=*/ this);
       pointCloudRenderer.createOnGlThread(/*context=*/ this);
-      virtualObject.createOnGlThread(/*context=*/ this, "models/andy.obj", "models/andy.png");
+      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/andy.png");
       virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
 
     } catch (IOException e) {
@@ -568,11 +589,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
         }
       }
-      float scaleFactor = 1.0f;
-      // 평균낸 거 넣기만 하면 되나?
       if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
-        anchorPoints.toMatrix(anchorMatrix, 0);
-        virtualObject.updateModelMatrix(anchorMatrix, scaleFactor);
+        virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh());
         virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
       }
 
