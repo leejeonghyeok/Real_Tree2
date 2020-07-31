@@ -164,8 +164,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     fstore = FirebaseFirestore.getInstance();
     userID= mFirebaseAuth.getCurrentUser().getUid();
 
-    Intent intent = new Intent(ArActivity.this, PopupActivity.class);
-    startActivityForResult(intent, 1);
+    //Intent intent = new Intent(ArActivity.this, PopupActivity.class);
+    //startActivityForResult(intent, 1);
+    PopupActivity popupActivity = new PopupActivity(ArActivity.this);
+    popupActivity.startDialog();
 
     installRequested = false;
 
@@ -188,8 +190,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 //    }
 
     popup.setOnClickListener(v -> {
-      Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
-      startActivityForResult(intent12, 1);
+      popupActivity.startDialog();
     });
 
 
