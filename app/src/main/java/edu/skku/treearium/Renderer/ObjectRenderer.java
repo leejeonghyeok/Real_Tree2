@@ -257,6 +257,14 @@ public class ObjectRenderer {
         scaleMatrix[10] = scaleFactor;
         Matrix.multiplyMM(this.modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
     }
+    public void updateModelMatrix(float[] modelMatrix, float scaleFactorX, float scaleFactorY, float scaleFactorZ) {
+        float[] scaleMatrix = new float[16];
+        Matrix.setIdentityM(scaleMatrix, 0);
+        scaleMatrix[0] = scaleFactorX;
+        scaleMatrix[5] = scaleFactorY;
+        scaleMatrix[10] = scaleFactorZ;
+        Matrix.multiplyMM(this.modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
+    }
 
     /**
      * Sets the surface characteristics of the rendered model.

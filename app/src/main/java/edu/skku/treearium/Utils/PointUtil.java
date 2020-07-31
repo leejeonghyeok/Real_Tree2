@@ -47,7 +47,7 @@ public class PointUtil {
         seedPointArr[1] = filterPoints.get(4* seedPointID + 1);
         seedPointArr[2] = filterPoints.get(4* seedPointID + 2);
 
-        Log.d("pickSeed", String.format("%d", seedPointID));
+        //Log.d("pickSeed", String.format("%d", seedPointID));
         return seedPointID;
     }
     public static void resetSeedPoint() {
