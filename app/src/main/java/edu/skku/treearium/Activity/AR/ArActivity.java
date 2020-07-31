@@ -124,6 +124,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
+  private int angle = -3; // degree
   private float[] ray = null;
   private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
@@ -601,8 +602,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
       if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
         GLES20.glEnable(GLES20.GL_CULL_FACE);
-        //GLES20.glFrontFace(GLES20.GL_CCW);
-
+        //Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.rotateM(modelMatrix, 0, angle,0,1,0);
+        //angle++;
         virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
         virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
 
