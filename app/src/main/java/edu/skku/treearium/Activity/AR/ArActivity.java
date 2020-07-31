@@ -299,6 +299,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
+                if(tmp[1] < 0){
+                  tmp[0] = -tmp[0];
+                  tmp[1] = -tmp[1];
+                  tmp[2] = -tmp[2];
+                  Log.d("tmp","바뀜");
+                }
                 modelMatrix[4] = tmp[0];
                 modelMatrix[5] = tmp[1];
                 modelMatrix[6] = tmp[2];
@@ -526,7 +532,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(/*context=*/ this);
       pointCloudRenderer.createOnGlThread(/*context=*/ this);
-      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/arrow.png");
+      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/treearium.png");
       virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
       virtualObject.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending);
 
