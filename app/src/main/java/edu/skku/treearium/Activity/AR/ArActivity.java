@@ -41,6 +41,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import edu.skku.treearium.Activity.MainActivity;
+import edu.skku.treearium.Activity.login.LoginActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.Utils.MatrixUtil;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
@@ -113,6 +115,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private CylinderVars cylinderVars = null;
 
   private Button popup = null;
+  private Button exit = null;
+
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
@@ -145,6 +149,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     arLayout = findViewById(R.id.arLayout);
     popup = (Button)findViewById(R.id.popup);
+    exit = (Button)findViewById(R.id.delete);
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
@@ -198,6 +203,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       popupActivity.startDialog();
     });
 
+    exit.setOnClickListener(v -> {
+      startActivity(new Intent(ArActivity.this, MainActivity.class));
+    });
 
     resetBtn.setOnClickListener(new View.OnClickListener() {
       @Override
