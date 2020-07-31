@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,25 +32,45 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.common.base.MoreObjects;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bnv;
     NavController  nc;
     FloatingActionButton btn;
     DrawerLayout drawerLayout;
-    FirebaseFirestore fstore;
+    public static FirebaseFirestore fstore;
+    public static DatabaseReference databaseReference;
     FirebaseAuth mFirebaseAuth;
     String userID;
+    public static String finalUserId;
     TextView musername, museremail;
+
+
+    GeoPoint imsi;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //geolist.clear();//일단 초기화
         setNavigationViewListener();
         //네비게이션 바
         bnv = (BottomNavigationView)findViewById(R.id.bottomNavigation);
@@ -71,12 +92,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         mFirebaseAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
+        databaseReference= FirebaseDatabase.getInstance().getReference();
         userID= mFirebaseAuth.getCurrentUser().getUid();
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigationlayout);
         View headerView = navigationView.getHeaderView(0);
         museremail=(TextView) headerView.findViewById(R.id.userdraweremail);
         musername=(TextView) headerView.findViewById(R.id.userdrawername);
+
         DocumentReference docRef = fstore.collection("users").document(userID);
+        DocumentReference docReft = fstore.collection("tree").document(userID);
+
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -85,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (document.exists()) {
                         musername.setText(document.getString("fName"));
                         museremail.setText(document.getString("email"));
+                        finalUserId=userID;
                     }
                 }
                 else {
@@ -92,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
         drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
 
         findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {

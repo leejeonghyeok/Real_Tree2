@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import edu.skku.treearium.Activity.fragment3_fragment1;
 import edu.skku.treearium.Activity.fragment3_fragment2;
+import edu.skku.treearium.Activity.fragment3_fragment3;
 import edu.skku.treearium.R;
 import com.google.android.material.tabs.TabLayout;
 
@@ -39,7 +40,7 @@ public class fragment3 extends Fragment {
         // add your fragments
         adapter.addFrag(new fragment3_fragment1(), "Tab1");
         adapter.addFrag(new fragment3_fragment2(), "Tab2");
-        adapter.addFrag(new fragment3_fragment3(), "Tab3");
+        //adapter.addFrag(new fragment3_fragment3(), "Tab3");
 
         // set adapter on viewpager
         viewPager.setAdapter(adapter);

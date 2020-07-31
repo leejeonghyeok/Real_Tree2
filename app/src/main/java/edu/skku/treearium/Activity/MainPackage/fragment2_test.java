@@ -30,38 +30,40 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import edu.skku.treearium.R;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.pedro.library.AutoPermissions;
-import com.pedro.library.AutoPermissionsListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
+import static edu.skku.treearium.Activity.MainActivity.finalUserId;
+import static edu.skku.treearium.Activity.MainActivity.fstore;
+//import static edu.skku.treearium.Activity.MainActivity.geolist;
 
 public class fragment2_test extends Fragment{
     GoogleMap map;
-    private DatabaseReference mDatabase;
-
+    public static int datasize;
+    public static List<GeoPoint> geolist=new ArrayList<>();
+    public static List<Double> dbhlist=new ArrayList<>();
+    public static List<String> namelist=new ArrayList<>();
+    public static List<String> splist=new ArrayList<>();
     List<Marker> mMarkerList = new ArrayList<>();
     List<LatLng> mPointList = new ArrayList<>();
-    //Marker trmark=null;
+    static Marker currentMarker=null;
     public OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map=googleMap;
         }
-
     };
-
-
-
-    static Marker currentMarker=null;
-
 
     private void startLocationService() {
 
@@ -90,10 +92,8 @@ public class fragment2_test extends Fragment{
 
             long minTime = 1000;
             float minDistance = 0;
-
             manager.requestLocationUpdates(GPS_PROVIDER, minTime, minDistance, gpsListener);
             manager.requestLocationUpdates(NETWORK_PROVIDER, minTime, minDistance, gpsListener);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,9 +102,6 @@ public class fragment2_test extends Fragment{
     class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-
-            //onLop.latitude=location.getLatitude();
-            //onLop.longitude=location.getLongitude();
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
             LatLng onLop=new LatLng(latitude,longitude);
@@ -113,8 +110,9 @@ public class fragment2_test extends Fragment{
             Log.d("Map", message);
 
             showCurrentLocation(onLop.latitude, onLop.longitude);
-            markeron();
-
+            getgeo(finalUserId);
+            maketree();
+            System.out.println("여기까진 실햄"+onLop.latitude+" "+onLop.longitude);
         }
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -128,15 +126,12 @@ public class fragment2_test extends Fragment{
         public void onProviderDisabled(String provider) {
         }
     }
+
     private void showCurrentLocation(Double latitude, Double longitude) {
         LatLng curPoint = new LatLng(latitude, longitude);
-
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 17));
-
-
-        //Toast.makeText(getApplicationContext(), "실행", Toast.LENGTH_LONG).show();
         String markerTitle = "내위치";
-        String markerSnippet = "위치정보가 확인되었습니다.";
+        String markerSnippet = "위치정보가 확인되었습니다."+latitude+"\n"+longitude;
 
         if (currentMarker != null) currentMarker.remove();
 
@@ -153,41 +148,104 @@ public class fragment2_test extends Fragment{
 
         map.moveCamera(cameraUpdate);
     }
-    private void markeron(){
+    public void markeron2(LatLng point,String name,String sp, Double dbh){
         Context context=this.getContext();
-        //Marker trmark=null;
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        MarkerOptions mapoptions=new MarkerOptions();
+        mapoptions.title("이름 : "+name);
+        Double latitude2=point.latitude;
+        Double longitude2=point.longitude;
+        mapoptions.snippet("DBH : "+dbh + ", 학종 : " + sp);
+        mapoptions.position(new LatLng(latitude2,longitude2));
+        BitmapDrawable bitmapdraw=(BitmapDrawable) context.getResources().getDrawable(R.drawable.treeicon);
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 200, 200, false);
+        mapoptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+        map.animateCamera(CameraUpdateFactory.newLatLng(point));
+        Marker tr2mark=map.addMarker(mapoptions);
+        mMarkerList.add(tr2mark);
+        mPointList.add(point);
+    }
+
+    public static void thesize(String userid)
+    {
+
+        fstore.collection("tree").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onMapClick(LatLng point) {
-                MarkerOptions mapoptions=new MarkerOptions();
-                mapoptions.title("~~나무");
-                Double latitude2=point.latitude;
-                Double longitude2=point.longitude;
-
-                mapoptions.snippet("DBH : ~~~ cm" );
-                mapoptions.position(new LatLng(latitude2,longitude2));
-                BitmapDrawable bitmapdraw=(BitmapDrawable) context.getResources().getDrawable(R.drawable.treeicon);
-                Bitmap b=bitmapdraw.getBitmap();
-                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 200, 200, false);
-                mapoptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-                map.animateCamera(CameraUpdateFactory.newLatLng(point));
-                Marker trmark=map.addMarker(mapoptions);
-                mMarkerList.add(trmark);
-                mPointList.add(point);
-
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> listS = new ArrayList<>();
+                        Map<String, Object> map = document.getData();
+                        if (map != null) {
+                            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                String key=entry.getKey();
+                                listS.add(key);
+                            }
+                            datasize=listS.size();
+                        }
+                    }
+                }
             }
         });
-        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+    }
+
+    public static void getgeo(String userid)
+    {
+        System.out.print("아이디 = " + userid);//성공
+        fstore.collection("tree").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onMapLongClick(LatLng point2) {
-                int i;
-                for (i = 0; i < mPointList.size(); i++)
-                {
-                    if(mPointList.get(i)==point2)
-                    {
-                        mMarkerList.get(i).remove();
-                        mPointList.remove(i);
-                        mMarkerList.remove(i);
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> listS = new ArrayList<>();
+                        List<Object> listO = new ArrayList<>();
+
+                        Map<String, Object> map = document.getData();
+                        if (map != null) {
+                            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                String key=entry.getKey();
+                                Object object=entry.getValue();
+                                listS.add(key);
+                                listO.add(object);
+                                System.out.print("키값들 : "+key);
+                            }
+                        }
+
+                        for (Object s : listO) {
+                            Map<String,Object> map2=(Map)s;
+                            for(Map.Entry<String,Object> entry:map2.entrySet())
+                            {
+                                GeoPoint fgeo=null;
+                                String keyname=entry.getKey();
+                                Object objname=entry.getValue();
+                                System.out.print("끼값들 : "+keyname+"원소들 : "+objname);
+                                if(keyname.equals("treeLocation"))
+                                {
+                                    fgeo=(GeoPoint)objname;
+                                    System.out.print("포인트 과연? "+fgeo);
+                                    geolist.add(fgeo);
+                                }
+                                else if(keyname.equals("treeName"))
+                                {
+                                    String name=(String)objname;
+                                    namelist.add(name);
+                                }
+                                else if(keyname.equals("treeDBH"))
+                                {
+                                    String fi=(String)objname;
+                                    Double dbh=Double.parseDouble(fi);
+                                    dbhlist.add(dbh);
+                                }
+                                else if(keyname.equals("treeSpecies"))
+                                {
+                                    String sp=(String)objname;
+                                    splist.add(sp);
+                                }
+                            }
+                        }
+                        System.out.println("   리스트  "+geolist);
                     }
                 }
             }
@@ -195,12 +253,32 @@ public class fragment2_test extends Fragment{
     }
 
 
+    public void maketree()
+    {
+        if(geolist!=null&&geolist.size()<=datasize)
+        {
+            for(int i=0;i<geolist.size();i++)
+            {
+
+                double newla = geolist.get(i).getLatitude();
+                double newlo=geolist.get(i).getLongitude();
+                LatLng geoLatlng = new LatLng(newla,newlo);
+                String name=namelist.get(i);
+                String sp=splist.get(i);
+                Double dbh=dbhlist.get(i);
+                System.out.println(i+"i번쨰 원소!!"+geolist.get(i));
+                markeron2(geoLatlng,name,sp,dbh);
+            }
+        }
+    }
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //map=GoogleMap;
 
         return inflater.inflate(R.layout.fragment_fragment2_test, container, false);
     }
@@ -224,6 +302,8 @@ public class fragment2_test extends Fragment{
                 Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(i);
             }
+            geolist.clear();//초기화
+            thesize(finalUserId);
             startLocationService();
         }
     }

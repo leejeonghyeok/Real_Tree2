@@ -21,6 +21,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -29,11 +31,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,12 +41,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import edu.skku.treearium.Activity.MainActivity;
-import edu.skku.treearium.Activity.login.LoginActivity;
+import edu.skku.treearium.Activity.MainPackage.fragment2_test;
 import edu.skku.treearium.R;
-import edu.skku.treearium.Utils.MatrixUtil;
 import edu.skku.treearium.Renderer.BackgroundRenderer;
-import edu.skku.treearium.Renderer.ObjectRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
 import edu.skku.treearium.Utils.PointCollector;
 import edu.skku.treearium.Utils.PointUtil;
@@ -57,6 +54,7 @@ import edu.skku.treearium.helpers.FullScreenHelper;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
@@ -65,7 +63,6 @@ import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.PointCloud;
-import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
@@ -74,6 +71,8 @@ import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
@@ -88,9 +87,13 @@ import java.util.Map;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
+//import static edu.skku.treearium.Activity.MainActivity.geolist;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.geolist;
 import static java.lang.Integer.parseInt;
 
-public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
+public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
   private static final String TAG = ArActivity.class.getSimpleName();
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
@@ -104,19 +107,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
   private final PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
-  private final ObjectRenderer virtualObject = new ObjectRenderer();
 
   private View arLayout;
   private Session session;
   private Thread httpTh;
   private Frame frame;
+  volatile float dbh = -1;
 
   private PointCollector collector = null;
-  private CylinderVars cylinderVars = null;
-
   private Button popup = null;
-  private Button exit = null;
-
+  private Button confirmBtn = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
 
@@ -124,9 +124,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
-  private int angle = -3; // degree
   private float[] ray = null;
-  private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
 
   //firebase
@@ -135,12 +133,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   String userID;
   LocationManager locationManager;
   String latitude, longitude;
-  GeoPoint location;
+  public static GeoPoint locationA;
 
   private static final int REQUEST_LOCATION = 1;
-
-  // Temporary matrix allocated here to reduce number of allocations for each frame.
-  private final float[] anchorMatrix = new float[16];
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -150,10 +145,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     arLayout = findViewById(R.id.arLayout);
     popup = (Button)findViewById(R.id.popup);
-    exit = (Button)findViewById(R.id.delete);
     resetBtn = (Button)findViewById(R.id.resetBtn);
     resetBtn.setEnabled(false);
     recBtn = (CameraButton)findViewById(R.id.recBtn);
+    confirmBtn = (Button)findViewById(R.id.confirmBtn);
     surfaceView = (GLSurfaceView)findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
@@ -165,48 +160,49 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
 
-    modelMatrix[3] = 0.0f;
-    modelMatrix[7] = 0.0f;
-    modelMatrix[11] = 0.0f;
-    modelMatrix[15] = 1.0f;
-
     //firebase
     mFirebaseAuth = FirebaseAuth.getInstance();
     fstore = FirebaseFirestore.getInstance();
     userID= mFirebaseAuth.getCurrentUser().getUid();
 
-    //Intent intent = new Intent(ArActivity.this, PopupActivity.class);
-    //startActivityForResult(intent, 1);
-    PopupActivity popupActivity = new PopupActivity(ArActivity.this);
-    popupActivity.startDialog();
+    Intent intent = new Intent(ArActivity.this, PopupActivity.class);
+    startActivityForResult(intent, 1);
 
     installRequested = false;
 
-//    LocationManager nManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//    if (ActivityCompat.checkSelfPermission(
-//            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-//    }
-//    else {
-//      Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//      if (locationGPS != null) {
-//        double lat = locationGPS.getLatitude();
-//        double longi = locationGPS.getLongitude();
-//        location = new GeoPoint(lat, longi);
-//      } else {
-//        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
-//      }
-//    }
+    LocationManager nManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+    if (ActivityCompat.checkSelfPermission(
+            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+    }
+    else {
+      Location locationGPS = nManager.getLastKnownLocation(GPS_PROVIDER);
+       if (locationGPS != null) {
+        double lat = locationGPS.getLatitude();
+        double longi = locationGPS.getLongitude();
+        //location = new GeoPoint(lat, longi);
+        }
+       else
+         {
+           Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
+         }
+
+    }
+    GPSSListener gpsListener = new GPSSListener();
+
+    long minTime = 1000;
+    float minDistance = 0;
+
+    nManager.requestLocationUpdates(GPS_PROVIDER, minTime, minDistance, gpsListener);
+    nManager.requestLocationUpdates(NETWORK_PROVIDER, minTime, minDistance, gpsListener);
 
     popup.setOnClickListener(v -> {
-      popupActivity.startDialog();
+      Intent intent12 = new Intent(ArActivity.this, PopupActivity.class);
+      startActivityForResult(intent12, 1);
     });
 
-    exit.setOnClickListener(v -> {
-      startActivity(new Intent(ArActivity.this, MainActivity.class));
-    });
 
     resetBtn.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -244,6 +240,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     surfaceView.setOnTouchListener((v, event) ->{
+      dbh = -1.0f;
       if(collector != null && collector.filterPoints != null) {
 
         float tx = event.getX();
@@ -260,8 +257,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         drawSeedState = true;
 
+        Log.d("UnitRadius__", Float.toString(unitRadius));
+
         FloatBuffer targetPoints = collector.filterPoints;
         targetPoints.rewind();
+        for(int i=0; i<targetPoints.capacity()/4; i++){
+          Log.d("PointsBuffer", collector.filterPoints.get(4 * i)
+                  +" "+ collector.filterPoints.get(4 * i + 1)
+                  +" "+ collector.filterPoints.get(4 * i + 2));
+        }
 
         int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
         float[] seedPoint = PointUtil.getSeedPoint();
@@ -269,9 +273,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         float seedZLength = ray[0] * (seedPoint[0] - rayOrigin[0]) + ray[1] * (seedPoint[1] - rayOrigin[1]) + ray[2] * (seedPoint[2] - rayOrigin[2]);
         seedZLength = Math.abs(seedZLength);
 
-        Log.d("UnitRadius__", Float.toString(unitRadius));
         Log.d("seedZLength__", Float.toString(seedZLength));
-        float roiRadius = unitRadius * seedZLength / 2;
+        float roiRadius = unitRadius * seedZLength;
         Log.d("UnitRadius", roiRadius +" "+ /*RMS*/roiRadius * 0.2f +" "+ roiRadius * 0.4f);
 
         if(pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
@@ -292,49 +295,17 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               if (resp != null && resp.isSuccess()) {
 
                 ResponseForm.CylinderParam param = resp.getParamAsCylider();
-
                 // Normal Vector should be [0, 1, 0]
                 float[] tmp = new float[]{param.b[0] - param.t[0], param.b[1] - param.t[1], param.b[2] - param.t[2]};
                 float dist = (float)Math.sqrt( tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2] );
                 tmp[0] /= dist;
                 tmp[1] /= dist;
                 tmp[2] /= dist;
-                if(tmp[1] < 0){
-                  tmp[0] = -tmp[0];
-                  tmp[1] = -tmp[1];
-                  tmp[2] = -tmp[2];
-                  Log.d("tmp","바뀜");
-                }
-                modelMatrix[4] = tmp[0];
-                modelMatrix[5] = tmp[1];
-                modelMatrix[6] = tmp[2];
 
-                float[] centerPose = new float[]{(param.b[0]+param.t[0])/2, (param.b[1]+param.t[1])/2, (param.b[2]+param.t[2])/2};
-                modelMatrix[12] = centerPose[0];
-                modelMatrix[13] = centerPose[1];
-                modelMatrix[14] = centerPose[2];
-
-                float[] x = MatrixUtil.crossMatrix(modelMatrix[4], modelMatrix[5], modelMatrix[6],
-                        rayOrigin[0], rayOrigin[1], rayOrigin[2]);
-                modelMatrix[0] = x[0];
-                modelMatrix[1] = x[1];
-                modelMatrix[2] = x[2];
-                float[] z = MatrixUtil.crossMatrix(modelMatrix[0], modelMatrix[1], modelMatrix[2],
-                        modelMatrix[4], modelMatrix[5], modelMatrix[6]);
-                modelMatrix[8] = z[0];
-                modelMatrix[9] = z[1];
-                modelMatrix[10] = z[2];
-
-                Log.d("modelMatrix: ", modelMatrix[0]+" "+modelMatrix[4]+" "+modelMatrix[8]+" "+modelMatrix[12]);
-                Log.d("modelMatrix: ", modelMatrix[1]+" "+modelMatrix[5]+" "+modelMatrix[9]+" "+modelMatrix[13]);
-                Log.d("modelMatrix: ",modelMatrix[2]+" "+modelMatrix[6]+" "+modelMatrix[10]+" "+modelMatrix[14]);
-                Log.d("modelMatrix: ",modelMatrix[3]+" "+modelMatrix[7]+" "+modelMatrix[11]+" "+modelMatrix[15]);
-
-                cylinderVars = new CylinderVars(param.r, tmp, centerPose);
                 Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
-                Log.d("Cylinder", String.valueOf(cylinderVars.getDbh()));
+                dbh = param.r;
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -352,35 +323,35 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
-            if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
+            if(isFound && dbh > 0.0f){
               Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
               final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                       ArActivity.this, R.style.BottomSheetDialogTheme
               );
-              View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+              View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                      .inflate(
                               R.layout.layout_bottom_sheet,
                               (LinearLayout)findViewById(R.id.bottomSheetContainer)
                       );
               EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
-              Spinner dropdown = bottomSheetView.findViewById(R.id.bottomspecies);
-              String[] items = new String[]{"은행","이팝", "배롱", "배롱","무궁화", "느티", "벚", "단풍", "백합", "메타","단풍","기타"};
-              ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-              adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-              dropdown.setAdapter(adapter);
+              mbottomdbh.setText(String.valueOf(dbh*200));
 
-              mbottomdbh.setText(String.valueOf(ArActivity.this.cylinderVars.getDbh()*200));
               bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
+                //DocumentReference documentReference = fstore.collection("tree").document(userID);
                 Map<String,Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
                 EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
+                EditText edit2 = bottomSheetView.findViewById(R.id.bottomspecies);
                 EditText edit3 = bottomSheetView.findViewById(R.id.bottomdbh);
                 EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
                 tree.put("treeName", edit1.getText().toString());
-                tree.put("treeSpecies",dropdown.getSelectedItem().toString());
+                tree.put("treeSpecies",edit2.getText().toString());
                 tree.put("treeDBH", edit3.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
-                //tree.put("treeLocation",location);
+                tree.put("treeLocation",locationA);
+                geolist.add(locationA);
+                System.out.print(geolist+"요소들");
                 Long tsLong = System.currentTimeMillis()/1000;
                 String ts = (tsLong).toString();
                 user.put(ts,tree);
@@ -532,9 +503,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Create the texture and pass it to ARCore session to be filled during update().
       backgroundRenderer.createOnGlThread(/*context=*/ this);
       pointCloudRenderer.createOnGlThread(/*context=*/ this);
-      virtualObject.createOnGlThread(/*context=*/ this, "models/cylinder_r.obj", "models/treearium.png");
-      virtualObject.setMaterialProperties(0.0f, 2.0f, 0.5f, 6.0f);
-      virtualObject.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending);
 
     } catch (IOException e) {
       Log.e(TAG, "Failed to read an asset file", e);
@@ -606,16 +574,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           pointCloudRenderer.draw_seedPoint(vpMatrix, seedPoint);
         }
       }
-      if(isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f){
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        //Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.rotateM(modelMatrix, 0, angle,0,1,0);
-        //angle++;
-        virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
-        virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
-
-        GLES20.glDisable(GLES20.GL_CULL_FACE);
-      }
 
     } catch (Throwable t) {
       // Avoid crashing the application due to unhandled exceptions.
@@ -663,4 +621,33 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     return out;
   }
 
+  private class GPSSListener implements LocationListener
+  {
+    @Override
+    public void onLocationChanged(Location location2) {
+      Double latitude = location2.getLatitude();
+      Double longitude = location2.getLongitude();
+      //LatLng onLop=new LatLng(latitude,longitude);
+      locationA=new GeoPoint(latitude,longitude);
+
+      String message = "내 위치 -> Latitude : " + latitude + "\nLongitude:" + longitude;
+      Log.d("Map", message);
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+  }
 }

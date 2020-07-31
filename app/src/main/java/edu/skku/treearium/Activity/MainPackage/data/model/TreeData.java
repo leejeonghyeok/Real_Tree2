@@ -19,8 +19,8 @@ public class TreeData {
     List<TreeData> Ltr=new ArrayList<>();
     Map<String, Float> Dtreemap= new HashMap<String, Float>();
     Map<String, Float> Htreemap= new HashMap<String, Float>();
-    public TreeData(String name,) {
-    }
+    /*public TreeData(String name,) {
+    }*/
 
     public void selectTree(TreeData treeData)
     {
