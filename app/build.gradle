@@ -81,9 +81,6 @@ dependencies {
     // FindSurface
     implementation files('libs/FSReq.jar')
 
-    //Sceneform
-    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.17.1'
-
     //CameraButton
 //    implementation 'com.hluhovskyi.camerabutton:camerabutton:2.0.1'
     implementation 'com.hluhovskyi.camerabutton:camerabutton-rxjava2:2.0.1'

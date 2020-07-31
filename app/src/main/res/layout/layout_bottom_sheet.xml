@@ -86,44 +86,8 @@
             android:textSize="15sp" />
 
     </LinearLayout>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/bottomspeciesask"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:padding="15dp"
-            android:textAlignment="textStart"
-            android:textSize="18sp"
-            android:text="수종"
-
-            />
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/et_custom"
-            android:padding="15dp"
-            android:id="@+id/bottomspecies"
-            android:hint="수종"
-            android:inputType="textPersonName"
-            android:textSize="15sp" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-    </LinearLayout> <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -153,7 +117,8 @@
         android:inputType="textPersonName"
         android:textSize="15sp" />
 
-</LinearLayout> <LinearLayout
+</LinearLayout>
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -184,6 +149,39 @@
         android:textSize="15sp" />
 
 </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/bottomspeciesask"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+            android:text="수종"
+
+            />
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:id="@+id/bottomspecies"
+            android:textSize="15sp"
+            android:background="@drawable/et_custom"
+            />
+
+    </LinearLayout>
     <Button
         android:id="@+id/confirmBtn"
         android:layout_width="match_parent"
@@ -192,6 +190,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
         android:padding="15dp"
+        android:textAlignment="textStart"
         android:text="확인"
         android:textSize="24sp" />
 </LinearLayout>

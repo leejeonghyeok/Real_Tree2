@@ -28,17 +28,6 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <Button
-      android:id="@+id/popup"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="POPUP"
-      app:layout_constraintBottom_toBottomOf="@+id/surfaceview"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="@+id/surfaceview"
-      app:layout_constraintVertical_bias="0.023" />
-
   <com.hluhovskyi.camerabutton.CameraButton
       android:id="@+id/recBtn"
       android:layout_width="@dimen/cb_layout_width_default"
@@ -50,17 +39,53 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.906" />
 
-  <Button
-      android:id="@+id/resetBtn"
-      android:layout_width="36dp"
-      android:layout_height="36dp"
-      android:background="#00FFFFFF"
-      android:foreground="@drawable/ic_sharp_sync_24"
-      app:layout_constraintBottom_toBottomOf="parent"
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="10dp"
+      android:layout_marginRight="10dp"
+      android:orientation="horizontal"
+      android:paddingTop="50dp"
+      app:layout_constraintBottom_toTopOf="@+id/surfaceview"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.821"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.861" />
+      app:layout_constraintTop_toTopOf="parent">
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:background="#00000000"
+        android:foreground="@drawable/ic_baseline_close_24" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="right"
+        >
+
+      <Button
+          android:id="@+id/resetBtn"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_marginTop="15dp"
+          android:layout_marginRight="24dp"
+          android:background="#00000000"
+          android:foreground="@drawable/ic_sharp_sync_24"
+          android:foregroundTint="@color/colorWhite"
+          />
+      <Button
+          android:id="@+id/popup"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="15dp"
+          android:background="#00000000"
+          android:foreground="@drawable/ic_baseline_info_24" />
+
+    </LinearLayout>
+
+  </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
