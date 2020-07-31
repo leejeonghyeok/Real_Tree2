@@ -66,6 +66,7 @@ public class fragment2_test extends Fragment{
     };
 
     private void startLocationService() {
+        geolist.clear();
 
         Context context=this.getContext();
         LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
