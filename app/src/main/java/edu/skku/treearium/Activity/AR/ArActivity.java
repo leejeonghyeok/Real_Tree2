@@ -397,7 +397,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                       );
               EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
               Spinner dropdown = bottomSheetView.findViewById(R.id.bottomspecies);
-              String[] items = new String[]{"은행","이팝", "배롱", "배롱","무궁화", "느티", "벚", "단풍", "백합", "메타","단풍","기타"};
+              String[] items = new String[]{"은행","이팝", "배롱","무궁화", "느티", "벚", "단풍", "백합", "메타","기타"};
               ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
               adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
               dropdown.setAdapter(adapter);

@@ -2,6 +2,7 @@ package edu.skku.treearium.Activity;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.BatteryManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,9 @@ import java.util.ArrayList;
 
 import edu.skku.treearium.Activity.MainPackage.data.model.TreeData;
 import edu.skku.treearium.R;
+
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.datasize;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,16 +75,49 @@ public class fragment3_fragment1 extends Fragment {
 
         BarChart barChart = v.findViewById(R.id.barChart);
 
-        TreeData tr;
+        int fo=0;
+        int fi=0;
+        int si=0;
+        int se=0;
+        int ei=0;
 
+        for(int i=0;i<datasize;i++)
+        {
+            double geti=dbhlist.get(i);
 
-        visitor.add(new BarEntry(2014,420));
-        visitor.add(new BarEntry(2015,475));
-        visitor.add(new BarEntry(2016,508));
-        visitor.add(new BarEntry(2017,601));
-        visitor.add(new BarEntry(2018,340));
+            if(geti<5)
+            {
+                fo=fo+1;
+                visitor.clear();
+                makech(fo,fi,si,se,ei);
+            }
+            else if(geti>=5&&geti<6)
+            {
+                fi=fi+1;
+                visitor.clear();
+                makech(fo,fi,si,se,ei);
+            }
+            else if(geti>=6&&geti<7)
+            {
+                si=si+1;
+                visitor.clear();
+                makech(fo,fi,si,se,ei);
+            }
+            else if(geti>=7&&geti<8)
+            {
+                se=se+1;
+                visitor.clear();
+                makech(fo,fi,si,se,ei);
+            }
+            else if(geti>=8)
+            {
+                ei=ei+1;
+                visitor.clear();
+                makech(fo,fi,si,se,ei);
+            }
+        }
 
-        BarDataSet barDataSet=new BarDataSet(visitor,"Height");
+        BarDataSet barDataSet=new BarDataSet(visitor,"DBH");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(16f);
@@ -88,47 +125,17 @@ public class fragment3_fragment1 extends Fragment {
 
         barChart.setFitBars(true);
         barChart.setData(barData);
-        barChart.getDescription().setText("TREE HEIGHT");
+        barChart.getDescription().setText("TREE DBH");
         barChart.animateY(2000);
         return v;
     }
-    void adden(TreeData tr)
+    public void makech(int a,int b, int c, int d,int e)
     {
-        int he= (int) ((tr.height-100)/200);
-        switch(he){
-            case(2):
-            {
-                fise=fise+1;
-                visitor.add(new BarEntry(5,fise));
-                break;
-            }
-            case(3):
-            {
-                seni=seni+1;
-                visitor.add(new BarEntry(7,seni));
-                break;
-            }
-            case(4):
-            {
-                niel=niel+1;
-                visitor.add(new BarEntry(9,niel));
-                break;
-            }
-            case(5):
-            {
-                elth=elth+1;
-                visitor.add(new BarEntry(11,elth));
-                break;
-            }
-            case(6):
-            {
-                thth=thth+1;
-                visitor.add((new BarEntry(13,thth)));
-                break;
-            }
-            default:
-                break;
-        }
-
+        visitor.add(new BarEntry(4,a));
+        visitor.add(new BarEntry(5,b));
+        visitor.add(new BarEntry(6,c));
+        visitor.add(new BarEntry(7,d));
+        visitor.add(new BarEntry(8,e));
     }
+
 }

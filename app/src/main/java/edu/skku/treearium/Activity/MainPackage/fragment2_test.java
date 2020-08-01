@@ -55,6 +55,7 @@ public class fragment2_test extends Fragment{
     public static List<Double> dbhlist=new ArrayList<>();
     public static List<String> namelist=new ArrayList<>();
     public static List<String> splist=new ArrayList<>();
+    public static List<Double> helist=new ArrayList<>();
     List<Marker> mMarkerList = new ArrayList<>();
     List<LatLng> mPointList = new ArrayList<>();
     static Marker currentMarker=null;
@@ -169,7 +170,7 @@ public class fragment2_test extends Fragment{
 
     public static void thesize(String userid)
     {
-
+        System.out.print(userid);
         fstore.collection("tree").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -244,6 +245,12 @@ public class fragment2_test extends Fragment{
                                     String sp=(String)objname;
                                     splist.add(sp);
                                 }
+                                else if(keyname.equals("treeHeight"))
+                                {
+                                    String sp=(String)objname;
+                                    Double hei=Double.parseDouble(sp);
+                                    helist.add(hei);
+                                }
                             }
                         }
                         System.out.println("   리스트  "+geolist);
@@ -256,6 +263,7 @@ public class fragment2_test extends Fragment{
 
     public void maketree()
     {
+
         if(geolist!=null&&geolist.size()<=datasize)
         {
             for(int i=0;i<geolist.size();i++)

@@ -38,9 +38,9 @@ public class fragment3 extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 
         // add your fragments
-        adapter.addFrag(new fragment3_fragment1(), "Tab1");
-        adapter.addFrag(new fragment3_fragment2(), "Tab2");
-        //adapter.addFrag(new fragment3_fragment3(), "Tab3");
+        adapter.addFrag(new fragment3_fragment1(), "DBH");
+        adapter.addFrag(new fragment3_fragment2(), "수종");
+        adapter.addFrag(new fragment3_fragment3(), "Height");
 
         // set adapter on viewpager
         viewPager.setAdapter(adapter);
