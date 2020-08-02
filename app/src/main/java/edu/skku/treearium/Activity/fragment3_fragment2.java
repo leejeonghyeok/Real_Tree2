@@ -77,15 +77,12 @@ public class fragment3_fragment2 extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_fragment3_fragment2, container, false);
-
         PieChart pieChart = v.findViewById(R.id.pieChart);
-
         int a1=0;
         int a2=0;
         int a3=0;
@@ -161,21 +158,17 @@ public class fragment3_fragment2 extends Fragment {
                 makech(a1,a2,a3,a4,a5,a6,a7,a8,a9,a0);
             }
         }
-
         PieDataSet pieDataSet=new PieDataSet(visitor,"TREE");
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.BLACK);
         pieDataSet.setValueTextSize(16f);
         PieData pieData=new PieData(pieDataSet);
-
-
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
         pieChart.animate();
         pieChart.setCenterText("수종");
         return v;
     }
-
     private void makech(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a0) {
         if(a1!=0)visitor.add(new PieEntry(a1,"은행"));
         if(a2!=0)visitor.add(new PieEntry(a2,"이팝"));
