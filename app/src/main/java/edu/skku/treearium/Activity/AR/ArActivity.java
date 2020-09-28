@@ -94,6 +94,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.geolist;
 import static java.lang.Integer.parseInt;
+import static java.lang.String.valueOf;
 
 public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer{
   private static final String TAG = ArActivity.class.getSimpleName();
@@ -133,6 +134,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private float[] ray = null;
   private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
+
 
   //firebase
   FirebaseAuth mFirebaseAuth;
@@ -364,10 +366,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 Log.d("modelMatrix: ",modelMatrix[3]+" "+modelMatrix[7]+" "+modelMatrix[11]+" "+modelMatrix[15]);
 
                 cylinderVars = new CylinderVars(param.r, tmp, centerPose);
-                Log.d("CylinderFinder", "request success code: "+parseInt(String.valueOf(resp.getResultCode()))+
+                Log.d("CylinderFinder", "request success code: "+parseInt(valueOf(resp.getResultCode()))+
                         ", Radius: "+param.r + ", Normal Vector: "+Arrays.toString(tmp)+
                         ", RMS: "+resp.getRMS());
-                Log.d("Cylinder", String.valueOf(cylinderVars.getDbh()));
+                Log.d("Cylinder", valueOf(cylinderVars.getDbh()));
                 isFound = true;
               } else {
                 Log.d("CylinderFinder", "request fail");
@@ -396,25 +398,31 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                               (LinearLayout)findViewById(R.id.bottomSheetContainer)
                       );
               EditText mbottomdbh=bottomSheetView.findViewById(R.id.bottomdbh);
+              EditText mbottomnreabylm= bottomSheetView.findViewById(R.id.bottomnearbylm);
               Spinner dropdown = bottomSheetView.findViewById(R.id.bottomspecies);
               String[] items = new String[]{"은행","이팝", "배롱","무궁화", "느티", "벚", "단풍", "백합", "메타","기타"};
               ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
               adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
               dropdown.setAdapter(adapter);
 
-              mbottomdbh.setText(String.valueOf(ArActivity.this.cylinderVars.getDbh()*200));
+              geolist.add(locationA);
+              double distance = haversine(locationA.getLatitude(), locationA.getLongitude(),37.28805556, 126.97250000);
+              if(distance<1)
+                mbottomnreabylm.setText("일월저수지");
+
+              mbottomdbh.setText(valueOf(ArActivity.this.cylinderVars.getDbh()*200));
               bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
                 Map<String,Map<String,Object>> user = new HashMap<>();
                 Map<String,Object> tree = new HashMap<>();
                 EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
-                EditText edit3 = bottomSheetView.findViewById(R.id.bottomdbh);
                 EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
+
                 tree.put("treeName", edit1.getText().toString());
                 tree.put("treeSpecies",dropdown.getSelectedItem().toString());
-                tree.put("treeDBH", edit3.getText().toString());
+                tree.put("treeDBH", mbottomdbh.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
                 tree.put("treeLocation",locationA);
-                geolist.add(locationA);
+                tree.put("treeNearLandMark",mbottomnreabylm.getText().toString() );
 
                 Long tsLong = System.currentTimeMillis()/1000;
                 String ts = (tsLong).toString();
@@ -656,6 +664,18 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       // Avoid crashing the application due to unhandled exceptions.
       Log.e(TAG, "Exception on the OpenGL thread", t);
     }
+  }
+
+  public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+    final double R = 6372.8; // In kilometers
+    double dLat = Math.toRadians(lat2 - lat1);
+    double dLon = Math.toRadians(lon2 - lon1);
+    lat1 = Math.toRadians(lat1);
+    lat2 = Math.toRadians(lat2);
+
+    double a = Math.pow(Math.sin(dLat / 2),2) + Math.pow(Math.sin(dLon / 2),2) * Math.cos(lat1) * Math.cos(lat2);
+    double c = 2 * Math.asin(Math.sqrt(a));
+    return R * c;
   }
 
   float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {
