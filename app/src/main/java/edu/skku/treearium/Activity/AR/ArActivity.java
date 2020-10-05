@@ -149,7 +149,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState){
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
 
@@ -187,23 +187,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     installRequested = false;
 
-//    LocationManager nManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//    if (ActivityCompat.checkSelfPermission(
-//            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-//    }
-//    else {
-//      Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//      if (locationGPS != null) {
-//        double lat = locationGPS.getLatitude();
-//        double longi = locationGPS.getLongitude();
-//        location = new GeoPoint(lat, longi);
-//      } else {
-//        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
-//      }
-//    }
     LocationManager nManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     if (ActivityCompat.checkSelfPermission(
@@ -239,6 +222,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     exit.setOnClickListener(v -> {
       startActivity(new Intent(ArActivity.this, MainActivity.class));
+      finish();
     });
 
     resetBtn.setOnClickListener(new View.OnClickListener() {
@@ -414,7 +398,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 tree.put("treeDBH", edit3.getText().toString());
                 tree.put("treeHeight", edit4.getText().toString());
                 tree.put("treeLocation",locationA);
-                geolist.add(locationA);
+                //geolist.add(locationA); 이거 10/2일에 //처리한거
 
                 Long tsLong = System.currentTimeMillis()/1000;
                 String ts = (tsLong).toString();
@@ -727,4 +711,5 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     }
   }
+
 }

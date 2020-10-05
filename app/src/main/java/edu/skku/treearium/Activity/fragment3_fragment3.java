@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import edu.skku.treearium.Activity.MainPackage.data.model.TreeData;
 import edu.skku.treearium.R;
 
-import static edu.skku.treearium.Activity.MainPackage.fragment2_test.datasize;
+
+import static edu.skku.treearium.Activity.MainActivity.datasize;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.helist;
 
