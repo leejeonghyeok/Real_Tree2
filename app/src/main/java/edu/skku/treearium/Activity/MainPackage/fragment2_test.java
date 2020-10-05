@@ -171,21 +171,18 @@ public class fragment2_test extends Fragment{
     public static void thesize(String userid)
     {
         System.out.print(userid);
-        fstore.collection("tree").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        List<String> listS = new ArrayList<>();
-                        Map<String, Object> map = document.getData();
-                        if (map != null) {
-                            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                                String key=entry.getKey();
-                                listS.add(key);
-                            }
-                            datasize=listS.size();
+        fstore.collection("tree").document(userid).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    List<String> listS = new ArrayList<>();
+                    Map<String, Object> map = document.getData();
+                    if (map != null) {
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            String key=entry.getKey();
+                            listS.add(key);
                         }
+                        datasize=listS.size();
                     }
                 }
             }

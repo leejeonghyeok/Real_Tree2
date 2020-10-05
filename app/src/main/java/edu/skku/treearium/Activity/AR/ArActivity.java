@@ -326,12 +326,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
           adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
           dropdown.setAdapter(adapter);
-
-//              이거 주석처리 안하면 왜인지 그냥 시작부터 튕기길래 일단 주석 ,,
-//              geolist.add(locationA);
-//              double distance = haversine(locationA.getLatitude(), locationA.getLongitude(),37.28805556, 126.97250000);
-//              if(distance<1)
-//                mbottomnreabylm.setText("일월저수지");
+              double distance = haversine(locationA.getLatitude(), locationA.getLongitude(),37.28805556, 126.97250000);
+              if(distance<1)
+                mbottomnreabylm.setText("일월저수지");
           
           mbottomdbh.setText(valueOf(ArActivity.this.cylinderVars.getDbh() * 200));
           
