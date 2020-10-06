@@ -106,6 +106,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 
 public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
+
   private static final String TAG = ArActivity.class.getSimpleName();
 
   // Rendering. The Renderers are created here, and initialized when the GL surface is created.
@@ -144,6 +145,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
+
+  //수종 인식
+  public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
   private String teamname, username;
   enum Mode {
@@ -333,6 +337,56 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
+//          수종 인식 ////////////////////////
+//          Image image = null;
+//          try {
+//            image = frame.acquireCameraImage();
+//          } catch (NotYetAvailableException e) {
+//            e.printStackTrace();
+//          }
+//          byte[] nv21;
+//          // Get the three planes.
+//          ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
+//          ByteBuffer uBuffer = image.getPlanes()[1].getBuffer();
+//          ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
+//
+//          int ySize = yBuffer.remaining();
+//          int uSize = uBuffer.remaining();
+//          int vSize = vBuffer.remaining();
+//
+//          nv21 = new byte[ySize + uSize + vSize];
+//
+//          //U and V are swapped
+//          yBuffer.get(nv21, 0, ySize);
+//          vBuffer.get(nv21, ySize, vSize);
+//          uBuffer.get(nv21, ySize + vSize, uSize);
+//
+//          int width = image.getWidth();
+//          int height = image.getHeight();
+//
+//          ByteArrayOutputStream out = new ByteArrayOutputStream();
+//          YuvImage yuv = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
+//          yuv.compressToJpeg(new Rect(0, 0, width, height), 100, out);
+//          byte[] byteArray = out.toByteArray();
+//          Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//          //this.sourceBitmap = Utils.getBitmapFromAsset(ArActivity.this, "kite.jpg");
+//          this.sourceBitmap = bitmap;
+//          this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+//
+//          final List<Classifier.Recognition> results = detector.recognizeImage(cropBitmap);
+//          final List<Classifier.Recognition> mappedRecognitions =
+//                  new LinkedList<Classifier.Recognition>();
+//
+//          for (final Classifier.Recognition result : results) {
+//            final RectF location = result.getLocation();
+//            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+//
+//              //cropToFrameTransform.mapRect(location);
+//              result.setLocation(location);
+//              mappedRecognitions.add(result);
+//            }
+//          }
+
           final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                   ArActivity.this, R.style.BottomSheetDialogTheme
           );
@@ -367,6 +421,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             tree.put("treePerson",username);
             tree.put("treeName", edit1.getText().toString());
             tree.put("treeSpecies", dropdown.getSelectedItem().toString());
+//            if(mappedRecognitions.get(0).getDetectedClass() != -1)
+//              tree.put("treeSpecies", "Ginkgo");
             tree.put("treeDBH", mbottomdbh.getText().toString());
             tree.put("treeHeight", edit4.getText().toString());
             tree.put("treeLocation", locationA);

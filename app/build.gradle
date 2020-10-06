@@ -24,7 +24,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    aaptOptions {
+        noCompress "tflite"
+        noCompress "lite"
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+    lintOptions {
+        abortOnError false
+    }
 }
+
+// import DownloadModels task
+project.ext.ASSET_DIR = projectDir.toString() + '/src/main/assets'
+project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
 
 allprojects {
     repositories {
@@ -36,6 +51,7 @@ allprojects {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -84,4 +100,12 @@ dependencies {
     //CameraButton
 //    implementation 'com.hluhovskyi.camerabutton:camerabutton:2.0.1'
     implementation 'com.hluhovskyi.camerabutton:camerabutton-rxjava2:2.0.1'
+
+    // Tensorflow
+    implementation 'org.tensorflow:tensorflow-lite:2.2.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.2.0'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.google.truth:truth:1.0.1'
 }
