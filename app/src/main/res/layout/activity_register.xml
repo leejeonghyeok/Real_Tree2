@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context="edu.skku.treearium.Activity.login.RegisterActivity">
 
+
     <TextView
         android:id="@+id/tv_logo"
         android:layout_width="wrap_content"
@@ -26,6 +27,19 @@
         android:textSize="17sp"
         android:layout_marginStart="25dp"
         android:layout_marginBottom="50dp"/>
+
+    <EditText
+        android:id="@+id/rt_team"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/team_name"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
+        android:inputType="textPersonName"
+        android:background="@drawable/et_custom"
+        android:textSize="15sp" />
 
     <EditText
         android:id="@+id/rt_name"

@@ -114,7 +114,7 @@
         android:background="@drawable/et_custom"
         android:padding="15dp"
         android:hint="DBH"
-        android:inputType="textPersonName"
+        android:inputType="numberDecimal"
         android:textSize="15sp" />
     </LinearLayout>
     <LinearLayout
@@ -174,7 +174,7 @@
         android:background="@drawable/et_custom"
         android:padding="15dp"
         android:hint="높이"
-        android:inputType="textPersonName"
+        android:inputType="numberDecimal"
         android:textSize="15sp" />
 
 </LinearLayout>

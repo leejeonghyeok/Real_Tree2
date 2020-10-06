@@ -49,7 +49,9 @@ import androidx.core.content.ContextCompat;
 import com.curvsurf.fsweb.FindSurfaceRequester;
 import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.ArCoreApk;
@@ -65,6 +67,8 @@ import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
@@ -140,7 +144,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private float[] modelMatrix = new float[16];
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
-  
+
+  private String teamname, username;
   enum Mode {
     isFindingCylinder,
     isFindingHeight
@@ -235,7 +240,23 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     mFirebaseAuth = FirebaseAuth.getInstance();
     fstore = FirebaseFirestore.getInstance();
     userID = mFirebaseAuth.getCurrentUser().getUid();
-    
+    fstore.collection("users").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+      @Override
+      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if (task.isSuccessful()) {
+          DocumentSnapshot document = task.getResult();
+          teamname= (String) document.getData().get("Team");
+          teamname= (String) document.getData().get("fName");
+          if (document.exists()) {
+            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+          } else {
+            Log.d(TAG, "No such document");
+          }
+        } else {
+          Log.d(TAG, "get failed with ", task.getException());
+        }
+      }
+    });
     //Intent intent = new Intent(ArActivity.this, PopupActivity.class);
     //startActivityForResult(intent, 1);
     PopupActivity popupActivity = new PopupActivity(ArActivity.this);
@@ -320,7 +341,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                   (LinearLayout) findViewById(R.id.bottomSheetContainer)
                                                                                      );
           EditText mbottomdbh = bottomSheetView.findViewById(R.id.bottomdbh);
-          EditText mbottomnreabylm = bottomSheetView.findViewById(R.id.bottomnearbylm);
+          EditText mbottomnearbylm = bottomSheetView.findViewById(R.id.bottomnearbylm);
           Spinner dropdown = bottomSheetView.findViewById(R.id.bottomspecies);
           String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};
           ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
@@ -328,38 +349,37 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           dropdown.setAdapter(adapter);
               double distance = haversine(locationA.getLatitude(), locationA.getLongitude(),37.28805556, 126.97250000);
               if(distance<1)
-                mbottomnreabylm.setText("일월저수지");
+                mbottomnearbylm.setText("일월저수지");
           
           mbottomdbh.setText(valueOf(ArActivity.this.cylinderVars.getDbh() * 200));
           
           EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
           String edit4Text = String.format("%.2f m", treeHeight);
           edit4.setText(edit4Text);
-          
+          EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
+          edit1.setText(teamname);
+
           bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
-            Map<String, Map<String, Object>> user = new HashMap<>();
             Map<String, Object> tree = new HashMap<>();
-            EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
 //							EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
-            
+            Long tsLong = System.currentTimeMillis() / 1000;
+            String ts = (tsLong).toString();
+            tree.put("treePerson",username);
             tree.put("treeName", edit1.getText().toString());
             tree.put("treeSpecies", dropdown.getSelectedItem().toString());
             tree.put("treeDBH", mbottomdbh.getText().toString());
             tree.put("treeHeight", edit4.getText().toString());
             tree.put("treeLocation", locationA);
-            tree.put("treeNearLandMark", mbottomnreabylm.getText().toString());
-            
-            Long tsLong = System.currentTimeMillis() / 1000;
-            String ts = (tsLong).toString();
-            user.put(ts, tree);
-            fstore.collection("tree").document(userID).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            tree.put("treeNearLandMark", mbottomnearbylm.getText().toString());
+            tree.put("treeMillis",ts);
+            DocumentReference treearray =  fstore.collection("Team").document(teamname).collection("Tree").document(ts);
+            treearray.set(tree).addOnSuccessListener(new OnSuccessListener<Void>() {
               @Override
               public void onSuccess(Void aVoid) {
               }
             });
             bottomSheetDialog.dismiss();
           });
-          
           bottomSheetDialog.setContentView(bottomSheetView);
           bottomSheetDialog.show();
         }
