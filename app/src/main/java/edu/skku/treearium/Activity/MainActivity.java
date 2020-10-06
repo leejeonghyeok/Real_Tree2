@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import edu.skku.treearium.Activity.AR.ArActivity;
 import edu.skku.treearium.Activity.MainPackage.Fragment1;
+import edu.skku.treearium.Activity.Search.SearchActivity;
 import edu.skku.treearium.Activity.login.LoginActivity;
 import edu.skku.treearium.R;
 import edu.skku.treearium.helpers.LocationHelper;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static FirebaseFirestore fstore;
     FirebaseAuth mFirebaseAuth;
     String userID;
+    ImageButton mSearchBtn;
     public static String finalUserId;
     public static int datasize;
     TextView musername, museremail;
@@ -122,6 +125,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //search
+        mSearchBtn = (ImageButton) findViewById(R.id.search_go_btn);
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this , SearchActivity.class));
+            }
+        });
+
     }
     public static void getgeo(String userid)
     {
@@ -179,9 +191,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                                 else if(keyname.equals("treeHeight"))
                                 {
-                                    String sp=(String)objname;
-                                    Double hei=Double.parseDouble(sp);
-                                    helist.add(hei);
+                                    if(objname!=null) {
+                                        String sp = (String) objname;
+                                        Double hei = Double.parseDouble(sp);
+                                        helist.add(hei);
+                                    }
                                 }
                             }
                         }

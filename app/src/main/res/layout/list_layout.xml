@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="10dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/tree_image"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:srcCompat="@drawable/treeicon" />
+
+        <TextView
+            android:id="@+id/smallName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:fontFamily="@font/nunito_semibold"
+            android:text="Name"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:layout_below="@id/smallName"
+            android:fontFamily="@font/nunito_bold"
+            android:text="Name"
+            android:textColor="#555555"
+            android:textSize="16sp" />
+
+
+
+        <TextView
+            android:id="@+id/smallSpecies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:layout_below="@id/name"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/nunito_semibold"
+            android:text="Species"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/species"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/smallSpecies"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:fontFamily="@font/nunito_bold"
+            android:text="Species"
+            android:textColor="#555555"
+            android:textSize="16sp" />
+
+
+
+        <TextView
+            android:id="@+id/smallTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:layout_below="@id/species"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/nunito_semibold"
+            android:text="Time"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/timeTree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/smallTime"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@id/tree_image"
+            android:fontFamily="@font/nunito_bold"
+            android:text="Time"
+            android:textColor="#555555"
+            android:textSize="16sp" />
+
+
+
+
+        <ImageView
+            android:id="@+id/arrowBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight = "true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+        <RelativeLayout
+            android:id="@+id/expandableView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tree_image"
+             >
+
+            <TextView
+                android:id="@+id/smallDbh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:text="DBH"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:id="@+id/dbh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:fontFamily="@font/nunito_bold"
+                android:layout_below="@+id/smallDbh"
+                android:text="DBH"
+                android:textColor="#555555"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/smallHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/dbh"
+                android:fontFamily="@font/nunito_semibold"
+                android:text="Height"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:id="@+id/height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/smallHeight"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@+id/dbh"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Height"
+                android:textColor="#555555"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/smallLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/height"
+                android:fontFamily="@font/nunito_semibold"
+                android:text="Location"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="30dp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Location"
+                android:textColor="#555555"
+                android:textSize="16sp" />
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

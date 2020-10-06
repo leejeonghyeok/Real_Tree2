@@ -43,6 +43,8 @@
             android:name=".Activity.AR.PopupActivity"
             android:theme="@style/popupTheme"
             tools:ignore="Instantiatable" />
+        <activity android:name=".Activity.Search.SearchActivity"
+            android:noHistory="true"/>
         <activity
             android:name=".Activity.AR.ArActivity"
             android:configChanges="screenSize|orientation"
@@ -64,6 +66,9 @@
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
