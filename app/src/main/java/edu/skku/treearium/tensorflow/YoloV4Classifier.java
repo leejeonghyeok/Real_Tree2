@@ -33,6 +33,7 @@ import java.util.Vector;
 import org.tensorflow.lite.Interpreter;
 
 import edu.skku.treearium.Activity.AR.ArActivity;
+import edu.skku.treearium.Utils.Utils;
 
 import org.tensorflow.lite.gpu.GpuDelegate;
 import org.tensorflow.lite.nnapi.NnApiDelegate;

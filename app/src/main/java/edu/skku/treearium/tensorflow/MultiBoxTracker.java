@@ -31,10 +31,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import edu.skku.treearium.Utils.ImageUtils;
 import edu.skku.treearium.tensorflow.Classifier.Recognition;
-import edu.skku.treearium.tensorflow.BorderedText;
-import edu.skku.treearium.tensorflow.ImageUtils;
-import edu.skku.treearium.tensorflow.Logger;
+import edu.skku.treearium.Utils.BorderedText;
 
 /** A tracker that handles non-max suppression and matches existing objects to new detections. */
 public class MultiBoxTracker {

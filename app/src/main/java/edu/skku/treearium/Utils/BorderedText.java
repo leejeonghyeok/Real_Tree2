@@ -1,4 +1,4 @@
-package edu.skku.treearium.tensorflow;
+package edu.skku.treearium.Utils;
 
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 

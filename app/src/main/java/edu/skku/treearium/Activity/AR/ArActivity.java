@@ -21,16 +21,21 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -61,6 +66,7 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
+import com.google.ar.core.exceptions.NotYetAvailableException;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
@@ -71,7 +77,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.SetOptions;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.IOException;
@@ -80,6 +85,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -92,6 +99,7 @@ import edu.skku.treearium.Renderer.ObjectRenderer;
 import edu.skku.treearium.Renderer.PointCloudRenderer;
 import edu.skku.treearium.Renderer.TempRendererSet.GLSupport;
 import edu.skku.treearium.Renderer.TempRendererSet.RendererForDebug;
+import edu.skku.treearium.Utils.ImageUtils;
 import edu.skku.treearium.Utils.MatrixUtil;
 import edu.skku.treearium.Utils.PointCollector;
 import edu.skku.treearium.Utils.PointUtil;
@@ -99,6 +107,9 @@ import edu.skku.treearium.Utils.VectorCal;
 import edu.skku.treearium.helpers.CameraPermissionHelper;
 import edu.skku.treearium.helpers.DisplayRotationHelper;
 import edu.skku.treearium.helpers.FullScreenHelper;
+import edu.skku.treearium.tensorflow.Classifier;
+import edu.skku.treearium.tensorflow.MultiBoxTracker;
+import edu.skku.treearium.tensorflow.YoloV4Classifier;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
@@ -146,8 +157,42 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
 
-  //수종 인식
+  //수종 인식 ///////////////////////
+  private Classifier detector;
+  private Bitmap croppedBitmap = null;
+  private Bitmap cropCopyBitmap = null;
   public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+  // Which detection model to use: by default uses Tensorflow Object Detection API frozen
+  // checkpoints.
+  private enum DetectorMode {
+    TF_OD_API;
+  }
+
+  private void initBox() {
+    try {
+      detector =
+              YoloV4Classifier.create(
+                      getAssets(),
+                      TF_OD_API_MODEL_FILE,
+                      TF_OD_API_LABELS_FILE,
+                      TF_OD_API_IS_QUANTIZED);
+    } catch (final IOException e) {
+      e.printStackTrace();
+      Toast.makeText(getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT).show();
+      finish();
+    }
+  }
+
+  private static final int TF_OD_API_INPUT_SIZE = 416;
+  private static final boolean TF_OD_API_IS_QUANTIZED = false;
+  private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+
+  private static final DetectorMode MODE = DetectorMode.TF_OD_API;
+  private static final boolean MAINTAIN_ASPECT = false;
+  private Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+  private static final boolean SAVE_PREVIEW_BITMAP = false;
+  ///////////////////////////////
 
   private String teamname, username;
   enum Mode {
@@ -167,7 +212,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       normal = new float[3];
       this.calNormal();
       this.checkNormal(z_dir);
-
     }
 
     protected void calNormal() {
@@ -333,49 +377,27 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         treeHeight = curHeight;
         isMeasuringHeightDone = true;
 
-
         if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
-//          수종 인식 ////////////////////////
+          // 수종 인식 ////////////////////////
+          // frame to bitmap
 //          Image image = null;
 //          try {
 //            image = frame.acquireCameraImage();
 //          } catch (NotYetAvailableException e) {
 //            e.printStackTrace();
 //          }
-//          byte[] nv21;
-//          // Get the three planes.
-//          ByteBuffer yBuffer = image.getPlanes()[0].getBuffer();
-//          ByteBuffer uBuffer = image.getPlanes()[1].getBuffer();
-//          ByteBuffer vBuffer = image.getPlanes()[2].getBuffer();
+//          ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//          byte[] bytes = new byte[buffer.remaining()];
+//          buffer.get(bytes);
+//          croppedBitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,null);
 //
-//          int ySize = yBuffer.remaining();
-//          int uSize = uBuffer.remaining();
-//          int vSize = vBuffer.remaining();
+//          //인식 시작
+//          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+//          cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
 //
-//          nv21 = new byte[ySize + uSize + vSize];
-//
-//          //U and V are swapped
-//          yBuffer.get(nv21, 0, ySize);
-//          vBuffer.get(nv21, ySize, vSize);
-//          uBuffer.get(nv21, ySize + vSize, uSize);
-//
-//          int width = image.getWidth();
-//          int height = image.getHeight();
-//
-//          ByteArrayOutputStream out = new ByteArrayOutputStream();
-//          YuvImage yuv = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
-//          yuv.compressToJpeg(new Rect(0, 0, width, height), 100, out);
-//          byte[] byteArray = out.toByteArray();
-//          Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-//          //this.sourceBitmap = Utils.getBitmapFromAsset(ArActivity.this, "kite.jpg");
-//          this.sourceBitmap = bitmap;
-//          this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
-//
-//          final List<Classifier.Recognition> results = detector.recognizeImage(cropBitmap);
-//          final List<Classifier.Recognition> mappedRecognitions =
-//                  new LinkedList<Classifier.Recognition>();
+//          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
 //
 //          for (final Classifier.Recognition result : results) {
 //            final RectF location = result.getLocation();
@@ -386,6 +408,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 //              mappedRecognitions.add(result);
 //            }
 //          }
+//          Toast.makeText(getApplicationContext(), mappedRecognitions.get(0).getDetectedClass(), Toast.LENGTH_SHORT).show();
+          ////////////////////////////////
 
           final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                   ArActivity.this, R.style.BottomSheetDialogTheme
@@ -415,7 +439,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
           bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
             Map<String, Object> tree = new HashMap<>();
-//							EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
+//            EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
             Long tsLong = System.currentTimeMillis() / 1000;
             String ts = (tsLong).toString();
             tree.put("treePerson",username);
@@ -429,10 +453,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             tree.put("treeNearLandMark", mbottomnearbylm.getText().toString());
             tree.put("treeMillis",ts);
             DocumentReference treearray =  fstore.collection("Team").document(teamname).collection("Tree").document(ts);
-            treearray.set(tree).addOnSuccessListener(new OnSuccessListener<Void>() {
-              @Override
-              public void onSuccess(Void aVoid) {
-              }
+            treearray.set(tree).addOnSuccessListener(aVoid -> {
             });
             bottomSheetDialog.dismiss();
           });
@@ -646,6 +667,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSSIONS, PERMISSION_REQUEST_CODE);
       }
     }
+
+    initBox();
   }
 
   @Override

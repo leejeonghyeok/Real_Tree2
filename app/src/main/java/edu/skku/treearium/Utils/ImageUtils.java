@@ -1,4 +1,4 @@
-package edu.skku.treearium.tensorflow;
+package edu.skku.treearium.Utils;
 
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
@@ -20,6 +20,8 @@ import android.graphics.Matrix;
 import android.os.Environment;
 import java.io.File;
 import java.io.FileOutputStream;
+
+import edu.skku.treearium.tensorflow.Logger;
 
 /** Utility class for manipulating images. */
 public class ImageUtils {

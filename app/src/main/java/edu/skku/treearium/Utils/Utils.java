@@ -1,4 +1,4 @@
-package edu.skku.treearium.tensorflow;
+package edu.skku.treearium.Utils;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
