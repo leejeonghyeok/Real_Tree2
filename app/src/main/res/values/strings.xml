@@ -28,4 +28,5 @@
     <string name="your_name">Full Name</string>
     <string name="user_name">USER NAME</string>
     <string name="user_email">user@user.com</string>
+    <string name="team_name">Team Name</string>
 </resources>
