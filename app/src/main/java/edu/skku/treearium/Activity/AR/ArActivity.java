@@ -23,8 +23,12 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.YuvImage;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -37,6 +41,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,6 +84,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.hluhovskyi.camerabutton.CameraButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -160,7 +166,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   //수종 인식 ///////////////////////
   private Classifier detector;
   private Bitmap croppedBitmap = null;
-  private Bitmap cropCopyBitmap = null;
   public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   // Which detection model to use: by default uses Tensorflow Object Detection API frozen
   // checkpoints.
@@ -185,13 +190,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
-  private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
-  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+  private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
+  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/name.txt";
 
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
-  private static final boolean MAINTAIN_ASPECT = false;
-  private Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-  private static final boolean SAVE_PREVIEW_BITMAP = false;
   ///////////////////////////////
 
   private String teamname, username;
@@ -312,23 +314,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     installRequested = false;
 
-//    LocationManager nManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//    if (ActivityCompat.checkSelfPermission(
-//            ArActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//            ArActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-//    }
-//    else {
-//      Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//      if (locationGPS != null) {
-//        double lat = locationGPS.getLatitude();
-//        double longi = locationGPS.getLongitude();
-//        location = new GeoPoint(lat, longi);
-//      } else {
-//        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
-//      }
-//    }
     LocationManager nManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     if (ActivityCompat.checkSelfPermission(
@@ -373,6 +358,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     recBtn.setOnClickListener(v -> {
+
       if (isPlaneFound) {
         treeHeight = curHeight;
         isMeasuringHeightDone = true;
@@ -380,35 +366,24 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
-          // 수종 인식 ////////////////////////
-          // frame to bitmap
-//          Image image = null;
-//          try {
-//            image = frame.acquireCameraImage();
-//          } catch (NotYetAvailableException e) {
-//            e.printStackTrace();
-//          }
-//          ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-//          byte[] bytes = new byte[buffer.remaining()];
-//          buffer.get(bytes);
-//          croppedBitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,null);
-//
-//          //인식 시작
-//          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-//          cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-//
-//          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
-//
-//          for (final Classifier.Recognition result : results) {
-//            final RectF location = result.getLocation();
-//            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-//
-//              //cropToFrameTransform.mapRect(location);
-//              result.setLocation(location);
-//              mappedRecognitions.add(result);
-//            }
-//          }
-//          Toast.makeText(getApplicationContext(), mappedRecognitions.get(0).getDetectedClass(), Toast.LENGTH_SHORT).show();
+          // GLSurfaceView -> Bitmap
+          croppedBitmap = Bitmap.createBitmap(TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE, Bitmap.Config.ARGB_8888);
+
+          //인식 시작
+          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
+
+          for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+
+              result.setLocation(location);
+              mappedRecognitions.add(result);
+            }
+          }
+          if(mappedRecognitions.size() > 0) {
+            Toast.makeText(getApplicationContext(), mappedRecognitions.get(0).getDetectedClass(), Toast.LENGTH_SHORT).show();
+          }
           ////////////////////////////////
 
           final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
