@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +29,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText mSearchField;
     private ImageButton mSearchBtn;
     private RecyclerView mRecyclerView;
+    private EditText mMemoField;
     RecyclerView.LayoutManager layoutManager;
     TreesAdapter adapter;
 
@@ -37,8 +42,8 @@ public class SearchActivity extends AppCompatActivity {
         mSearchField = (EditText) findViewById(R.id.search_field);
         mSearchBtn = (ImageButton) findViewById(R.id.search_btn);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mMemoField = (EditText) findViewById(R.id.name);
         List<Trees> allTrees = TreesContent.getTrees();
-
 
 
         mRecyclerView.setHasFixedSize(true);

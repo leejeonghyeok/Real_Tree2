@@ -674,7 +674,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     }
 
-    initBox();
+    //initBox();
   }
 
   @Override
