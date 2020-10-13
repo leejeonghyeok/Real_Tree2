@@ -10,7 +10,7 @@ public class Trees {
 
     }
 
-    public Trees(String treeName, String treeSpecies, String time, String treePerson, String treeNearLandMark, String treeDbh, String treeHeight, String treeMillis, GeoPoint treeLocation) {
+    public Trees(String treeName, String treeSpecies, String time, String treePerson, String treeNearLandMark, String treeDbh, String treeHeight,  GeoPoint treeLocation) {
         this.treeName = treeName;
         this.treeSpecies = treeSpecies;
         this.time = time;

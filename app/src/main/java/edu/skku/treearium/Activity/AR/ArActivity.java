@@ -434,7 +434,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           mbottomdbh.setText(valueOf(ArActivity.this.cylinderVars.getDbh() * 200));
 
           EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
-          String edit4Text = String.format("%.2f m", treeHeight);
+          String edit4Text = String.format("%.2f", treeHeight);//"%.2f m" -> "%.2f"
           edit4.setText(edit4Text);
           EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
           edit1.setText(teamname);

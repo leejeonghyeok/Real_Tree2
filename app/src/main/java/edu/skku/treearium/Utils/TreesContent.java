@@ -25,15 +25,16 @@ import java.util.Map;
 
 import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.Activity.Search.Trees;
+import edu.skku.treearium.Activity.Search.TreesData;
 import edu.skku.treearium.R;
 
 
 public class TreesContent {
 
-    public static ArrayList<Trees> getTrees()
+    public static TreesData getTrees()
     {
 
-        ArrayList<Trees> trees = new ArrayList<>();
+        List<Trees> tList = new ArrayList<>();
 
         //firebase
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -135,7 +136,7 @@ public class TreesContent {
                                         } else if (key.equals("treePerson")) {
                                             model.setTreePerson((String) object.getData().get(key));
                                         }
-                                    }trees.add(model);
+                                    }tList.add(model);
 
                                 }
 
@@ -157,7 +158,7 @@ public class TreesContent {
             }
         });
 
-        return trees;
+        return new TreesData(tList);
     }
 
     public static void updateFirebase(String memo, String treeID){
