@@ -6,6 +6,8 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import edu.skku.treearium.Utils.TreesContent;
 
 import edu.skku.treearium.R;
 
@@ -41,11 +44,16 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
     public void onBindViewHolder(@NonNull TreesHolder holder, int position) {
         holder.mTreeName.setText(trees.get(position).getTreeName());
         holder.mTreeDBH.setText(trees.get(position).getTreeDbh() + " cm");
-        holder.mTreeHeight.setText(trees.get(position).getTreeHeight() + " m");
+        holder.mTreeHeight.setText(trees.get(position).getTreeHeight());
         holder.mTreeSpecies.setText(trees.get(position).getTreeSpecies());
         holder.mTreeLocation.setText(String.format("%.4f",trees.get(position).getTreeLocation().getLatitude())
                 + "     "
                 + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
+        holder.mLandmark.setText(trees.get(position).getTreeNearLandMark());
+        holder.mPerson.setText(trees.get(position).getTreePerson());
+
+
+
         //time
         SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm");
         String format_time1 = format1.format (1000*(Long.parseLong(trees.get(position).getTime())));
@@ -60,10 +68,21 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
                     TransitionManager.beginDelayedTransition(holder.cardView, new AutoTransition());
                     holder.expandableView.setVisibility(View.VISIBLE);
                     holder.arrowBtn.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
+
                 } else {
                     holder.expandableView.setVisibility(View.GONE);
                     holder.arrowBtn.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
+                    TreesContent.updateFirebase(holder.mTreeName.getText().toString(), trees.get(position).getTime());
                 }
+            }
+        });
+
+        holder.updatebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(trees.get(position).getTime());
+                TreesContent.updateFirebase(holder.mTreeName.getText().toString(), trees.get(position).getTime());
+
             }
         });
 
@@ -84,10 +103,12 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
 
     public class TreesHolder extends RecyclerView.ViewHolder {
 
-        TextView mTreeName, mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime;
+        TextView mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime, mPerson, mLandmark;
+        EditText mTreeName;
         RelativeLayout expandableView;
         ImageView arrowBtn;
         CardView cardView;
+        Button updatebutton;
 
 
         public TreesHolder(@NonNull View itemView) {
@@ -99,9 +120,12 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             mTreeSpecies  = itemView.findViewById(R.id.species);
             mTreeLocation  = itemView.findViewById(R.id.location);
             mTime = itemView.findViewById(R.id.timeTree);
+            mPerson = itemView.findViewById(R.id.person);
+            mLandmark = itemView.findViewById(R.id.landmark);
             expandableView = itemView.findViewById(R.id.expandableView);
             arrowBtn = itemView.findViewById(R.id.arrowBtn);
             cardView = itemView.findViewById(R.id.cardView);
+            updatebutton = itemView.findViewById(R.id.updatebutton);
         }
     }
 

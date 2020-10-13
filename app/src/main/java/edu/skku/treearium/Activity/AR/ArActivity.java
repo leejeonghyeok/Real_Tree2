@@ -34,6 +34,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Image;
 import android.opengl.GLES20;
+import android.opengl.GLException;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Build;
@@ -46,6 +47,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -85,17 +87,24 @@ import com.google.firebase.firestore.GeoPoint;
 import com.hluhovskyi.camerabutton.CameraButton;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.skku.treearium.Activity.MainActivity;
@@ -121,6 +130,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
+import static java.lang.Thread.sleep;
 
 public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
 
@@ -139,6 +149,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private PointCloudRenderer pointCloudRenderer = new PointCloudRenderer();
   private final ObjectRenderer virtualObject = new ObjectRenderer();
 
+  private ImageView test;
   private View arLayout;
   private Session session;
   private Thread httpTh;
@@ -163,7 +174,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
 
-  //수종 인식 ///////////////////////
+  //수종 인식: 변수 선언
+  private boolean treeRecog = false;
+  private boolean surfToBitmap = false;
+  private String detectedTree = "";
   private Classifier detector;
   private Bitmap croppedBitmap = null;
   public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -172,7 +186,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private enum DetectorMode {
     TF_OD_API;
   }
-
   private void initBox() {
     try {
       detector =
@@ -187,7 +200,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       finish();
     }
   }
-
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
@@ -264,6 +276,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
 
+    test = findViewById(R.id.test);
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
     exit = (Button) findViewById(R.id.delete);
@@ -363,13 +376,18 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         treeHeight = curHeight;
         isMeasuringHeightDone = true;
 
-        if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
-          Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
-
-          // GLSurfaceView -> Bitmap
-          croppedBitmap = Bitmap.createBitmap(TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE, Bitmap.Config.ARGB_8888);
-
-          //인식 시작
+        // 수종 인식: GLSurfaceView to Bitmap
+        surfToBitmap = true;
+        //test.setImageBitmap(croppedBitmap); // 디버깅용
+        // 인식 시작
+        (new Thread(() -> {
+          if(treeRecog == false) {
+            try {
+              Thread.sleep(500);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
           final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
           final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
 
@@ -382,9 +400,18 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             }
           }
           if(mappedRecognitions.size() > 0) {
-            Toast.makeText(getApplicationContext(), mappedRecognitions.get(0).getDetectedClass(), Toast.LENGTH_SHORT).show();
+            Log.d("treeRecognization", "success");
+            Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
+            detectedTree = mappedRecognitions.get(0).getTitle();
+          }else{
+            Log.d("treeRecognization", "fail");
           }
-          ////////////////////////////////
+          treeRecog = false;
+        })).start();
+        ////////////////////////////////
+
+        if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
+          Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
 
           final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                   ArActivity.this, R.style.BottomSheetDialogTheme
@@ -414,14 +441,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
           bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
             Map<String, Object> tree = new HashMap<>();
-//            EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
             Long tsLong = System.currentTimeMillis() / 1000;
             String ts = (tsLong).toString();
             tree.put("treePerson",username);
             tree.put("treeName", edit1.getText().toString());
             tree.put("treeSpecies", dropdown.getSelectedItem().toString());
-//            if(mappedRecognitions.get(0).getDetectedClass() != -1)
-//              tree.put("treeSpecies", "Ginkgo");
             tree.put("treeDBH", mbottomdbh.getText().toString());
             tree.put("treeHeight", edit4.getText().toString());
             tree.put("treeLocation", locationA);
@@ -643,7 +667,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     }
 
-    initBox();
+    //initBox();
   }
 
   @Override
@@ -827,7 +851,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
       // Visualize tracked points.
       // Use try-with-resources to automatically release the point cloud.
-
       if (isPlaneFound) {
 //				float[] tmp = new float[]{
 //						plane.ll[0], plane.ll[1], plane.ll[2], 1.0f,
@@ -898,6 +921,45 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     } catch (Throwable t) {
       // Avoid crashing the application due to unhandled exceptions.
       Log.e(TAG, "Exception on the OpenGL thread", t);
+    }
+
+    // 수종 인식: GLSurfaceView to croppedBitmap
+    if(surfToBitmap) {
+      int width = surfaceView.getWidth();
+      int height = surfaceView.getHeight();
+      int screenshotSize = width * height;
+      ByteBuffer bb = ByteBuffer.allocateDirect(screenshotSize * 4);
+      bb.order(ByteOrder.nativeOrder());
+      gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA,
+              GL10.GL_UNSIGNED_BYTE, bb);
+      int pixelsBuffer[] = new int[screenshotSize];
+      bb.asIntBuffer().get(pixelsBuffer);
+      bb = null;
+      croppedBitmap = Bitmap.createBitmap(width, height,
+              Bitmap.Config.RGB_565);
+      croppedBitmap.setPixels(pixelsBuffer, screenshotSize - width, -width, 0,
+              0, width, height);
+      pixelsBuffer = null;
+
+      short sBuffer[] = new short[screenshotSize];
+      ShortBuffer sb = ShortBuffer.wrap(sBuffer);
+      croppedBitmap.copyPixelsToBuffer(sb);
+
+      // Making created bitmap (from OpenGL points) compatible with
+      // Android bitmap
+      for (int i = 0; i < screenshotSize; ++i) {
+        short v = sBuffer[i];
+        sBuffer[i] = (short) (((v & 0x1f) << 11) | (v & 0x7e0) | ((v & 0xf800) >> 11));
+      }
+      sb.rewind();
+      croppedBitmap.copyPixelsFromBuffer(sb);
+
+      // resize
+      croppedBitmap = Bitmap.createScaledBitmap(croppedBitmap,
+              TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE, true);
+
+      surfToBitmap = false;
+      treeRecog = true;
     }
   }
 

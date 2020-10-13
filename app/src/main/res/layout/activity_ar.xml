@@ -31,15 +31,28 @@
   <com.hluhovskyi.camerabutton.CameraButton
       android:id="@+id/recBtn"
       android:layout_width="@dimen/cb_layout_width_default"
-      android:layout_height="@dimen/cb_layout_height_default"
+      android:layout_height="0dp"
+      android:layout_marginBottom="53dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.498"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/test"
       app:layout_constraintVertical_bias="0.906" />
 
+  <ImageView
+      android:id="@+id/test"
+      android:layout_width="300dp"
+      android:layout_height="300dp"
+      android:layout_marginStart="44dp"
+      android:layout_marginBottom="382dp"
+      app:layout_constraintBottom_toTopOf="@+id/recBtn"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:srcCompat="@tools:sample/avatars" />
+
   <LinearLayout
+      android:id="@+id/linearLayout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginLeft="10dp"
@@ -50,6 +63,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent">
+
     <Button
         android:id="@+id/delete"
         android:layout_width="24dp"
@@ -58,12 +72,12 @@
         android:layout_marginTop="15dp"
         android:background="#00000000"
         android:foreground="@drawable/ic_baseline_close_24" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:gravity="right"
-        >
+        android:orientation="horizontal">
 
       <Button
           android:id="@+id/resetBtn"
@@ -73,14 +87,14 @@
           android:layout_marginRight="24dp"
           android:background="#00000000"
           android:foreground="@drawable/ic_sharp_sync_24"
-          android:foregroundTint="@color/colorWhite"
-          />
+          android:foregroundTint="@color/colorWhite" />
+
       <Button
           android:id="@+id/popup"
           android:layout_width="24dp"
           android:layout_height="24dp"
-          android:layout_marginRight="10dp"
           android:layout_marginTop="15dp"
+          android:layout_marginRight="10dp"
           android:background="#00000000"
           android:foreground="@drawable/ic_baseline_info_24" />
 
