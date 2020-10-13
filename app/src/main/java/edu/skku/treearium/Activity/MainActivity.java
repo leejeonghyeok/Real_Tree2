@@ -125,8 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        //search
-        mSearchBtn = (ImageButton) findViewById(R.id.search_go_btn);
+        mSearchBtn= (ImageButton) findViewById(R.id.search_go_btn);
         mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public static void getgeo(String userid)
     {
-
+//.document("CurvSurf").collection("Tree")
         System.out.print("아이디 = " + userid);//성공
         fstore.collection("tree").document(userid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

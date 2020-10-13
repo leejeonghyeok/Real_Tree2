@@ -37,4 +37,12 @@
         <item name="behavior_peekHeight">200dp</item>
     </style>
 
+    <style name="BottomSheetDialogTheme2" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+    <style name="BottomSheetStyle2" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="behavior_peekHeight">200dp</item>
+    </style>
+
 </resources>

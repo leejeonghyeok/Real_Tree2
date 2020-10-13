@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <item android:state_enabled="false">
-        <shape>
-            <solid android:color="@color/colorBlack">
-            </solid>
-        </shape>
-    </item>
-    <item android:state_enabled="true">
-        <shape>
-            <solid android:color="#ff0000">
-            </solid>
-        </shape>
-    </item>
+    <item android:state_pressed="false"
+        android:drawable="@drawable/humanicon"/>
+    <item android:state_pressed="true"
+        android:background="@drawable/humanicon2"
+         />
 </selector>
