@@ -177,6 +177,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   //수종 인식: 변수 선언
   private boolean treeRecog = false;
   private boolean surfToBitmap = false;
+  private String detectedTree = "";
   private Classifier detector;
   private Bitmap croppedBitmap = null;
   public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -371,52 +372,46 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     recBtn.setOnClickListener(v -> {
 
-      // 수종 인식: GLSurfaceView to Bitmap
-      surfToBitmap = true;
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      test.setImageBitmap(croppedBitmap); // 디버깅용
-      // 인식 시작
-      (new Thread(() -> {
-        if(treeRecog == false) {
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
-        final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-        final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
-
-        for (final Classifier.Recognition result : results) {
-          final RectF location = result.getLocation();
-          if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-
-            result.setLocation(location);
-            mappedRecognitions.add(result);
-          }
-        }
-        if(mappedRecognitions.size() > 0) {
-          Log.d("treeRecognization", "success");
-          Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
-        }else{
-          Log.d("treeRecognization", "fail");
-        }
-        treeRecog = false;
-      })).start();
-      ////////////////////////////////
-
       if (isPlaneFound) {
         treeHeight = curHeight;
         isMeasuringHeightDone = true;
 
+        // 수종 인식: GLSurfaceView to Bitmap
+        surfToBitmap = true;
+        //test.setImageBitmap(croppedBitmap); // 디버깅용
+        // 인식 시작
+        (new Thread(() -> {
+          if(treeRecog == false) {
+            try {
+              Thread.sleep(500);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
+
+          for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+
+              result.setLocation(location);
+              mappedRecognitions.add(result);
+            }
+          }
+          if(mappedRecognitions.size() > 0) {
+            Log.d("treeRecognization", "success");
+            Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
+            detectedTree = mappedRecognitions.get(0).getTitle();
+          }else{
+            Log.d("treeRecognization", "fail");
+          }
+          treeRecog = false;
+        })).start();
+        ////////////////////////////////
+
         if (isMeasuringHeightDone && isFound && ArActivity.this.cylinderVars.getDbh() > 0.0f) {
           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
-
-//          // 수종 인식: 들어갈 자리
 
           final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                   ArActivity.this, R.style.BottomSheetDialogTheme
@@ -451,8 +446,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             tree.put("treePerson",username);
             tree.put("treeName", edit1.getText().toString());
             tree.put("treeSpecies", dropdown.getSelectedItem().toString());
-//            if(mappedRecognitions.get(0).getDetectedClass() != -1)
-//              tree.put("treeSpecies", "Ginkgo");
             tree.put("treeDBH", mbottomdbh.getText().toString());
             tree.put("treeHeight", edit4.getText().toString());
             tree.put("treeLocation", locationA);
