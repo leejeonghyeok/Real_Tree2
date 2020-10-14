@@ -464,7 +464,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 		setContentView(R.layout.activity_ar);
 		
 		
-		test = findViewById(R.id.test);
 		arLayout = findViewById(R.id.arLayout);
 		popup = (Button) findViewById(R.id.popup);
 		exit = (Button) findViewById(R.id.delete);

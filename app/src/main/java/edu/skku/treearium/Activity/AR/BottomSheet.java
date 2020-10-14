@@ -25,6 +25,7 @@ public class BottomSheet {
 		isFindingHeight
 	}
 	
+	/*================= Buttom Sheet Stuffs =================*/
 	private View view;
 	private Mode mode = null;
 	private EditText teamName;
@@ -36,6 +37,7 @@ public class BottomSheet {
 	private Button dbhMeasureButton;
 	private Button heightMeasureButton;
 	private Button confirmButton;
+	/*=======================================================*/
 	
 	
 	void setTeamName(String teamName) {

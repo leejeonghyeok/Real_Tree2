@@ -32,26 +32,43 @@
         android:id="@+id/recBtn"
         android:layout_width="@dimen/cb_layout_width_default"
         android:layout_height="@dimen/cb_layout_height_default"
-        android:layout_marginBottom="53dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/test"
         app:layout_constraintVertical_bias="0.906" />
 
-  <ImageView
-      android:id="@+id/test"
-      android:layout_width="300dp"
-      android:layout_height="300dp"
-      android:layout_marginStart="40dp"
-      android:layout_marginBottom="382dp"
-      app:layout_constraintBottom_toTopOf="@+id/recBtn"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      tools:srcCompat="@tools:sample/avatars" />
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-  <LinearLayout
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DBH" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="높이" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="수종" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
