@@ -1,5 +1,6 @@
 package edu.skku.treearium.Activity.AR;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.skku.treearium.Activity.Search.SearchActivity;
 import edu.skku.treearium.R;
 
 public class BottomSheet {
@@ -99,6 +101,8 @@ public class BottomSheet {
       treearray.set(tree).addOnSuccessListener(aVoid -> {
       });
       dialog.dismiss();
+
+      v1.getContext().startActivity(new Intent(v1.getContext(), SearchActivity.class));
     });
   }
 
