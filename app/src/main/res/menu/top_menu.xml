@@ -3,13 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Whatever"
-        android:id="@+id/Whatever"
-        android:icon="@drawable/ic_baseline_search_24"/>
+    <item android:title="Map"
+        android:id="@+id/fragment2_test_nav"
+        android:icon="@drawable/ic_baseline_map_24"/>
+    <item android:title="Statistics"
+        android:id="@+id/fragment3_nav"
+        android:icon="@drawable/ic_baseline_info_24"/>
     <item
-        android:id="@+id/hello"
+        android:id="@+id/History_nav"
         android:icon="@drawable/ic_baseline_menu_24"
-        android:title="Hello"/>
+        android:title="History"/>
+
 
     <item android:title="Settings">
         <menu >

@@ -44,7 +44,7 @@
             android:theme="@style/popupTheme"
             tools:ignore="Instantiatable" />
         <activity android:name=".Activity.Search.SearchActivity"
-            android:noHistory="true"/>
+            android:noHistory="true" />
         <activity
             android:name=".Activity.AR.ArActivity"
             android:configChanges="screenSize|orientation"

@@ -47,7 +47,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
                 + "     "
                 + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
         //time
-        SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm");
+        SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy년 MM월 dd일 HH시 mm분");
         String format_time1 = format1.format (1000*(Long.parseLong(trees.get(position).getTime())));
         holder.mTime.setText(format_time1);
 

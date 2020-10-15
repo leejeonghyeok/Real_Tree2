@@ -8,4 +8,14 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorDivider">#ECECEC</color>
     <color name="colorBlack">#000000</color>
+
+    <color name="filtersfab">#3f51b5</color>
+    <color name="filters_header">#303f9f</color>
+    <color name="filters_buttons">#008000</color>
+    <color name="filters_buttons_selected">#0f6a08</color>
+    <color name="filters_chips">#b3e5fc</color>
+
+    <color name="orange">#ff5722</color>
+    <color name="brown">#795548</color>
+
 </resources>

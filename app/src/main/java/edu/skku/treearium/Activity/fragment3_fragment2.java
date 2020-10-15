@@ -29,6 +29,7 @@ import edu.skku.treearium.R;
 import static edu.skku.treearium.Activity.MainActivity.datasize;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.namelist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.splist;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,10 +94,12 @@ public class fragment3_fragment2 extends Fragment {
         int a8=0;
         int a9=0;
         int a0=0;
-        System.out.print("이름들:"+splist);
-        for (int i = 0; i<datasize; i++)
+        //세중 splist -> tList
+        //System.out.print("이름들:"+splist);
+        for (int i = 0; i</*datasize*/tData.getAllTrees().size(); i++)
         {
-            String string=splist.get(i);
+            String string= tData.getAllTrees().get(i).getTreeSpecies();
+            //String string = splist.get(i);
             if(string.equals("은행"))
             {
                 a1=a1+1;
