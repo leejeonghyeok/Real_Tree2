@@ -65,7 +65,7 @@ public class BottomSheet {
     treeHeight = view.findViewById(R.id.bottomheight);
     treeType = view.findViewById(R.id.bottomspecies);
     String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
+    ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     treeType.setAdapter(adapter);
 

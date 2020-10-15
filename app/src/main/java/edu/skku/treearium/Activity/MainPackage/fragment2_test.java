@@ -1,75 +1,57 @@
 package edu.skku.treearium.Activity.MainPackage;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.ArrayMap;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
 import com.allattentionhere.fabulousfilter.AAH_FabulousFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.internal.IGoogleMapDelegate;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import edu.skku.treearium.Activity.MyMainFabFragment;
-import edu.skku.treearium.Activity.Search.MyFabFragment;
-import edu.skku.treearium.Activity.Search.Trees;
-import edu.skku.treearium.Activity.Search.TreesData;
-import edu.skku.treearium.R;
-import edu.skku.treearium.Utils.TreesContent;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import edu.skku.treearium.Activity.MyMainFabFragment;
+import edu.skku.treearium.Activity.Search.Trees;
+import edu.skku.treearium.Activity.Search.TreesData;
+import edu.skku.treearium.R;
+import edu.skku.treearium.Utils.TreesContent;
+
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
-import static edu.skku.treearium.Activity.MainActivity.datasize;
-import static edu.skku.treearium.Activity.MainActivity.finalUserId;
-import static edu.skku.treearium.Activity.MainActivity.fstore;
 //import static edu.skku.treearium.Activity.MainActivity.thesize;
 //import static edu.skku.treearium.Activity.MainActivity.geolist;
 
