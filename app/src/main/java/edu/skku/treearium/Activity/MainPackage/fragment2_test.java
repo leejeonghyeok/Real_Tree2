@@ -110,8 +110,6 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         }
     };
 
-
-
     //Button mybtn=(Button)findViewById(R.id.mybtn);
 
     private void startLocationService() {
@@ -201,6 +199,108 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
                 );
                 View bottomSheetView= LayoutInflater.from(getContext()).inflate(
                         R.layout.layout_bottom_map_show,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer));
+
+
+
+                TextView mapbottomname = bottomSheetView.findViewById(R.id.mapbottomname);//지역
+                TextView mapbottomlocation = bottomSheetView.findViewById(R.id.mapbottomlocation);//위도경도
+                TextView mapbottomtreenum = bottomSheetView.findViewById(R.id.mapbottomtreenum);//몇그루
+                TextView mapbottomtreespec1 = bottomSheetView.findViewById(R.id.mapbottomtreespec1);//은행
+                TextView mapbottomtreespec2 = bottomSheetView.findViewById(R.id.mapbottomtreespec2);//벚꽃
+                TextView mapbottomtreespec3 = bottomSheetView.findViewById(R.id.mapbottomtreespec3);//기타
+                mapbottomtreenum.setText(tList.size()+"그루");
+                if(tList.size()!=0) {
+
+                    int k = 0;
+                    for (int i = 0; i < tList.size(); i++) {
+                        if(tList.get(i).getTreeSpecies().equals("은행"))
+                            k++;
+                    }
+                    float per = (float) k / (float) tList.size();
+                    per = per * 100;
+                    mapbottomtreespec1.setText((int)per + "%");
+
+
+                    k = 0;
+                    for (int i = 0; i < tList.size(); i++) {
+                        if(tList.get(i).getTreeSpecies().equals("벚꽃"))
+                            k++;
+                    }
+                    per = (float) k / (float) tList.size();
+                    per = per * 100;
+                    mapbottomtreespec2.setText((int)per + "%");
+
+
+                    k = 0;
+                    for (int i = 0; i < tList.size(); i++) {
+                        if(tList.get(i).getTreeSpecies().equals("기타"))
+                            k++;
+                    }
+                    per = (float) k / (float) tList.size();
+                    per = per * 100;
+                    mapbottomtreespec3.setText((int)per + "%");
+                } else {
+                    mapbottomtreespec1.setText("");
+                    mapbottomtreespec2.setText("");
+                    mapbottomtreespec3.setText("");
+                }
+
+                if (tList.size()!=0){
+                    int s = 0;
+                    int m = 0;
+                    int l = 0;
+                    for (int i=0; i<tList.size(); i++)
+                    {
+                        if (Double.parseDouble(tList.get(i).getTreeDbh()) < 16)
+                        {
+                            s++;
+                        } else if (Double.parseDouble(tList.get(i).getTreeDbh()) < 29 && Double.parseDouble(tList.get(i).getTreeDbh()) > 16)
+                        {
+                            m++;
+                        } else {
+                            l++;
+                        }
+                    }
+                    TextView mapbottomtreedbh1 = bottomSheetView.findViewById(R.id.mapbottomtreedbh1);//소경목 6~16
+                    TextView mapbottomtreedbh2 = bottomSheetView.findViewById(R.id.mapbottomtreedbh2);//중경목 16~29
+                    TextView mapbottomtreedbh3 = bottomSheetView.findViewById(R.id.mapbottomtreedbh3);//대경목 29~
+
+                    int tmp = (int)((float)s / (float)tList.size())*100;
+                    mapbottomtreedbh1.setText(tmp + "%");
+                    tmp = (int)((float)m / (float)tList.size())*100;
+                    mapbottomtreedbh2.setText(tmp + "%");
+                    tmp = (int)((float)l / (float)tList.size())*100;
+                    mapbottomtreedbh3.setText(tmp + "%");
+                }
+
+
+                if (tList.size()!=0){
+                    int sh = 0;
+                    int mh = 0;
+                    int lh = 0;
+                    for (int i=0; i<tList.size(); i++)
+                    {
+                        if (Double.parseDouble(tList.get(i).getTreeHeight()) < 5)
+                        {
+                            sh++;
+                        } else if (Double.parseDouble(tList.get(i).getTreeHeight()) < 10 && Double.parseDouble(tList.get(i).getTreeHeight()) > 5)
+                        {
+                            mh++;
+                        } else {
+                            lh++;
+                        }
+                    }
+                    TextView mapbottomtreeh1 = bottomSheetView.findViewById(R.id.mapbottomtreeh1);//10m 이상
+                    TextView mapbottomtreeh2 = bottomSheetView.findViewById(R.id.mapbottomtreeh2);//5m 이상
+                    TextView mapbottomtreeh3 = bottomSheetView.findViewById(R.id.mapbottomtreeh3);//~5m
+
+                    int tmp = (int)((float)lh / (float)tList.size())*100;
+                    mapbottomtreeh1.setText(tmp + "%");
+                    tmp = (int)((float)mh / (float)tList.size())*100;
+                    mapbottomtreeh2.setText(tmp + "%");
+                    tmp = (int)((float)sh / (float)tList.size())*100;
+                    mapbottomtreeh3.setText(tmp + "%");
+                }
 
 
                 bottomSheetDialog.setContentView(bottomSheetView);
