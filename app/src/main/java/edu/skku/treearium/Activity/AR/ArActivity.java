@@ -676,7 +676,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         runOnUiThread(() -> {
           Snackbar.make(arLayout, "Height Found", Snackbar.LENGTH_LONG).show();
           landmark = "일월저수지";
-          height = String.format("%.2f m", treeHeight);
+          height = String.format("%.2f", treeHeight);
           statTexts.setText(buildTextView());
           toggle.check(R.id.typeButton);
         });

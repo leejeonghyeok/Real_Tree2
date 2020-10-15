@@ -26,6 +26,19 @@
         app:srcCompat="@drawable/target"
         />
 
+    <ImageButton
+        android:id="@+id/statisticalbtn"
+        android:layout_alignParentRight="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_below="@+id/filterBtnMap"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/statistical"
+        />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filterBtnMap"
         android:layout_marginTop="60dp"
