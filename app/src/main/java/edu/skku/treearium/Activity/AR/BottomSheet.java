@@ -1,6 +1,5 @@
 package edu.skku.treearium.Activity.AR;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,11 +19,6 @@ import java.util.Map;
 import edu.skku.treearium.R;
 
 public class BottomSheet {
-  enum Mode {
-    isFindingCylinder,
-    isFindingHeight
-  }
-
   /*================= Buttom Sheet Stuffs =================*/
   private View view;
   private Mode mode = Mode.isFindingCylinder;
@@ -45,14 +39,12 @@ public class BottomSheet {
     this.teamName.setText(teamName);
   }
 
-  public void setDbhSize(float dbh) {
-    @SuppressLint("DefaultLocale") String text = String.format("%f", dbh * 200);
-    dbhSize.setText(text);
+  public void setDbhSize(String dbh) {
+    dbhSize.setText(dbh);
   }
 
-  public void setTreeHeight(float height) {
-    String text = String.format("%.2f m", height);
-    treeHeight.setText(text);
+  public void setTreeHeight(String height) {
+    treeHeight.setText(height);
   }
 
   public void setTreeLandMark(String position) {
@@ -79,10 +71,7 @@ public class BottomSheet {
     treeType.setAdapter(adapter);
 
     dbhMeasureButton = view.findViewById(R.id.bottomdbhmeasure);
-    setDbhMeasureButton(activity);
-
     heightMeasureButton = view.findViewById(R.id.bottomheightmeasure);
-    setHeightMeasureButton(activity);
   }
 
   public void setConfirmButton(FirebaseFirestore fstore, GeoPoint locationA) {
@@ -111,28 +100,24 @@ public class BottomSheet {
     });
   }
 
-  private void setDbhMeasureButton(ArActivity activity) {
-    dbhMeasureButton.setOnClickListener(l -> {
-      this.mode = Mode.isFindingCylinder;
-      dialog.dismiss();
-      activity.resetArActivity(true);
-    });
-  }
-
-  private void setHeightMeasureButton(ArActivity activity) {
-    heightMeasureButton.setOnClickListener(l -> {
-      this.mode = Mode.isFindingHeight;
-      dialog.dismiss();
-      activity.resetArActivity(false);
-    });
-  }
+//  private void setDbhMeasureButton(ArActivity activity) {
+//    dbhMeasureButton.setOnClickListener(l -> {
+//      this.mode = Mode.isFindingCylinder;
+//      dialog.dismiss();
+//      activity.resetArActivity(true);
+//    });
+//  }
+//
+//  private void setHeightMeasureButton(ArActivity activity) {
+//    heightMeasureButton.setOnClickListener(l -> {
+//      this.mode = Mode.isFindingHeight;
+//      dialog.dismiss();
+//      activity.resetArActivity(false);
+//    });
+//  }
 
   public void show() {
     dialog.setContentView(view);
     dialog.show();
-  }
-
-  public Mode getMode() {
-    return mode;
   }
 }

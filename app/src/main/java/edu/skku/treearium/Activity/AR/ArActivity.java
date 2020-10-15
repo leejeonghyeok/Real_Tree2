@@ -50,6 +50,7 @@ import com.curvsurf.fsweb.RequestForm;
 import com.curvsurf.fsweb.ResponseForm;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.ArCoreApk;
@@ -132,6 +133,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private Button exit = null;
   private Button resetBtn = null;
   private CameraButton recBtn = null;
+  private BottomSheet bottomSheet = null;
   private TextView statTexts = null;
   private MaterialButtonToggleGroup toggle = null;
   /*************************************************************/
@@ -178,7 +180,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   /************************* bool 값 ***************************/
   boolean isPlaneFound;    /* findSurf 로 땅을 찾았음 */
-  boolean isProcessDone;   /* 모든게 끝나서 넘어갈 준비가 됨 */
+  //  boolean isProcessDone;   /* 모든게 끝나서 넘어갈 준비가 됨 */
   boolean isCylinderDone = false;
   boolean isHeightDone = false;
   Mode currentMode = Mode.isFindingCylinder;
@@ -240,7 +242,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private final float[] anchorMatrix = new float[16];
 
   View.OnTouchListener surfaceViewTouchListener = new View.OnTouchListener() {
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     @Override
     public boolean onTouch(View v, MotionEvent event) {
       {
@@ -278,7 +280,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             switch (currentMode) {
               case isFindingCylinder:
                 httpTh = new Thread(() -> {
-                  isProcessDone = false;
+                  isCylinderDone = false;
                   RequestForm rf = new RequestForm();
 
                   rf.setPointBufferDescription(targetPoints.capacity() / 4, 16, 0); //pointcount, pointstride, pointoffset
@@ -339,25 +341,29 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                       Log.d("Cylinder", valueOf(cylinderVars.getDbh()));
 
                       if (cylinderVars.getDbh() > 0.0f) {
-                        isProcessDone = true;
+                        isCylinderDone = true;
                       }
 
-                      if (isProcessDone) {
-                        Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
-                        runOnUiThread(new Runnable() {
-                          @SuppressLint("DefaultLocale")
-                          @Override
-                          public void run() {
-                            landmark = "일월저수지";
-                            dbh = String.format("%.2f", cylinderVars.getDbh() * 200);
-//                            bottom.setTeamName(teamname);
-//                            bottom.setConfirmButton(fstore, locationA);
-//                            bottom.show();
-                            statTexts.setText(buildTextView());
-                            toggle.check(R.id.heightButton);
-                            resetArActivity(false);
-                          }
+                      if (isCylinderDone) {
+                        runOnUiThread(() -> {
+                          Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
+                          landmark = "일월저수지";
+                          dbh = String.format("%.2f", cylinderVars.getDbh() * 200);
+                          statTexts.setText(buildTextView());
+                          toggle.check(R.id.heightButton);
+                          resetArActivity(false);
                         });
+
+                        if (isHeightDone) {
+                          runOnUiThread(() -> {
+                            bottomSheet.setTeamName(teamname);
+                            bottomSheet.setDbhSize(dbh);
+                            bottomSheet.setTreeHeight(height);
+                            bottomSheet.setTreeLandMark(landmark);
+                            bottomSheet.setConfirmButton(fstore, locationA);
+                            bottomSheet.show();
+                          });
+                        }
                       }
 
                       drawSeedState = false;
@@ -485,8 +491,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   @SuppressLint("ClickableViewAccessibility")
   public void resetArActivity(boolean needToDeleteCylinder) {
     isPlaneFound = false;
-    isProcessDone = false;
-    if (needToDeleteCylinder) cylinderVars = null;
+    isHeightDone = false;
+    if (needToDeleteCylinder) {
+      isCylinderDone = false;
+      cylinderVars = null;
+    }
     collector = null;
     surfaceView.setOnTouchListener(surfaceViewTouchListener);
   }
@@ -497,7 +506,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
-
 
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
@@ -618,6 +626,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       }
     });
 
+    bottomSheet = new BottomSheet();
+    bottomSheet.init(ArActivity.this, new BottomSheetDialog(
+            ArActivity.this, R.style.BottomSheetDialogTheme
+    ));
+
     recBtn.setOnClickListener(v -> {
       // 수종 인식: GLSurfaceView to Bitmap
       surfToBitmap = true;
@@ -642,7 +655,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         for (final Classifier.Recognition result : results) {
           final RectF location = result.getLocation();
           if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-
             result.setLocation(location);
             mappedRecognitions.add(result);
           }
@@ -656,20 +668,33 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         treeRecog = false;
       })).start();
 
+      ////////////////////////////////      // 이건 그냥 내 폰에서 distance 왜인지 안먹혀서 주석해두겟슴 ,,
       double distance = 0.1f;
       if (isPlaneFound) {
-
         treeHeight = curHeight;
-        isProcessDone = true;
-        Snackbar.make(arLayout, "Height Found", Snackbar.LENGTH_LONG).show();
-//						distance = haversine(locationA.getLatitude(), locationA.getLongitude(), 37.28805556, 126.97250000);
-        if (distance < 1) {
+        isHeightDone = true;
+
+        runOnUiThread(() -> {
+          Snackbar.make(arLayout, "Height Found", Snackbar.LENGTH_LONG).show();
           landmark = "일월저수지";
+          height = String.format("%.2f m", treeHeight);
+          statTexts.setText(buildTextView());
+          toggle.check(R.id.typeButton);
+        });
+
+        if (isHeightDone && isCylinderDone) {
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              bottomSheet.setTeamName(teamname);
+              bottomSheet.setDbhSize(dbh);
+              bottomSheet.setTreeHeight(height);
+              bottomSheet.setTreeLandMark(landmark);
+              bottomSheet.setConfirmButton(fstore, locationA);
+              bottomSheet.show();
+            }
+          });
         }
-        height = String.format("%.2f m", treeHeight);
-//        bottom.setConfirmButton(fstore, locationA);
-        statTexts.setText(buildTextView());
-        toggle.check(R.id.typeButton);
 
       } else {
         isRecording = !isRecording;
@@ -912,9 +937,50 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
 
-      switch (currentMode) {
-        case isFindingCylinder:
-          if (isProcessDone) {
+      if (currentMode == Mode.isFindingCylinder) {
+        if (isCylinderDone && cylinderVars != null) {
+          GLES20.glEnable(GLES20.GL_CULL_FACE);
+          //Matrix.setIdentityM(modelMatrix, 0);
+          Matrix.rotateM(modelMatrix, 0, angle, 0, 1, 0);
+          //angle++;
+          virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
+          virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
+
+          GLES20.glDisable(GLES20.GL_CULL_FACE);
+        }
+      }
+
+      if (currentMode == Mode.isFindingHeight) {
+        if (isPlaneFound) {
+          if (treeBottom != null && !isHeightDone) {
+            float width = this.surfaceView.getMeasuredWidth();
+            float height = this.surfaceView.getMeasuredHeight();
+            float[] ray = screenPointToWorldRay(width / 2.0f, height / 2.0f, frame);
+            float[] rayVec = new float[]{ray[3], ray[4], ray[5]};
+            float[] bigPlaneVec = VectorCal.outer(rayVec, VectorCal.outer(plane.normal, rayVec));
+            float u = ((bigPlaneVec[0] * (ray[0] - treeBottom[0])) + (bigPlaneVec[1] * (ray[1] - treeBottom[1])) + (bigPlaneVec[2] * (ray[2] - treeBottom[2])))
+                    /
+                    ((bigPlaneVec[0] * plane.normal[0]) + (bigPlaneVec[1] * plane.normal[1]) + (bigPlaneVec[2] * plane.normal[2]));
+            curHeight = (float) java.lang.Math.sqrt(
+                    u * plane.normal[0] * u * plane.normal[0]
+                            + u * plane.normal[1] * u * plane.normal[1]
+                            + u * plane.normal[2] * u * plane.normal[2]
+            );
+
+            treeTanTop = new float[]{
+                    treeBottom[0] + u * plane.normal[0], treeBottom[1] + u * plane.normal[1], treeBottom[2] + u * plane.normal[2], 1.0f
+            };
+          }
+
+          float[] tmp = new float[]{
+                  treeBottom[0], treeBottom[1], treeBottom[2], 1.0f,
+                  treeTanTop[0], treeTanTop[1], treeTanTop[2], 1.0f
+          };
+          renderer.pointDraw(GLSupport.makeFloatBuffer(treeBottom), vpMatrix, Color.valueOf(Color.CYAN), 30.0f);
+          renderer.lineDraw(GLSupport.makeFloatBuffer(tmp), vpMatrix, Color.valueOf(Color.RED), 30.0f);
+        }
+        if (isCylinderDone) {
+          if (cylinderVars != null) {
             GLES20.glEnable(GLES20.GL_CULL_FACE);
             //Matrix.setIdentityM(modelMatrix, 0);
             Matrix.rotateM(modelMatrix, 0, angle, 0, 1, 0);
@@ -924,38 +990,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
             GLES20.glDisable(GLES20.GL_CULL_FACE);
           }
-          break;
-
-        case isFindingHeight:
-          if (isPlaneFound) {
-            if (!isProcessDone) {
-              float width = this.surfaceView.getMeasuredWidth();
-              float height = this.surfaceView.getMeasuredHeight();
-              float[] ray = screenPointToWorldRay(width / 2.0f, height / 2.0f, frame);
-              float[] rayVec = new float[]{ray[3], ray[4], ray[5]};
-              float[] bigPlaneVec = VectorCal.outer(rayVec, VectorCal.outer(plane.normal, rayVec));
-              float u = ((bigPlaneVec[0] * (ray[0] - treeBottom[0])) + (bigPlaneVec[1] * (ray[1] - treeBottom[1])) + (bigPlaneVec[2] * (ray[2] - treeBottom[2])))
-                      /
-                      ((bigPlaneVec[0] * plane.normal[0]) + (bigPlaneVec[1] * plane.normal[1]) + (bigPlaneVec[2] * plane.normal[2]));
-              curHeight = (float) java.lang.Math.sqrt(
-                      u * plane.normal[0] * u * plane.normal[0]
-                              + u * plane.normal[1] * u * plane.normal[1]
-                              + u * plane.normal[2] * u * plane.normal[2]
-              );
-
-              treeTanTop = new float[]{
-                      treeBottom[0] + u * plane.normal[0], treeBottom[1] + u * plane.normal[1], treeBottom[2] + u * plane.normal[2], 1.0f
-              };
-            }
-
-            float[] tmp = new float[]{
-                    treeBottom[0], treeBottom[1], treeBottom[2], 1.0f,
-                    treeTanTop[0], treeTanTop[1], treeTanTop[2], 1.0f
-            };
-            renderer.pointDraw(GLSupport.makeFloatBuffer(treeBottom), vpMatrix, Color.valueOf(Color.CYAN), 30.0f);
-            renderer.lineDraw(GLSupport.makeFloatBuffer(tmp), vpMatrix, Color.valueOf(Color.RED), 30.0f);
-          }
-          break;
+        }
       }
 
     } catch (Throwable t) {
