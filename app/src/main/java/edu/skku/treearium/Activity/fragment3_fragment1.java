@@ -1,33 +1,27 @@
 package edu.skku.treearium.Activity;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.os.BatteryManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.firebase.database.core.utilities.Tree;
 
 import java.util.ArrayList;
 
-import edu.skku.treearium.Activity.MainPackage.data.model.TreeData;
 import edu.skku.treearium.R;
 
-import static edu.skku.treearium.Activity.MainActivity.datasize;
-//import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
-import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tList;
+
+//import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +76,6 @@ public class fragment3_fragment1 extends Fragment {
         int fi=0;
         int si=0;
         int se=0;
-        int ei=0;
 
         for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)
         {
@@ -91,35 +84,29 @@ public class fragment3_fragment1 extends Fragment {
 
             double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeDbh());
             
-            if(geti<5)
+            if(geti<6)
             {
                 fo=fo+1;
                 visitor.clear();
-                makech(fo,fi,si,se,ei);
+                makech(fo,fi,si,se);
             }
-            else if(geti>=5&&geti<6)
+            else if(geti>=6&&geti<16)
             {
                 fi=fi+1;
                 visitor.clear();
-                makech(fo,fi,si,se,ei);
+                makech(fo,fi,si,se);
             }
-            else if(geti>=6&&geti<7)
+            else if(geti>=16&&geti<29)
             {
                 si=si+1;
                 visitor.clear();
-                makech(fo,fi,si,se,ei);
+                makech(fo,fi,si,se);
             }
-            else if(geti>=7&&geti<8)
+            else if(geti>=29)
             {
                 se=se+1;
                 visitor.clear();
-                makech(fo,fi,si,se,ei);
-            }
-            else if(geti>=8)
-            {
-                ei=ei+1;
-                visitor.clear();
-                makech(fo,fi,si,se,ei);
+                makech(fo,fi,si,se);
             }
         }
 
@@ -135,13 +122,12 @@ public class fragment3_fragment1 extends Fragment {
         barChart.animateY(2000);
         return v;
     }
-    public void makech(int a,int b, int c, int d,int e)
+    public void makech(int a,int b, int c, int d)
     {
-        visitor.add(new BarEntry(4,a));
-        visitor.add(new BarEntry(5,b));
-        visitor.add(new BarEntry(6,c));
-        visitor.add(new BarEntry(7,d));
-        visitor.add(new BarEntry(8,e));
+        visitor.add(new BarEntry(1,a));
+        visitor.add(new BarEntry(2,b));
+        visitor.add(new BarEntry(3,c));
+        visitor.add(new BarEntry(4,d));
     }
 
 }

@@ -150,7 +150,6 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
     }
 
 
-
     class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
@@ -189,6 +188,27 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         public void onProviderDisabled(String provider) {
         }
     }
+
+    public void onstat(View view)
+    {
+        ImageButton imageButton2=(ImageButton)view.findViewById(R.id.statisticalbtn);
+        imageButton2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                v=view;
+                BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(
+                        getActivity(),R.style.BottomSheetDialogTheme
+                );
+                View bottomSheetView= LayoutInflater.from(getContext()).inflate(
+                        R.layout.layout_bottom_map_show,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer));
+
+
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+            }
+        });
+    }
+
     public boolean btnbool(View view,LatLng curPoint)
     {
         ImageButton imageButton=(ImageButton)view.findViewById(R.id.mybtn);
@@ -241,6 +261,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         markerOptions.draggable(false);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         currentMarker=map.addMarker(markerOptions);
+
 
         l=0;
         if(btnbool(finalview, curPoint))
@@ -295,6 +316,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
     }
 
 
+
     public void maketree()
     {
         System.out.println("들어가서 팅기나?");
@@ -333,7 +355,6 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
             }
 
         }
-
     }
 
     @Nullable
@@ -452,6 +473,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
             }
             //System.out.print("LIST : "+geolist);
             startLocationService();
+            onstat(view);
             //System.out.print("2LIST : "+geolist);
         }
     }
