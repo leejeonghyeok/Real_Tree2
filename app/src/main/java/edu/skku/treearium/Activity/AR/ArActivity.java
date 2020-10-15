@@ -148,6 +148,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   /************************* findSurf **************************/
   private Thread httpTh;
+  private Thread treeRec;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
   /*************************************************************/
@@ -166,7 +167,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   String landmark = "landmark";
   String height = "0.0";
   String dbh = "0.0";
-  String treeType = "treetype";
+  String treeType = "Ginkgo";
   /*************************************************************/
 
 
@@ -213,7 +214,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private enum DetectorMode {
     TF_OD_API;
   }
-
   private void initBox() {
     try {
       detector =
@@ -228,7 +228,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       finish();
     }
   }
-
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
@@ -379,7 +378,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 httpTh.start();
                 break;
 
-
               case isFindingHeight:
                 httpTh = new Thread(() -> {
                   RequestForm rf = new RequestForm();
@@ -453,9 +451,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             return false;
                           }
                         });
-
                       }
-
                     } else {
                       Log.d("PlaneFinder", "request fail");
                     }
@@ -640,42 +636,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     ));
 
     recBtn.setOnClickListener(v -> {
-      // 수종 인식: GLSurfaceView to Bitmap
-      surfToBitmap = true;
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-//			test.setImageBitmap(croppedBitmap); // 디버깅용
-      // 인식 시작
-      (new Thread(() -> {
-        if (treeRecog == false) {
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
-        final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-        final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
 
-        for (final Classifier.Recognition result : results) {
-          final RectF location = result.getLocation();
-          if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-            result.setLocation(location);
-            mappedRecognitions.add(result);
-          }
-        }
-        if (mappedRecognitions.size() > 0) {
-          Log.d("treeRecognization", "success");
-          Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
-        } else {
-          Log.d("treeRecognization", "fail");
-        }
-        treeRecog = false;
-      })).start();
-
+      // 이건 그냥 내 폰에서 distance 왜인지 안먹혀서 주석해두겟슴 ,,
       double distance = 0.1f;
       if (isPlaneFound) {
         treeHeight = curHeight;
@@ -689,8 +651,50 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           toggle.check(R.id.typeButton);
         });
 
+        // 수종 인식: GLSurfaceView to Bitmap
+        surfToBitmap = true;
+        // test.setImageBitmap(croppedBitmap); // 디버깅용
+
+        // 인식 시작
+        treeRec = new Thread(() -> {
+          if (surfToBitmap) {
+            try {
+              Thread.sleep(300);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
+
+          for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+              result.setLocation(location);
+              mappedRecognitions.add(result);
+            }
+          }
+          if (mappedRecognitions.size() > 0) {
+            Log.d("treeRecognization", "success");
+            Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
+            treeType = mappedRecognitions.get(0).getTitle();
+          } else {
+            Log.d("treeRecognization", "fail");
+          }
+
+          treeRecog = false;
+        });
+        treeRec.start();
+        ////////////////////////////////
+
         if (isHeightDone && isCylinderDone) {
+
           runOnUiThread(() -> {
+            try{
+              treeRec.join();
+            }catch(InterruptedException e){
+              e.printStackTrace();
+            }
             bottomSheet.setTeamName(teamname);
             bottomSheet.setDbhSize(dbh);
             bottomSheet.setTreeHeight(height);
