@@ -37,15 +37,13 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
     private RecyclerView mRecyclerView;
     private EditText mMemoField;
     RecyclerView.LayoutManager layoutManager;
+
     TreesAdapter adapter;
     TreesData tData;
     List<Trees> tList = new ArrayList<>();
     private ArrayMap<String, List<String>> applied_filters = new ArrayMap<>();
     FloatingActionButton filterBtn;
     MyFabFragment dialogFrag;
-    //List<Trees> allTrees = new ArrayList<>();
-
-
 
 
     @Override
@@ -59,9 +57,8 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         mMemoField = (EditText) findViewById(R.id.name);
 
 
-        //allTrees = TreesContent.getTrees().getAllTrees();
-        tList = TreesContent.getTrees().getAllTrees();
         tData = TreesContent.getTrees();
+        tList = tData.getAllTrees();
 
 
         mRecyclerView.setHasFixedSize(true);
@@ -133,7 +130,6 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
                 ArrayMap<String, List<String>> applied_filters = (ArrayMap<String, List<String>>) result;
                 if (applied_filters.size() != 0) {
                     List<Trees> filteredList = tData.getAllTrees();
-                    System.out.println(filteredList);
                     //iterate over arraymap
                     for (Map.Entry<String, List<String>> entry : applied_filters.entrySet()) {
                         Log.d("k9res", "entry.key: " + entry.getKey());
@@ -156,11 +152,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
                     tList.clear(); //비우고
                     tList.addAll(filteredList);// 필터해서
                     adapter.notifyDataSetChanged(); //나타내기
-                    System.out.println("필터 리스트 왜 안보이냐");
-                    for(int i=0; i<filteredList.size(); i++)
-                    {
-                        System.out.println(filteredList.get(i).getTreeDbh());
-                    }
+
 
                 } else {
                     tList.addAll(tData.getAllTrees()); //다 넣고

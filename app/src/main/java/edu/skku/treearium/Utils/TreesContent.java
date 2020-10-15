@@ -31,6 +31,8 @@ import edu.skku.treearium.R;
 
 public class TreesContent {
 
+
+
     public static TreesData getTrees()
     {
 
@@ -41,6 +43,7 @@ public class TreesContent {
         FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
         String userID = mFirebaseAuth.getCurrentUser().getUid();
 
+        //옛날꺼
         /*db.collection("tree").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

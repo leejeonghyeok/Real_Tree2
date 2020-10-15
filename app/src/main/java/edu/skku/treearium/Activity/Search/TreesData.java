@@ -56,6 +56,19 @@ public class TreesData {
         return tempList;
     }
 
+    public List<Trees> getLandMarkFilteredtrees(List<String> landmark, List<Trees> mList) {
+        List<Trees> tempList = new ArrayList<>();
+        for (Trees tree : mList) {
+            for (String s : landmark) {
+                if (tree.getTreeNearLandMark().equalsIgnoreCase(s)) {
+                    tempList.add(tree);
+                }
+            }
+
+        }
+        return tempList;
+    }
+
     public List<String> getUniqueDBHKeys() {
         List<String> dbhs = new ArrayList<>();
         for (Trees tree : tList) {
@@ -92,6 +105,19 @@ public class TreesData {
         }
         Collections.sort(species);
         return species;
+    }
+
+
+
+    public List<String> getUniqueLandmarkKeys() {
+        List<String> landmark = new ArrayList<>();
+        for (Trees tree : tList) {
+            if (!landmark.contains(tree.getTreeNearLandMark())) {
+                landmark.add(tree.getTreeNearLandMark());
+            }
+        }
+        Collections.sort(landmark);
+        return landmark;
     }
 
 

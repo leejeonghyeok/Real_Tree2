@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -29,11 +31,17 @@ import edu.skku.treearium.Activity.AR.ArActivity;
 import edu.skku.treearium.Activity.MainPackage.Fragment1;
 import edu.skku.treearium.Activity.MainPackage.fragment2_test;
 import edu.skku.treearium.Activity.MainPackage.fragment3;
+import edu.skku.treearium.Activity.MyMainFabFragment;
 import edu.skku.treearium.Activity.Search.SearchActivity;
+import edu.skku.treearium.Activity.Search.Trees;
+import edu.skku.treearium.Activity.Search.TreesAdapter;
+import edu.skku.treearium.Activity.Search.TreesData;
 import edu.skku.treearium.Activity.login.LoginActivity;
 import edu.skku.treearium.R;
+import edu.skku.treearium.Utils.TreesContent;
 import edu.skku.treearium.helpers.LocationHelper;
 
+import com.allattentionhere.fabulousfilter.AAH_FabulousFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -54,6 +62,8 @@ import static edu.skku.treearium.Activity.MainPackage.fragment2_test.geolist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.helist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.namelist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.splist;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bnv;
@@ -69,6 +79,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView musername, museremail;
     private long lastTimeBackPressed;;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    public static String userName;//세중 추가
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +115,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationView.getHeaderView(0);
         museremail=(TextView) headerView.findViewById(R.id.userdraweremail);
         musername=(TextView) headerView.findViewById(R.id.userdrawername);
+        //세중추가------------------------------------------
+        tData = TreesContent.getTrees();
+        tList = TreesContent.getTrees().getAllTrees();
+        //세중추가------------------------------------------
+
+
         DocumentReference docRef = fstore.collection("users").document(userID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -120,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawerlayout);
 
         findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -256,7 +277,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.History_nav: {
-                Toast.makeText(this, "History", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "History", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this , SearchActivity.class));
                 //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new fragment3());
                 break;
             }

@@ -25,8 +25,9 @@ import edu.skku.treearium.R;
 
 
 import static edu.skku.treearium.Activity.MainActivity.datasize;
-import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
+
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.helist;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,9 +84,10 @@ public class fragment3_fragment3 extends Fragment {
         int se=0;
         int ei=0;
 
-        for(int i=0;i<datasize;i++)
+        for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)
         {
-            double geti=helist.get(i);
+            //double geti=helist.get(i);
+            double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeHeight());
 
             if(geti<6)
             {

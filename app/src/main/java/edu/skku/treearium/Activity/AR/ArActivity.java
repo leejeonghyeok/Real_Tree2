@@ -50,6 +50,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -128,6 +129,7 @@ import edu.skku.treearium.tensorflow.YoloV4Classifier;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
+import static edu.skku.treearium.Activity.MainActivity.userName;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.sleep;
@@ -436,15 +438,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           EditText edit4 = bottomSheetView.findViewById(R.id.bottomheight);
           String edit4Text = String.format("%.2f", treeHeight);//"%.2f m" -> "%.2f"
           edit4.setText(edit4Text);
-          EditText edit1 = bottomSheetView.findViewById(R.id.bottomname);
-          edit1.setText(teamname);
+          EditText edit1 = bottomSheetView.findViewById(R.id.bottommemo);
+          //edit1.setText(teamname); //양세중 수정
 
           bottomSheetView.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
             Map<String, Object> tree = new HashMap<>();
             Long tsLong = System.currentTimeMillis() / 1000;
             String ts = (tsLong).toString();
-            tree.put("treePerson",username);
-            tree.put("treeName", edit1.getText().toString());
+
+            tree.put("treePerson",userName);//양세중 수정
+            tree.put("treeName", edit1.getText().toString());//양세중 수정할 예정
             tree.put("treeSpecies", dropdown.getSelectedItem().toString());
             tree.put("treeDBH", mbottomdbh.getText().toString());
             tree.put("treeHeight", edit4.getText().toString());

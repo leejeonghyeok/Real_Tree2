@@ -1,4 +1,4 @@
-package edu.skku.treearium.Activity.Search;
+package edu.skku.treearium.Activity;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -8,13 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -26,16 +26,15 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.applied_filters;
+import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
 
+import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.R;
 
-/**
- * Created by krupenghetiya on 23/06/17.
- */
+public class MyMainFabFragment extends AAH_FabulousFragment {
 
-public class MyFabFragment extends AAH_FabulousFragment {
 
-    ArrayMap<String, List<String>> applied_filters = new ArrayMap<>();
     List<TextView> textviews = new ArrayList<>();
 
     TabLayout tabs_types;
@@ -45,25 +44,11 @@ public class MyFabFragment extends AAH_FabulousFragment {
     private DisplayMetrics metrics;
 
 
-    public static MyFabFragment newInstance() {
-        MyFabFragment mff = new MyFabFragment();
+    public static MyMainFabFragment newInstance() {
+        MyMainFabFragment mff = new MyMainFabFragment();
         return mff;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        applied_filters = ((SearchActivity) getActivity()).getApplied_filters();
-        metrics = this.getResources().getDisplayMetrics();
-
-        for (Map.Entry<String, List<String>> entry : applied_filters.entrySet()) {
-            Log.d("k9res", "from activity: " + entry.getKey());
-            for (String s : entry.getValue()) {
-                Log.d("k9res", "from activity val: " + s);
-
-            }
-        }
-    }
 
     @Override
 
@@ -72,6 +57,8 @@ public class MyFabFragment extends AAH_FabulousFragment {
 
         RelativeLayout rl_content = (RelativeLayout) contentView.findViewById(R.id.rl_content);
         LinearLayout ll_buttons = (LinearLayout) contentView.findViewById(R.id.ll_buttons);
+
+
         imgbtn_refresh = (ImageButton) contentView.findViewById(R.id.imgbtn_refresh);
         imgbtn_apply = (ImageButton) contentView.findViewById(R.id.imgbtn_apply);
         ViewPager vp_types = (ViewPager) contentView.findViewById(R.id.vp_types);
@@ -81,7 +68,6 @@ public class MyFabFragment extends AAH_FabulousFragment {
             @Override
             public void onClick(View v) {
                 closeFilter(applied_filters);
-                System.out.println("applied_filters" + applied_filters);
             }
         });
         imgbtn_refresh.setOnClickListener(new View.OnClickListener() {
@@ -95,24 +81,6 @@ public class MyFabFragment extends AAH_FabulousFragment {
                 applied_filters.clear();
             }
         });
-
-        /*imgbtn_apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFilter(applied_filters);
-            }
-        });
-        imgbtn_refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (TextView tv : textviews) {
-                    tv.setTag("unselected");
-                    tv.setBackgroundResource(R.drawable.chip_unselected);
-                    tv.setTextColor(ContextCompat.getColor(getContext(), R.color.filters_chips));
-                }
-                applied_filters.clear();
-            }
-        });*/
 
         mAdapter = new SectionsPagerAdapter();
         vp_types.setOffscreenPageLimit(4);
@@ -124,13 +92,15 @@ public class MyFabFragment extends AAH_FabulousFragment {
         //params to set
         setAnimationDuration(600); //optional; default 500ms
         setPeekHeight(300); // optional; default 400dp
-        setCallbacks((AAH_FabulousFragment.Callbacks) getActivity()); //optional; to get back result
+        //setCallbacks((AAH_FabulousFragment.Callbacks) getActivity()); //optional; to get back result
         setViewgroupStatic(ll_buttons); // optional; layout to stick at bottom on slide
-        setViewPager(vp_types); //optional; if you use viewpager that has scrollview
+//        setViewPager(vp_types); //optional; if you use viewpager that has scrollview
         setViewMain(rl_content); //necessary; main bottomsheet view
         setMainContentView(contentView); // necessary; call at end before super
         super.setupDialog(dialog, style); //call super at last
     }
+
+
 
     public class SectionsPagerAdapter extends PagerAdapter {
 
@@ -152,6 +122,9 @@ public class MyFabFragment extends AAH_FabulousFragment {
                 case 2:
                     inflateLayoutWithFilters("species", fbl);
                     break;
+                case 3:
+                    inflateLayoutWithFilters("landmark", fbl);
+                    break;
             }
             collection.addView(layout);
             return layout;
@@ -165,7 +138,7 @@ public class MyFabFragment extends AAH_FabulousFragment {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -177,6 +150,8 @@ public class MyFabFragment extends AAH_FabulousFragment {
                     return "HEIGHT";
                 case 2:
                     return "수종";
+                case 3:
+                    return "지역";
 
             }
             return "";
@@ -192,13 +167,16 @@ public class MyFabFragment extends AAH_FabulousFragment {
         List<String> keys = new ArrayList<>();
         switch (filter_category) {
             case "dbh":
-                keys = ((SearchActivity) getActivity()).gettData().getUniqueDBHKeys(); //SeachActivity의 DBH값을 넣어라
+                keys = tData.getUniqueDBHKeys();
                 break;
             case "height":
-                keys = ((SearchActivity) getActivity()).gettData().getUniqueHeightKeys(); //Height값을 넣어라
+                keys = tData.getUniqueHeightKeys();
                 break;
             case "species":
-                keys = ((SearchActivity) getActivity()).gettData().getUniqueSpeciesKeys(); //수종 값을 넣어라
+                keys = tData.getUniqueSpeciesKeys();
+                break;
+            case "landmark":
+                keys = tData.getUniqueLandmarkKeys();
                 break;
         }
 
@@ -265,7 +243,5 @@ public class MyFabFragment extends AAH_FabulousFragment {
             applied_filters.get(key).remove(value);
         }
     }
-
-
 
 }
