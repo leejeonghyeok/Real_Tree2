@@ -668,7 +668,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         treeRecog = false;
       })).start();
 
-      ////////////////////////////////      // 이건 그냥 내 폰에서 distance 왜인지 안먹혀서 주석해두겟슴 ,,
       double distance = 0.1f;
       if (isPlaneFound) {
         treeHeight = curHeight;
@@ -683,16 +682,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         });
 
         if (isHeightDone && isCylinderDone) {
-          runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              bottomSheet.setTeamName(teamname);
-              bottomSheet.setDbhSize(dbh);
-              bottomSheet.setTreeHeight(height);
-              bottomSheet.setTreeLandMark(landmark);
-              bottomSheet.setConfirmButton(fstore, locationA);
-              bottomSheet.show();
-            }
+          runOnUiThread(() -> {
+            bottomSheet.setTeamName(teamname);
+            bottomSheet.setDbhSize(dbh);
+            bottomSheet.setTreeHeight(height);
+            bottomSheet.setTreeLandMark(landmark);
+            bottomSheet.setConfirmButton(fstore, locationA);
+            bottomSheet.show();
           });
         }
 
