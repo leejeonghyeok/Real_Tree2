@@ -316,6 +316,8 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         }
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
