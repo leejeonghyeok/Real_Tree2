@@ -21,7 +21,6 @@ import edu.skku.treearium.R;
 public class BottomSheet {
   /*================= Buttom Sheet Stuffs =================*/
   private View view;
-  private Mode mode = Mode.isFindingCylinder;
   private EditText teamName;
   private EditText dbhSize;
   private EditText treeLandMark;
@@ -71,7 +70,10 @@ public class BottomSheet {
     treeType.setAdapter(adapter);
 
     dbhMeasureButton = view.findViewById(R.id.bottomdbhmeasure);
+    setDbhMeasureButton(activity);
+
     heightMeasureButton = view.findViewById(R.id.bottomheightmeasure);
+    setHeightMeasureButton(activity);
   }
 
   public void setConfirmButton(FirebaseFirestore fstore, GeoPoint locationA) {
@@ -100,21 +102,21 @@ public class BottomSheet {
     });
   }
 
-//  private void setDbhMeasureButton(ArActivity activity) {
-//    dbhMeasureButton.setOnClickListener(l -> {
-//      this.mode = Mode.isFindingCylinder;
-//      dialog.dismiss();
-//      activity.resetArActivity(true);
-//    });
-//  }
-//
-//  private void setHeightMeasureButton(ArActivity activity) {
-//    heightMeasureButton.setOnClickListener(l -> {
-//      this.mode = Mode.isFindingHeight;
-//      dialog.dismiss();
-//      activity.resetArActivity(false);
-//    });
-//  }
+  private void setDbhMeasureButton(ArActivity activity) {
+    dbhMeasureButton.setOnClickListener(l -> {
+      dialog.dismiss();
+      activity.currentMode = Mode.isFindingCylinder;
+      activity.resetArActivity(true);
+    });
+  }
+
+  private void setHeightMeasureButton(ArActivity activity) {
+    heightMeasureButton.setOnClickListener(l -> {
+      dialog.dismiss();
+      activity.currentMode = Mode.isFindingHeight;
+      activity.resetArActivity(false);
+    });
+  }
 
   public void show() {
     dialog.setContentView(view);
