@@ -167,7 +167,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   String landmark = "landmark";
   String height = "0.0";
   String dbh = "0.0";
-  String treeType = "Ginkgo";
+  String treeType = "tree";
   /*************************************************************/
 
 
@@ -214,6 +214,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private enum DetectorMode {
     TF_OD_API;
   }
+
   private void initBox() {
     try {
       detector =
@@ -228,6 +229,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       finish();
     }
   }
+
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
@@ -361,6 +363,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             bottomSheet.setTreeHeight(height);
                             bottomSheet.setTreeLandMark(landmark);
                             bottomSheet.setConfirmButton(fstore, locationA);
+                            bottomSheet.setTreeType(ArActivity.this, treeType);
                             bottomSheet.show();
                           });
                         }
@@ -657,7 +660,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         // 인식 시작
         treeRec = new Thread(() -> {
-          if (surfToBitmap) {
+          while(surfToBitmap) {
             try {
               Thread.sleep(300);
             } catch (InterruptedException e) {
@@ -678,6 +681,14 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             Log.d("treeRecognization", "success");
             Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
             treeType = mappedRecognitions.get(0).getTitle();
+            switch (treeType) {
+              case "Maple":
+                treeType = "단풍";
+                break;
+              case "Ginkgo":
+                treeType = "은행";
+                break;
+            }
           } else {
             Log.d("treeRecognization", "fail");
           }
@@ -690,9 +701,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         if (isHeightDone && isCylinderDone) {
 
           runOnUiThread(() -> {
-            try{
+            try {
               treeRec.join();
-            }catch(InterruptedException e){
+            } catch (InterruptedException e) {
               e.printStackTrace();
             }
             bottomSheet.setTeamName(teamname);
@@ -700,6 +711,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             bottomSheet.setTreeHeight(height);
             bottomSheet.setTreeLandMark(landmark);
             bottomSheet.setConfirmButton(fstore, locationA);
+            bottomSheet.setTreeType(this, treeType);
             bottomSheet.show();
           });
         }

@@ -35,6 +35,11 @@ public class BottomSheet {
   /*=======================================================*/
 
 
+  /*==================== Inner Variable ===================*/
+  String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};
+  /*=======================================================*/
+
+
   void setTeamName(String teamName) {
 //		if (!TextUtils.isEmpty(this.teamName.getText())) return;
     this.teamName.setText(teamName);
@@ -42,6 +47,32 @@ public class BottomSheet {
 
   public void setDbhSize(String dbh) {
     dbhSize.setText(dbh);
+  }
+
+  public void setTreeType(ArActivity activity, String treeName) {
+    boolean found = false;
+    int parameterIDX = -1;
+    for (int i = 0; i < items.length; i++) {
+      if (treeName.equals(items[i])) {
+        found = true;
+        parameterIDX = i;
+      }
+    }
+
+    if (found) {
+      String tmp = items[parameterIDX];
+      items[parameterIDX] = items[0];
+      items[0] = tmp;
+    } else {
+      int guitarIDX = items.length - 1;
+      String tmp = items[guitarIDX];
+      items[guitarIDX] = items[0];
+      items[0] = tmp;
+    }
+
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    treeType.setAdapter(adapter);
   }
 
   public void setTreeHeight(String height) {
@@ -66,8 +97,7 @@ public class BottomSheet {
     treeLandMark = view.findViewById(R.id.bottomnearbylm);
     treeHeight = view.findViewById(R.id.bottomheight);
     treeType = view.findViewById(R.id.bottomspecies);
-    String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};
-    ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, items);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     treeType.setAdapter(adapter);
 
