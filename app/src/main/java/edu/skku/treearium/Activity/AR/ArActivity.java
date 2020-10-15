@@ -76,6 +76,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -506,6 +507,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
+
+    Intent intent = getIntent();
+    ArrayList<String> recieve = intent.getStringArrayListExtra("treeInfo");
+//    이런식으로 intentd에 스트링배열루다가 넘겨서 하나하나 그냥 스트링에 입력하면 댐
+//    if (recieve != null) {
+//      teamname = recieve.get(0);
+//    }
 
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
