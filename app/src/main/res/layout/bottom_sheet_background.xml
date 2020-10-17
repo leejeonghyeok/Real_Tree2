@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="15dp"
-        android:text="정보창"
+        android:text="개체목 정보"
         android:textColor="@color/colorPrimaryText"
         android:textSize="18dp"
         android:textStyle="bold"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/bottomnameask1"
+            android:id="@+id/sp1"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -31,11 +31,11 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:textAlignment="textStart"
-            android:text="학종"
+            android:text="수종"
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/bottomname1"
+            android:id="@+id/setsp1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -43,7 +43,6 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:padding="15dp"
-            android:hint="학종"
             android:inputType="textPersonName"
             android:textSize="15sp" />
         >
@@ -53,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/bottomnameask2"
+            android:id="@+id/he1"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -61,11 +60,11 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:textAlignment="textStart"
-            android:text="DBH"
+            android:text="수고"
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/bottomname2"
+            android:id="@+id/sethe2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -73,7 +72,6 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:padding="15dp"
-            android:hint="이름"
             android:inputType="textPersonName"
             android:textSize="15sp" />></LinearLayout>
 
@@ -81,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/bottomnameask3"
+            android:id="@+id/dbh3"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -89,11 +87,11 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:textAlignment="textStart"
-            android:text="높이"
+            android:text="직경"
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/bottomname3"
+            android:id="@+id/setdbh3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -101,7 +99,6 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:padding="15dp"
-            android:hint="이름"
             android:inputType="textPersonName"
             android:textSize="15sp" />
         >
@@ -110,7 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/bottomnameask4"
+            android:id="@+id/ung4"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -118,11 +115,11 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:textAlignment="textStart"
-            android:text="위치"
+            android:text="영급"
             android:textSize="18sp"/>
 
         <EditText
-            android:id="@+id/bottomname4"
+            android:id="@+id/setung4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -130,7 +127,6 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:padding="15dp"
-            android:hint="이름"
             android:inputType="textPersonName"
             android:textSize="15sp" />
         >
@@ -139,7 +135,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/bottomnameask5"
+            android:id="@+id/gung5"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -147,11 +143,11 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:textAlignment="textStart"
-            android:text="이름"
+            android:text="경급"
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/bottomname5"
+            android:id="@+id/setgung5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -159,7 +155,6 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:padding="15dp"
-            android:hint="이름"
             android:inputType="textPersonName"
             android:textSize="15sp" />
         >

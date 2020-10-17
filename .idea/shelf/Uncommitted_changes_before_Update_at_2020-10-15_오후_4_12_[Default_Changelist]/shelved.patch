@@ -1,0 +1,367 @@
+Index: app/src/main/java/edu/skku/treearium/Activity/MainPackage/fragment2_test.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.skku.treearium.Activity.MainPackage;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.Manifest;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.content.res.Configuration;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport android.graphics.drawable.BitmapDrawable;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Bundle;\r\nimport android.util.ArrayMap;\r\nimport android.util.EventLog;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageButton;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.allattentionhere.fabulousfilter.AAH_FabulousFragment;\r\nimport com.google.android.gms.maps.CameraUpdate;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.internal.IGoogleMapDelegate;\r\nimport com.google.android.gms.maps.model.BitmapDescriptor;\r\nimport com.google.android.gms.maps.model.BitmapDescriptorFactory;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\n\r\nimport edu.skku.treearium.Activity.MyMainFabFragment;\r\nimport edu.skku.treearium.Activity.Search.MyFabFragment;\r\nimport edu.skku.treearium.Activity.Search.Trees;\r\nimport edu.skku.treearium.Activity.Search.TreesData;\r\nimport edu.skku.treearium.R;\r\nimport edu.skku.treearium.Utils.TreesContent;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.android.material.bottomsheet.BottomSheetDialog;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.GeoPoint;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Map;\r\n\r\nimport static android.location.LocationManager.GPS_PROVIDER;\r\nimport static android.location.LocationManager.NETWORK_PROVIDER;\r\nimport static edu.skku.treearium.Activity.MainActivity.datasize;\r\nimport static edu.skku.treearium.Activity.MainActivity.finalUserId;\r\nimport static edu.skku.treearium.Activity.MainActivity.fstore;\r\n//import static edu.skku.treearium.Activity.MainActivity.thesize;\r\n//import static edu.skku.treearium.Activity.MainActivity.geolist;\r\n\r\n//implements OnMarkerClickListener\r\npublic class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickListener, AAH_FabulousFragment.Callbacks, AAH_FabulousFragment.AnimationListener{\r\n    GoogleMap map;\r\n    int len;\r\n    int il = 0;\r\n    int l;\r\n    View finalview;\r\n    DrawerLayout drawerLayout2;\r\n    public static List<GeoPoint> geolist = new ArrayList<>();\r\n    public static List<Double> dbhlist = new ArrayList<>();\r\n    public static List<String> namelist = new ArrayList<>();\r\n    public static List<String> splist = new ArrayList<>();\r\n    public static List<Double> helist = new ArrayList<>();\r\n    List<Marker> mMarkerList = new ArrayList<>();\r\n    List<LatLng> mPointList = new ArrayList<>();\r\n    static Marker currentMarker = null;\r\n\r\n\r\n    //세중추가------------------------------------------\r\n\r\n    MyMainFabFragment dialogFrag;\r\n\r\n    public static TreesData tData;\r\n    public static List<Trees> tList = new ArrayList<>();\r\n    public static ArrayMap<String, List<String>> applied_filters = new ArrayMap<>();\r\n\r\n    //--------------------------------------------------\r\n\r\n    public OnMapReadyCallback callback = new OnMapReadyCallback() {\r\n        @Override\r\n        public void onMapReady(GoogleMap googleMap) {\r\n            map = googleMap;\r\n            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {\r\n                @Override\r\n                public View getInfoWindow(Marker marker) {\r\n                    return null;\r\n                }\r\n\r\n                @Override\r\n                public View getInfoContents(Marker marker) {\r\n                    View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents, null);\r\n\r\n                    TextView title = ((TextView) infoWindow.findViewById(R.id.title));\r\n                    title.setText(marker.getTitle());\r\n\r\n                    TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));\r\n                    //TextView snippet2=((TextView)infoWindow.findViewById(R.id.snippet2));\r\n                    snippet.setText(marker.getSnippet());\r\n                    //snippet2.setText(marker.getSnippet());\r\n                    return null;\r\n                }\r\n            });\r\n        }\r\n    };\r\n\r\n\r\n\r\n    //Button mybtn=(Button)findViewById(R.id.mybtn);\r\n\r\n    private void startLocationService() {\r\n        Context context=this.getContext();\r\n        LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);\r\n\r\n\r\n        try {\r\n            int chk1 = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);\r\n            int chk2 = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION);\r\n\r\n            Location location = null;\r\n            if (chk1 == PackageManager.PERMISSION_GRANTED && chk2 == PackageManager.PERMISSION_GRANTED) {\r\n                location = manager.getLastKnownLocation(GPS_PROVIDER);\r\n\r\n            } else {\r\n                return;\r\n            }\r\n\r\n            if (location != null) {\r\n                double latitude = location.getLatitude();\r\n                double longitude = location.getLongitude();\r\n            }\r\n\r\n            GPSListener gpsListener = new GPSListener();\r\n\r\n//\r\n            long minTime = 1000;\r\n            float minDistance = 0;\r\n            manager.requestLocationUpdates(GPS_PROVIDER, minTime, minDistance, gpsListener);\r\n            manager.requestLocationUpdates(NETWORK_PROVIDER, minTime, minDistance, gpsListener);\r\n\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n\r\n\r\n    class GPSListener implements LocationListener {\r\n        @Override\r\n        public void onLocationChanged(Location location) {\r\n            Double latitude = location.getLatitude();\r\n            Double longitude = location.getLongitude();\r\n            LatLng onLop=new LatLng(latitude,longitude);\r\n\r\n            String message = \"내 위치 -> Latitude : \" + onLop.latitude + \"\\nLongitude:\" + onLop.longitude;\r\n            Log.d(\"Map\", message);\r\n\r\n            showCurrentLocation(onLop.latitude, onLop.longitude);\r\n            maketree();\r\n\r\n            if(il==0)\r\n            {\r\n                //LatLng point=new LatLng(geolist.get(len-1).getLatitude(),geolist.get(len-1).getLongitude());\r\n                if(tList.size()!=0) {\r\n                    LatLng point = new LatLng(tList.get(tList.size() - 1).getTreeLocation().getLatitude(), tList.get(tList.size() - 1).getTreeLocation().getLongitude());\r\n                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(point, 17);\r\n                    map.moveCamera(cameraUpdate);\r\n                    //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함\r\n                    il = il + 1;\r\n                }\r\n            }\r\n            System.out.println(\"여기까진 실햄\"+onLop.latitude+\" \"+onLop.longitude);\r\n        }\r\n        @Override\r\n        public void onStatusChanged(String provider, int status, Bundle extras) {\r\n        }\r\n\r\n        @Override\r\n        public void onProviderEnabled(String provider) {\r\n        }\r\n\r\n        @Override\r\n        public void onProviderDisabled(String provider) {\r\n        }\r\n    }\r\n    public boolean btnbool(View view,LatLng curPoint)\r\n    {\r\n        ImageButton imageButton=(ImageButton)view.findViewById(R.id.mybtn);\r\n\r\n        imageButton.setOnClickListener(new View.OnClickListener()\r\n        {\r\n            @Override\r\n            public void onClick(View view1)\r\n            {\r\n                view1=view;\r\n                map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 17));\r\n                if(l==1)\r\n                {\r\n                    Toast.makeText(getContext(), \"지급부터 내 위치 자동 찾기 기능을 종료합니다\", Toast.LENGTH_LONG).show();\r\n                    l=0;\r\n\r\n                }\r\n                else if(l==0)\r\n                {\r\n                    Toast.makeText(getContext(), \"지금부터 내 위치 자동 찾기를 시작합니다\", Toast.LENGTH_LONG).show();\r\n                    l=1;\r\n                }\r\n            }\r\n        });\r\n        if(l==1)\r\n        {\r\n            System.out.print(\"트루다\");\r\n            return true;\r\n        }\r\n        else\r\n        {\r\n            System.out.print(\"퍼스다\");\r\n            return false;\r\n        }\r\n    }\r\n\r\n\r\n    private void showCurrentLocation(Double latitude, Double longitude) {\r\n        LatLng curPoint = new LatLng(latitude, longitude);\r\n        //      map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 17));\r\n        String markerTitle = \"내위치\";\r\n        String markerSnippet = \"위치정보가 확인되었습니다.\"+latitude+\"\\n\"+longitude;\r\n\r\n        if (currentMarker != null) currentMarker.remove();\r\n\r\n        MarkerOptions markerOptions = new MarkerOptions();\r\n        markerOptions.position(curPoint);\r\n        markerOptions.title(markerTitle);\r\n        markerOptions.snippet(markerSnippet);\r\n        markerOptions.draggable(false);\r\n        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));\r\n        currentMarker=map.addMarker(markerOptions);\r\n\r\n        l=0;\r\n        if(btnbool(finalview, curPoint))\r\n        {\r\n            System.out.print(\"bool실행\");\r\n            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(curPoint, 17);\r\n            map.moveCamera(cameraUpdate);\r\n        }\r\n    }\r\n\r\n    public void markeron2(LatLng point,String name,String sp, Double dbh){\r\n        Context context=this.getContext();\r\n        MarkerOptions mapoptions=new MarkerOptions();\r\n        mapoptions.title(\"이름 : \"+name);\r\n        Double latitude2=point.latitude;\r\n        Double longitude2=point.longitude;\r\n        mapoptions.snippet(\"DBH : \"+dbh + \", 학종 : \" + sp);\r\n        mapoptions.position(new LatLng(latitude2,longitude2));\r\n        mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));\r\n        System.out.println(latitude2);\r\n        //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함\r\n        Marker tr2mark=map.addMarker(mapoptions);\r\n        map.setOnMarkerClickListener(this);\r\n        //if(onMarkerClick(tr2mark))\r\n\r\n        //map.setOnMarkerClickListener(this);\r\n        mMarkerList.add(tr2mark);\r\n        mPointList.add(point);\r\n    }\r\n\r\n    @Override\r\n    public boolean onMarkerClick(Marker marker) {\r\n        BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(\r\n                getActivity(),R.style.BottomSheetDialogTheme\r\n        );\r\n        View bottomSheetView= LayoutInflater.from(getContext()).inflate(\r\n                R.layout.bottom_sheet_background,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer2));\r\n        //bottomSheetView.findViewById(R.id.bottomname).\r\n        EditText edit4 = bottomSheetView.findViewById(R.id.bottomname1);\r\n        //String edit4Text = String.format(\"%.2f m\", sp);\r\n        //edit4.setText(sp);\r\n        bottomSheetView.findViewById(R.id.xbtn).setOnClickListener(new View.OnClickListener(){\r\n            @Override\r\n            public void onClick(View v) {\r\n                Toast.makeText(getContext(),\"정보 창을 닫습니다\",Toast.LENGTH_SHORT).show();\r\n                bottomSheetDialog.dismiss();\r\n            }\r\n        });\r\n        bottomSheetDialog.setContentView(bottomSheetView);\r\n        bottomSheetDialog.show();\r\n        return true;\r\n    }\r\n\r\n\r\n    public void maketree()\r\n    {\r\n        System.out.println(\"들어가서 팅기나?\");\r\n        /*if(geolist!=null&&geolist.size()<=datasize)\r\n        {\r\n            len=0;\r\n            for(int i=0;i<geolist.size();i++)\r\n            {\r\n                double newla = geolist.get(i).getLatitude();\r\n                double newlo=geolist.get(i).getLongitude();\r\n                LatLng geoLatlng = new LatLng(newla,newlo);\r\n                String name=namelist.get(i);\r\n                String sp=splist.get(i);\r\n                Double dbh=dbhlist.get(i);\r\n                System.out.println(i+\"i번쨰 쫘표!!\"+geolist.get(i));\r\n                System.out.println(i+\"i번쨰 latlng!!\"+geoLatlng);\r\n                System.out.println(i+\"i번쨰 name!!\"+name);\r\n                System.out.println(i+\"i번쨰 sp!!\"+sp);\r\n                System.out.println(i+\"i번쨰 dbh!!\"+dbh);\r\n                //markeron2(geoLatlng,name,sp,dbh);\r\n                len=len+1;\r\n            }\r\n        }\r\n        else if(geolist.size()==0)\r\n        {\r\n\r\n        }*/\r\n\r\n\r\n        if(tList!=null && tList.size() != 0)\r\n        {\r\n            for(int i=0; i<tList.size(); i++){\r\n                Trees tree = tList.get(i);\r\n                LatLng geoLatlng = new LatLng(tree.getTreeLocation().getLatitude(),tree.getTreeLocation().getLongitude());\r\n                markeron2(geoLatlng,tree.getTreeName(),tree.getTreeSpecies(),Double.parseDouble(tree.getTreeDbh()));\r\n            }\r\n\r\n        }\r\n\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater,\r\n                             @Nullable ViewGroup container,\r\n                             @Nullable Bundle savedInstanceState) {\r\n\r\n        finalview= inflater.inflate(R.layout.fragment_fragment2_test, container, false);\r\n        //세중-------------------------------------------------\r\n        final FloatingActionButton fab = (FloatingActionButton) finalview.findViewById(R.id.filterBtnMap);\r\n        dialogFrag = MyMainFabFragment.newInstance();\r\n        dialogFrag.setParentFab(fab);\r\n        fab.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                dialogFrag.setCallbacks(fragment2_test.this);\r\n                dialogFrag.show(getActivity().getSupportFragmentManager(), dialogFrag.getTag());\r\n\r\n            }\r\n        });\r\n\r\n        tData = TreesContent.getTrees();\r\n        tList = TreesContent.getTrees().getAllTrees();\r\n\r\n        //세중-------------------------------------------------\r\n\r\n        return finalview;\r\n\r\n    }\r\n\r\n\r\n    //세중추가------------------------------------------\r\n    @Override\r\n    public void onResult(Object result) {\r\n        Log.d(\"k9res\", \"onResult: \" + result.toString());\r\n        if (result.toString().equalsIgnoreCase(\"swiped_down\")) {\r\n            //do something or nothing\r\n        } else {\r\n            if (result != null) {\r\n                ArrayMap<String, List<String>> applied_filters = (ArrayMap<String, List<String>>) result;\r\n                if (applied_filters.size() != 0) {\r\n                    List<Trees> filteredList = tData.getAllTrees();\r\n                    System.out.println(filteredList);\r\n                    //iterate over arraymap\r\n                    for (Map.Entry<String, List<String>> entry : applied_filters.entrySet()) {\r\n                        Log.d(\"k9res\", \"entry.key: \" + entry.getKey());\r\n                        switch (entry.getKey()) {\r\n                            case \"dbh\":\r\n                                filteredList = tData.getDBHFilteredtrees(entry.getValue(), filteredList);\r\n                                //System.out.println(\"dbh로 필터 리스트 채움\");\r\n                                break;\r\n                            case \"height\":\r\n                                filteredList = tData.getHeightFilteredtrees(entry.getValue(), filteredList);\r\n                                //System.out.println(\"height로 필터 리스트 채움\");\r\n                                break;\r\n                            case \"species\":\r\n                                filteredList = tData.getSpeciesFilteredtrees(entry.getValue(), filteredList);\r\n                                //System.out.println(\"종으로 필터 리스트 채움\");\r\n                                break;\r\n                            case \"landmark\":\r\n                                filteredList = tData.getLandMarkFilteredtrees(entry.getValue(), filteredList);\r\n                                break;\r\n\r\n                        }\r\n                    }\r\n                    Log.d(\"k9res\", \"new size: \" + filteredList.size());\r\n                    tList.clear(); //비우고\r\n                    tList.addAll(filteredList);// 필터해서\r\n                    System.out.println(\"필터 후 tList\" + tList);\r\n                    map.clear();\r\n                    maketree();\r\n\r\n\r\n                } else {\r\n                    tList.addAll(tData.getAllTrees()); //다 넣고\r\n                    map.clear();\r\n                    maketree();\r\n                }\r\n            }\r\n            //handle result\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void onConfigurationChanged(Configuration newConfig) {\r\n        super.onConfigurationChanged(newConfig);\r\n        if (dialogFrag.isAdded()) {\r\n            dialogFrag.dismiss();\r\n            dialogFrag.show(getActivity().getSupportFragmentManager(), dialogFrag.getTag());\r\n        }\r\n\r\n    }\r\n    //세중추가-------------------------------------------------\r\n\r\n    public boolean checkForGpsProvider() {\r\n        Context context=this.getContext();\r\n        LocationManager locationManager = (LocationManager)\r\n                context.getSystemService(Context.LOCATION_SERVICE);\r\n        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);\r\n    }\r\n\r\n    @Override\r\n    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {\r\n        super.onViewCreated(view, savedInstanceState);\r\n        SupportMapFragment mapFragment =\r\n                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);\r\n        if (mapFragment != null) {\r\n            mapFragment.getMapAsync(callback);\r\n\r\n            if(!checkForGpsProvider())\r\n            {\r\n                Toast.makeText(this.getContext(), \"위치 정보를 켜야 합니다.\", Toast.LENGTH_LONG).show();\r\n                Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);\r\n                startActivity(i);\r\n            }\r\n            //System.out.print(\"LIST : \"+geolist);\r\n            startLocationService();\r\n            //System.out.print(\"2LIST : \"+geolist);\r\n        }\r\n    }\r\n\r\n    public ArrayMap<String, List<String>> getApplied_filters() {\r\n        return applied_filters;\r\n    }\r\n\r\n    public TreesData gettData() {\r\n        return tData;\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onOpenAnimationStart() {\r\n        Log.d(\"aah_animation\", \"onOpenAnimationStart: \");\r\n    }\r\n\r\n    @Override\r\n    public void onOpenAnimationEnd() {\r\n        Log.d(\"aah_animation\", \"onOpenAnimationEnd: \");\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onCloseAnimationStart() {\r\n        Log.d(\"aah_animation\", \"onCloseAnimationStart: \");\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onCloseAnimationEnd() {\r\n        Log.d(\"aah_animation\", \"onCloseAnimationEnd: \");\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/edu/skku/treearium/Activity/MainPackage/fragment2_test.java	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ app/src/main/java/edu/skku/treearium/Activity/MainPackage/fragment2_test.java	(date 1602745946084)
+@@ -1,75 +1,57 @@
+ package edu.skku.treearium.Activity.MainPackage;
+ 
+-import androidx.annotation.NonNull;
+-import androidx.annotation.Nullable;
+-import androidx.core.app.ActivityCompat;
+-import androidx.core.content.ContextCompat;
+-import androidx.core.view.GravityCompat;
+-import androidx.drawerlayout.widget.DrawerLayout;
+-import androidx.fragment.app.Fragment;
+-
+ import android.Manifest;
+ import android.content.Context;
+ import android.content.Intent;
+ import android.content.pm.PackageManager;
+ import android.content.res.Configuration;
+-import android.graphics.Bitmap;
+-import android.graphics.BitmapFactory;
+-import android.graphics.drawable.BitmapDrawable;
+ import android.location.Location;
+ import android.location.LocationListener;
+ import android.location.LocationManager;
+ import android.os.Bundle;
+ import android.util.ArrayMap;
+-import android.util.EventLog;
+ import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+-import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.ImageButton;
+ import android.widget.LinearLayout;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import androidx.core.content.ContextCompat;
++import androidx.drawerlayout.widget.DrawerLayout;
++import androidx.fragment.app.Fragment;
++
+ import com.allattentionhere.fabulousfilter.AAH_FabulousFragment;
+ import com.google.android.gms.maps.CameraUpdate;
+ import com.google.android.gms.maps.CameraUpdateFactory;
+ import com.google.android.gms.maps.GoogleMap;
+-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+ import com.google.android.gms.maps.OnMapReadyCallback;
+ import com.google.android.gms.maps.SupportMapFragment;
+-import com.google.android.gms.maps.internal.IGoogleMapDelegate;
+-import com.google.android.gms.maps.model.BitmapDescriptor;
+ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+ import com.google.android.gms.maps.model.LatLng;
+ import com.google.android.gms.maps.model.Marker;
+ import com.google.android.gms.maps.model.MarkerOptions;
+-
+-import edu.skku.treearium.Activity.MyMainFabFragment;
+-import edu.skku.treearium.Activity.Search.MyFabFragment;
+-import edu.skku.treearium.Activity.Search.Trees;
+-import edu.skku.treearium.Activity.Search.TreesData;
+-import edu.skku.treearium.R;
+-import edu.skku.treearium.Utils.TreesContent;
+-
+-import com.google.android.gms.tasks.OnCompleteListener;
+-import com.google.android.gms.tasks.Task;
+ import com.google.android.material.bottomsheet.BottomSheetDialog;
+ import com.google.android.material.floatingactionbutton.FloatingActionButton;
+-import com.google.firebase.firestore.DocumentSnapshot;
+ import com.google.firebase.firestore.GeoPoint;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ 
++import edu.skku.treearium.Activity.MyMainFabFragment;
++import edu.skku.treearium.Activity.Search.Trees;
++import edu.skku.treearium.Activity.Search.TreesData;
++import edu.skku.treearium.R;
++import edu.skku.treearium.Utils.TreesContent;
++
+ import static android.location.LocationManager.GPS_PROVIDER;
+ import static android.location.LocationManager.NETWORK_PROVIDER;
+-import static edu.skku.treearium.Activity.MainActivity.datasize;
+-import static edu.skku.treearium.Activity.MainActivity.finalUserId;
+-import static edu.skku.treearium.Activity.MainActivity.fstore;
+ //import static edu.skku.treearium.Activity.MainActivity.thesize;
+ //import static edu.skku.treearium.Activity.MainActivity.geolist;
+ 
+@@ -260,6 +242,7 @@
+         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+         currentMarker=map.addMarker(markerOptions);
+ 
++
+         l=0;
+         if(btnbool(finalview, curPoint))
+         {
+@@ -313,6 +296,7 @@
+     }
+ 
+ 
++
+     public void maketree()
+     {
+         System.out.println("들어가서 팅기나?");
+@@ -351,7 +335,6 @@
+             }
+ 
+         }
+-
+     }
+ 
+     @Nullable
+Index: app/src/main/java/edu/skku/treearium/Activity/fragment3_fragment1.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.skku.treearium.Activity;\r\n\r\nimport android.content.Context;\r\nimport android.graphics.Color;\r\nimport android.os.BatteryManager;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.firebase.database.core.utilities.Tree;\r\n\r\nimport java.util.ArrayList;\r\n\r\nimport edu.skku.treearium.Activity.MainPackage.data.model.TreeData;\r\nimport edu.skku.treearium.R;\r\n\r\nimport static edu.skku.treearium.Activity.MainActivity.datasize;\r\n//import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;\r\nimport static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;\r\nimport static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;\r\nimport static edu.skku.treearium.Activity.MainPackage.fragment2_test.tList;\r\n\r\n/**\r\n * A simple {@link Fragment} subclass.\r\n * Use the {@link fragment3_fragment1#newInstance} factory method to\r\n * create an instance of this fragment.\r\n */\r\npublic class fragment3_fragment1 extends Fragment {\r\n\r\n    // TODO: Rename parameter arguments, choose names that match\r\n    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER\r\n    private static final String ARG_PARAM1 = \"param1\";\r\n    private static final String ARG_PARAM2 = \"param2\";\r\n    private String mParam1;\r\n    private String mParam2;\r\n    ArrayList<BarEntry> visitor=new ArrayList<>();\r\n    int fise=0;\r\n    int seni=0;\r\n    int niel=0;\r\n    int elth=0;\r\n    int thth=0;\r\n\r\n    public fragment3_fragment1() {\r\n    }\r\n\r\n    public static fragment3_fragment1 newInstance(String param1, String param2) {\r\n        fragment3_fragment1 fragment = new fragment3_fragment1();\r\n        Bundle args = new Bundle();\r\n        args.putString(ARG_PARAM1, param1);\r\n        args.putString(ARG_PARAM2, param2);\r\n        fragment.setArguments(args);\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        if (getArguments() != null) {\r\n            mParam1 = getArguments().getString(ARG_PARAM1);\r\n            mParam2 = getArguments().getString(ARG_PARAM2);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View v=inflater.inflate(R.layout.fragment_fragment3_fragment1, container, false);\r\n\r\n        BarChart barChart = v.findViewById(R.id.barChart);\r\n\r\n        int fo=0;\r\n        int fi=0;\r\n        int si=0;\r\n        int se=0;\r\n        int ei=0;\r\n\r\n        for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)\r\n        {\r\n            System.out.println(tList.size());\r\n            //double geti=dbhlist.get(i);\r\n\r\n            double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeDbh());\r\n            \r\n            if(geti<5)\r\n            {\r\n                fo=fo+1;\r\n                visitor.clear();\r\n                makech(fo,fi,si,se,ei);\r\n            }\r\n            else if(geti>=5&&geti<6)\r\n            {\r\n                fi=fi+1;\r\n                visitor.clear();\r\n                makech(fo,fi,si,se,ei);\r\n            }\r\n            else if(geti>=6&&geti<7)\r\n            {\r\n                si=si+1;\r\n                visitor.clear();\r\n                makech(fo,fi,si,se,ei);\r\n            }\r\n            else if(geti>=7&&geti<8)\r\n            {\r\n                se=se+1;\r\n                visitor.clear();\r\n                makech(fo,fi,si,se,ei);\r\n            }\r\n            else if(geti>=8)\r\n            {\r\n                ei=ei+1;\r\n                visitor.clear();\r\n                makech(fo,fi,si,se,ei);\r\n            }\r\n        }\r\n\r\n        BarDataSet barDataSet=new BarDataSet(visitor,\"DBH\");\r\n        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);\r\n        barDataSet.setValueTextColor(Color.BLACK);\r\n        barDataSet.setValueTextSize(16f);\r\n        BarData barData=new BarData(barDataSet);\r\n\r\n        barChart.setFitBars(true);\r\n        barChart.setData(barData);\r\n        barChart.getDescription().setText(\"TREE DBH\");\r\n        barChart.animateY(2000);\r\n        return v;\r\n    }\r\n    public void makech(int a,int b, int c, int d,int e)\r\n    {\r\n        visitor.add(new BarEntry(4,a));\r\n        visitor.add(new BarEntry(5,b));\r\n        visitor.add(new BarEntry(6,c));\r\n        visitor.add(new BarEntry(7,d));\r\n        visitor.add(new BarEntry(8,e));\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/edu/skku/treearium/Activity/fragment3_fragment1.java	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ app/src/main/java/edu/skku/treearium/Activity/fragment3_fragment1.java	(date 1602745057337)
+@@ -1,34 +1,28 @@
+ package edu.skku.treearium.Activity;
+ 
+-import android.content.Context;
+ import android.graphics.Color;
+-import android.os.BatteryManager;
+ import android.os.Bundle;
+-
+-import androidx.fragment.app.Fragment;
+-
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ 
++import androidx.fragment.app.Fragment;
++
+ import com.github.mikephil.charting.charts.BarChart;
+ import com.github.mikephil.charting.data.BarData;
+ import com.github.mikephil.charting.data.BarDataSet;
+ import com.github.mikephil.charting.data.BarEntry;
+ import com.github.mikephil.charting.utils.ColorTemplate;
+-import com.google.firebase.database.core.utilities.Tree;
+ 
+ import java.util.ArrayList;
+ 
+-import edu.skku.treearium.Activity.MainPackage.data.model.TreeData;
+ import edu.skku.treearium.R;
+ 
+-import static edu.skku.treearium.Activity.MainActivity.datasize;
+-//import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
+-import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
+ import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
+ import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tList;
+ 
++//import static edu.skku.treearium.Activity.MainPackage.fragment2_test.dbhlist;
++
+ /**
+  * A simple {@link Fragment} subclass.
+  * Use the {@link fragment3_fragment1#newInstance} factory method to
+@@ -82,7 +76,6 @@
+         int fi=0;
+         int si=0;
+         int se=0;
+-        int ei=0;
+ 
+         for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)
+         {
+@@ -91,35 +84,29 @@
+ 
+             double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeDbh());
+             
+-            if(geti<5)
++            if(geti<6)
+             {
+                 fo=fo+1;
+                 visitor.clear();
+-                makech(fo,fi,si,se,ei);
++                makech(fo,fi,si,se);
+             }
+-            else if(geti>=5&&geti<6)
++            else if(geti>=6&&geti<16)
+             {
+                 fi=fi+1;
+                 visitor.clear();
+-                makech(fo,fi,si,se,ei);
++                makech(fo,fi,si,se);
+             }
+-            else if(geti>=6&&geti<7)
++            else if(geti>=16&&geti<29)
+             {
+                 si=si+1;
+                 visitor.clear();
+-                makech(fo,fi,si,se,ei);
++                makech(fo,fi,si,se);
+             }
+-            else if(geti>=7&&geti<8)
++            else if(geti>=29)
+             {
+                 se=se+1;
+                 visitor.clear();
+-                makech(fo,fi,si,se,ei);
+-            }
+-            else if(geti>=8)
+-            {
+-                ei=ei+1;
+-                visitor.clear();
+-                makech(fo,fi,si,se,ei);
++                makech(fo,fi,si,se);
+             }
+         }
+ 
+@@ -135,13 +122,12 @@
+         barChart.animateY(2000);
+         return v;
+     }
+-    public void makech(int a,int b, int c, int d,int e)
++    public void makech(int a,int b, int c, int d)
+     {
+-        visitor.add(new BarEntry(4,a));
+-        visitor.add(new BarEntry(5,b));
+-        visitor.add(new BarEntry(6,c));
+-        visitor.add(new BarEntry(7,d));
+-        visitor.add(new BarEntry(8,e));
++        visitor.add(new BarEntry(1,a));
++        visitor.add(new BarEntry(2,b));
++        visitor.add(new BarEntry(3,c));
++        visitor.add(new BarEntry(4,d));
+     }
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/edu/skku/treearium/Activity/login/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package edu.skku.treearium.Activity.login;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\n\r\nimport edu.skku.treearium.Activity.MainActivity;\r\nimport edu.skku.treearium.R;\r\n\r\npublic class LoginActivity extends AppCompatActivity {\r\n    EditText id, password;\r\n    Button loginbtn;\r\n    TextView register;\r\n    FirebaseAuth mFirebaseAuth;\r\n    private FirebaseAuth.AuthStateListener mAuthStateLisnter;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n        mFirebaseAuth = FirebaseAuth.getInstance();\r\n        id = findViewById(R.id.et_email);\r\n        password = findViewById(R.id.et_password);\r\n        loginbtn = findViewById(R.id.btn_login);\r\n        register = findViewById(R.id.toRegister);\r\n\r\n\r\n        mAuthStateLisnter = new FirebaseAuth.AuthStateListener() {\r\n            @Override\r\n            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {\r\n                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();\r\n                if (mFirebaseUser != null) {\r\n                    startActivity(new Intent(LoginActivity.this, MainActivity.class));\r\n                } else\r\n                    Toast.makeText(LoginActivity.this, \"Please Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        };\r\n\r\n\r\n        loginbtn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                String email = id.getText().toString();\r\n                String pswrd = password.getText().toString();\r\n                if (email.isEmpty()) {\r\n                    id.setError(\"Please insert Email\");\r\n                    id.requestFocus();\r\n                } else if (pswrd.isEmpty()) {\r\n                    password.setError(\"Please insert Password\");\r\n                    password.requestFocus();\r\n                } else if (!(pswrd.isEmpty() && email.isEmpty())) {\r\n                    loginbtn.setEnabled(false);\r\n                    mFirebaseAuth.signInWithEmailAndPassword(email, pswrd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {\r\n                        @Override\r\n                        public void onComplete(@NonNull Task<AuthResult> task) {\r\n                            if (!task.isSuccessful()) {\r\n                                Toast.makeText(LoginActivity.this, \"Login Failed, Try again!\", Toast.LENGTH_SHORT).show();\r\n                            } else {\r\n                                startActivity(new Intent(LoginActivity.this, MainActivity.class));\r\n                            }\r\n                        }\r\n                    });\r\n                } else\r\n                    Toast.makeText(LoginActivity.this, \"ERROR\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n        register.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n        mFirebaseAuth.addAuthStateListener(mAuthStateLisnter);\r\n    }\r\n\r\n\r\n    @Override\r\n    protected void onResume() {\r\n        super.onResume();\r\n\r\n        loginbtn.setEnabled(true);\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/edu/skku/treearium/Activity/login/LoginActivity.java	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ app/src/main/java/edu/skku/treearium/Activity/login/LoginActivity.java	(date 1602745520172)
+@@ -2,19 +2,15 @@
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
+-
+-import androidx.annotation.NonNull;
+-import androidx.appcompat.app.AppCompatActivity;
+-import androidx.fragment.app.Fragment;
+-
+-import android.view.LayoutInflater;
+ import android.view.View;
+-import android.view.ViewGroup;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
++import androidx.annotation.NonNull;
++import androidx.appcompat.app.AppCompatActivity;
++
+ import com.google.android.gms.tasks.OnCompleteListener;
+ import com.google.android.gms.tasks.Task;
+ import com.google.firebase.auth.AuthResult;
+@@ -77,6 +73,7 @@
+                             }
+                         }
+                     });
++                    //loginbtn.setEnabled(true);
+                 } else
+                     Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+             }
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Mon Jul 06 12:08:44 KST 2020\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionPath=wrapper/dists\r\nzipStoreBase=GRADLE_USER_HOME\r\nzipStorePath=wrapper/dists\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-6.1.1-all.zip\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>x-windows-949
+===================================================================
+--- gradle/wrapper/gradle-wrapper.properties	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ gradle/wrapper/gradle-wrapper.properties	(date 1602744768996)
+@@ -1,6 +1,6 @@
+-#Mon Jul 06 12:08:44 KST 2020
++#Thu Oct 15 15:25:13 KST 2020
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.5-bin.zip
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleJvm\" value=\"1.8\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ .idea/gradle.xml	(date 1602744769012)
+@@ -15,6 +15,7 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
++        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nbuildscript {\r\n    repositories {\r\n        google()\r\n        jcenter()\r\n        maven {\r\n            url \"https://maven.google.com\"\r\n        }\r\n    }\r\n    dependencies {\r\n        classpath 'com.android.tools.build:gradle:4.0.1'\r\n        classpath 'com.google.gms:google-services:4.3.3'\r\n        classpath 'de.undercouch:gradle-download-task:3.4.3'\r\n        classpath 'com.android.support:design:24.1.1'//10.12하단 정보창\r\n        // NOTE: Do not place your application dependencies here; they belong\r\n        // in the individual module build.gradle files\r\n    }\r\n}\r\n\r\nallprojects {\r\n    repositories {\r\n        google()\r\n        jcenter()\r\n        mavenLocal()\r\n        maven{ url 'https://jitpack.io'}\r\n    }\r\n}\r\n\r\ntask clean(type: Delete) {\r\n    delete rootProject.buildDir\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ build.gradle	(date 1602744769012)
+@@ -8,7 +8,7 @@
+         }
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:4.0.1'
++        classpath 'com.android.tools.build:gradle:4.1.0'
+         classpath 'com.google.gms:google-services:4.3.3'
+         classpath 'de.undercouch:gradle-download-task:3.4.3'
+         classpath 'com.android.support:design:24.1.1'//10.12하단 정보창
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(date 1602744769027)
++++ .idea/compiler.xml	(date 1602744769027)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <bytecodeTargetLevel target="1.8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"NullableNotNullManager\">\r\n    <option name=\"myDefaultNullable\" value=\"org.jetbrains.annotations.Nullable\" />\r\n    <option name=\"myDefaultNotNull\" value=\"androidx.annotation.NonNull\" />\r\n    <option name=\"myNullables\">\r\n      <value>\r\n        <list size=\"12\">\r\n          <item index=\"0\" class=\"java.lang.String\" itemvalue=\"org.jetbrains.annotations.Nullable\" />\r\n          <item index=\"1\" class=\"java.lang.String\" itemvalue=\"javax.annotation.Nullable\" />\r\n          <item index=\"2\" class=\"java.lang.String\" itemvalue=\"javax.annotation.CheckForNull\" />\r\n          <item index=\"3\" class=\"java.lang.String\" itemvalue=\"edu.umd.cs.findbugs.annotations.Nullable\" />\r\n          <item index=\"4\" class=\"java.lang.String\" itemvalue=\"android.support.annotation.Nullable\" />\r\n          <item index=\"5\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.Nullable\" />\r\n          <item index=\"6\" class=\"java.lang.String\" itemvalue=\"android.annotation.Nullable\" />\r\n          <item index=\"7\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.RecentlyNullable\" />\r\n          <item index=\"8\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.qual.Nullable\" />\r\n          <item index=\"9\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NullableDecl\" />\r\n          <item index=\"10\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NullableType\" />\r\n          <item index=\"11\" class=\"java.lang.String\" itemvalue=\"com.android.annotations.Nullable\" />\r\n        </list>\r\n      </value>\r\n    </option>\r\n    <option name=\"myNotNulls\">\r\n      <value>\r\n        <list size=\"11\">\r\n          <item index=\"0\" class=\"java.lang.String\" itemvalue=\"org.jetbrains.annotations.NotNull\" />\r\n          <item index=\"1\" class=\"java.lang.String\" itemvalue=\"javax.annotation.Nonnull\" />\r\n          <item index=\"2\" class=\"java.lang.String\" itemvalue=\"edu.umd.cs.findbugs.annotations.NonNull\" />\r\n          <item index=\"3\" class=\"java.lang.String\" itemvalue=\"android.support.annotation.NonNull\" />\r\n          <item index=\"4\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.NonNull\" />\r\n          <item index=\"5\" class=\"java.lang.String\" itemvalue=\"android.annotation.NonNull\" />\r\n          <item index=\"6\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.RecentlyNonNull\" />\r\n          <item index=\"7\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.qual.NonNull\" />\r\n          <item index=\"8\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NonNullDecl\" />\r\n          <item index=\"9\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NonNullType\" />\r\n          <item index=\"10\" class=\"java.lang.String\" itemvalue=\"com.android.annotations.NonNull\" />\r\n        </list>\r\n      </value>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_8\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision a726734a4b4f918fcbf71685ba92c0d75cc04d9f)
++++ .idea/misc.xml	(date 1602744769012)
+@@ -39,7 +39,7 @@
+       </value>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">

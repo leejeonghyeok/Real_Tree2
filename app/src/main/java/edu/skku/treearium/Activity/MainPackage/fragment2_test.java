@@ -56,11 +56,13 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 //import static edu.skku.treearium.Activity.MainActivity.geolist;
 
 //implements OnMarkerClickListener
-public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickListener, AAH_FabulousFragment.Callbacks, AAH_FabulousFragment.AnimationListener{
+//GoogleMap.OnMarkerClickListener,<--이거 오류나면 imp해야함
+public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Callbacks, AAH_FabulousFragment.AnimationListener{
     GoogleMap map;
     int len;
     int il = 0;
     int l;
+    int Mlens=0;
     View finalview;
     DrawerLayout drawerLayout2;
     public static List<GeoPoint> geolist = new ArrayList<>();
@@ -87,6 +89,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
+            //selectM();
             map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
@@ -148,6 +151,8 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
             e.printStackTrace();
         }
     }
+
+
 
 
     class GPSListener implements LocationListener {
@@ -248,7 +253,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
 
     private void showCurrentLocation(Double latitude, Double longitude) {
         LatLng curPoint = new LatLng(latitude, longitude);
-        //      map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 17));
+
         String markerTitle = "내위치";
         String markerSnippet = "위치정보가 확인되었습니다."+latitude+"\n"+longitude;
 
@@ -261,7 +266,6 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         markerOptions.draggable(false);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         currentMarker=map.addMarker(markerOptions);
-
 
         l=0;
         if(btnbool(finalview, curPoint))
@@ -284,25 +288,138 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         System.out.println(latitude2);
         //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함
         Marker tr2mark=map.addMarker(mapoptions);
-        map.setOnMarkerClickListener(this);
-        //if(onMarkerClick(tr2mark))
+        //map.setOnMarkerClickListener(this);
+        //onMarkerClick(tr2mark);
+        //onMarkerClick(tr2mark);
 
         //map.setOnMarkerClickListener(this);
+        selectM();
         mMarkerList.add(tr2mark);
+        Mlens=Mlens+1;
         mPointList.add(point);
     }
+    public void selectM()//ㅈ댐 이거 다 똑같이 치수가 나옴
+    {
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+            @Override
+            public boolean onMarkerClick(Marker marker) {
 
-    @Override
+                int i;
+                for(i=0;i<Mlens-1;i++)
+                {
+                    if(mMarkerList.get(i)==marker)
+                    {
+                        System.out.println("이건 몇번째 i일까"+i);
+                        break;
+                    }
+                }
+
+                tList.get(i);
+
+                BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(
+                        getActivity(),R.style.BottomSheetDialogTheme
+                );
+                View bottomSheetView= LayoutInflater.from(getContext()).inflate(
+                        R.layout.bottom_sheet_background,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer2));
+
+
+                EditText sp1 = bottomSheetView.findViewById(R.id.setsp1);
+                sp1.setText(tList.get(i).getTreeSpecies());
+
+                EditText he1=bottomSheetView.findViewById(R.id.sethe2);
+                he1.setText(tList.get(i).getTreeHeight());
+
+                EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
+                dbh1.setText(tList.get(i).getTreeDbh());
+
+                EditText ung1=bottomSheetView.findViewById(R.id.setung4);
+                ung1.setText("못구함");
+
+                EditText gung1=bottomSheetView.findViewById(R.id.setgung5);
+                if(Double.parseDouble(tList.get(i).getTreeDbh())<6)
+                {
+                    gung1.setText("치수");
+                }
+                else if(Double.parseDouble(tList.get(i).getTreeDbh())<16&&Double.parseDouble(tList.get(i).getTreeDbh())>6)
+                {
+                    gung1.setText("소경목");
+                }
+                else if(Double.parseDouble(tList.get(i).getTreeDbh())>16&&Double.parseDouble(tList.get(i).getTreeDbh())<29)
+                {
+                    gung1.setText("중경목");
+                }
+                else if(Double.parseDouble(tList.get(i).getTreeDbh())>=29)
+                {
+                    gung1.setText("대경목");
+                }
+
+
+
+
+
+
+                bottomSheetView.findViewById(R.id.xbtn).setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(),"정보 창을 닫습니다",Toast.LENGTH_SHORT).show();
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+                return true;
+            }
+        });
+    }
+    /*@Override
     public boolean onMarkerClick(Marker marker) {
+        int i;
+        for(i=0;i<Mlens-1;i++)
+        {
+            if(mMarkerList.get(i)==marker)
+            {
+                break;
+            }
+        }
+
+        tList.get(i);
+
         BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(
                 getActivity(),R.style.BottomSheetDialogTheme
         );
         View bottomSheetView= LayoutInflater.from(getContext()).inflate(
                 R.layout.bottom_sheet_background,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer2));
-        //bottomSheetView.findViewById(R.id.bottomname).
-        EditText edit4 = bottomSheetView.findViewById(R.id.bottomname1);
-        //String edit4Text = String.format("%.2f m", sp);
-        //edit4.setText(sp);
+
+
+        EditText sp1 = bottomSheetView.findViewById(R.id.setsp1);
+        sp1.setText(tList.get(i).getTreeSpecies());
+
+        EditText he1=bottomSheetView.findViewById(R.id.sethe2);
+        he1.setText(tList.get(i).getTreeHeight());
+
+        EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
+        dbh1.setText(tList.get(i).getTreeDbh());
+
+        EditText ung1=bottomSheetView.findViewById(R.id.setung4);
+        ung1.setText("못구함");
+
+        EditText gung1=bottomSheetView.findViewById(R.id.setgung5);
+        if(Double.parseDouble(tList.get(i).getTreeDbh())<6)
+        {
+            gung1.setText("치수");
+        }
+        else if(Double.parseDouble(tList.get(i).getTreeDbh())<16&&Double.parseDouble(tList.get(i).getTreeDbh())>6)
+        {
+            gung1.setText("소경목");
+        }
+        else if(Double.parseDouble(tList.get(i).getTreeDbh())>16&&Double.parseDouble(tList.get(i).getTreeDbh())<29)
+        {
+            gung1.setText("중경목");
+        }
+        else if(Double.parseDouble(tList.get(i).getTreeDbh())>=29)
+        {
+            gung1.setText("대경목");
+        }
         bottomSheetView.findViewById(R.id.xbtn).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -313,7 +430,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
         return true;
-    }
+    }*/
 
 
 
@@ -474,6 +591,7 @@ public class fragment2_test extends Fragment implements GoogleMap.OnMarkerClickL
             //System.out.print("LIST : "+geolist);
             startLocationService();
             onstat(view);
+
             //System.out.print("2LIST : "+geolist);
         }
     }

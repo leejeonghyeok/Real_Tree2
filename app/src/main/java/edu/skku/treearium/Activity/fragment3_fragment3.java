@@ -1,32 +1,23 @@
 package edu.skku.treearium.Activity;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.os.BatteryManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.firebase.database.core.utilities.Tree;
 
 import java.util.ArrayList;
 
-import edu.skku.treearium.Activity.MainPackage.data.model.TreeData;
 import edu.skku.treearium.R;
 
-
-import static edu.skku.treearium.Activity.MainActivity.datasize;
-
-import static edu.skku.treearium.Activity.MainPackage.fragment2_test.helist;
 import static edu.skku.treearium.Activity.MainPackage.fragment2_test.tData;
 
 /**
