@@ -35,7 +35,6 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
     private EditText mSearchField;
     private ImageButton mSearchBtn;
     private RecyclerView mRecyclerView;
-    private EditText mMemoField;
     RecyclerView.LayoutManager layoutManager;
 
     TreesAdapter adapter;
@@ -54,7 +53,6 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         mSearchField = (EditText) findViewById(R.id.search_field);
         mSearchBtn = (ImageButton) findViewById(R.id.search_btn);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mMemoField = (EditText) findViewById(R.id.name);
 
 
         tData = TreesContent.getTrees();
@@ -64,9 +62,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         mRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
-
         adapter = new TreesAdapter(tList, SearchActivity.this); //allTrees -> tList
         mRecyclerView.setAdapter(adapter);
+
 
         filterBtn = (FloatingActionButton) findViewById(R.id.filterBtn);
         dialogFrag = MyFabFragment.newInstance();

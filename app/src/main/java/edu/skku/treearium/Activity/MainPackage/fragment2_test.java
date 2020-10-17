@@ -41,6 +41,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -204,7 +206,6 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 );
                 View bottomSheetView= LayoutInflater.from(getContext()).inflate(
                         R.layout.layout_bottom_map_show,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer));
-
 
 
                 TextView mapbottomname = bottomSheetView.findViewById(R.id.mapbottomname);//지역

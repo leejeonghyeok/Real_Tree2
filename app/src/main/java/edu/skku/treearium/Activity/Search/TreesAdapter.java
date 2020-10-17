@@ -6,6 +6,7 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.skku.treearium.R;
+import edu.skku.treearium.Utils.TreesContent;
 
 public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder> {
 
@@ -39,17 +41,34 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
 
     @Override
     public void onBindViewHolder(@NonNull TreesHolder holder, int position) {
-        holder.mTreeName.setText(trees.get(position).getTreeName());
-        holder.mTreeDBH.setText(trees.get(position).getTreeDbh() + " cm");
-        holder.mTreeHeight.setText(trees.get(position).getTreeHeight() + " m");
-        holder.mTreeSpecies.setText(trees.get(position).getTreeSpecies());
-        holder.mTreeLocation.setText(String.format("%.4f",trees.get(position).getTreeLocation().getLatitude())
-                + "     "
-                + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
+        if(trees.get(position).getTreeName() != null) {
+            holder.mTreeName.setText(trees.get(position).getTreeName());
+        }
+        if(trees.get(position).getTreeDbh() != null) {
+            holder.mTreeDBH.setText(trees.get(position).getTreeDbh() + " cm");
+        }
+        if(trees.get(position).getTreeHeight() != null) {
+            holder.mTreeHeight.setText(trees.get(position).getTreeHeight() + " m");
+        }
+        if(trees.get(position).getTreeSpecies() != null) {
+            holder.mTreeSpecies.setText(trees.get(position).getTreeSpecies());
+        }
+        if(trees.get(position).getTreeNearLandMark() != null) {
+            holder.mTreeLandmark.setText(trees.get(position).getTreeNearLandMark());
+        }
+        if(trees.get(position).getTreeLocation()!=null) {
+            holder.mTreeLocation.setText(String.format("%.4f",trees.get(position).getTreeLocation().getLatitude())
+                    + "     "
+                    + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
+        }
+
         //time
         SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy년 MM월 dd일 HH시 mm분");
-        String format_time1 = format1.format (1000*(Long.parseLong(trees.get(position).getTime())));
-        holder.mTime.setText(format_time1);
+        if(trees.get(position).getTime()!=null) {
+            String format_time1 = format1.format (1000*(Long.parseLong(trees.get(position).getTime())));
+            holder.mTime.setText(format_time1);
+        }
+
 
         holder.expandableView.setVisibility(View.GONE);
 
@@ -61,6 +80,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
                     holder.expandableView.setVisibility(View.VISIBLE);
                     holder.arrowBtn.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
                 } else {
+                    TreesContent.updateFirebase(holder.mTreeName.getText().toString(),trees.get(position).getTime());
                     holder.expandableView.setVisibility(View.GONE);
                     holder.arrowBtn.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
                 }
@@ -84,7 +104,8 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
 
     public class TreesHolder extends RecyclerView.ViewHolder {
 
-        TextView mTreeName, mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime;
+        TextView mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime, mTreeLandmark;
+        EditText mTreeName;
         RelativeLayout expandableView;
         ImageView arrowBtn;
         CardView cardView;
@@ -98,6 +119,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             mTreeHeight  = itemView.findViewById(R.id.height);
             mTreeSpecies  = itemView.findViewById(R.id.species);
             mTreeLocation  = itemView.findViewById(R.id.location);
+            mTreeLandmark = itemView.findViewById(R.id.landmark);
             mTime = itemView.findViewById(R.id.timeTree);
             expandableView = itemView.findViewById(R.id.expandableView);
             arrowBtn = itemView.findViewById(R.id.arrowBtn);

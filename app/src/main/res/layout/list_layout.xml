@@ -229,7 +229,7 @@
                 android:layout_below="@id/person"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/nunito_semibold"
-                android:text="Name"
+                android:text="Memo"
                 android:textColor="#999999"
                 android:textSize="12sp" />
 
@@ -243,19 +243,10 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/smallName"
                 android:fontFamily="@font/nunito_bold"
-                android:text="Name"
+                android:hint="특이사항을 입력하세요"
                 android:textColor="#555555"
                 android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/updatebutton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="5dp"
-                android:layout_above="@id/name"
-                android:text="update button" />
 
 
         </RelativeLayout>
