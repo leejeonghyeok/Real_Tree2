@@ -76,6 +76,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -147,6 +148,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   /************************* findSurf **************************/
   private Thread httpTh;
+  private Thread treeRec;
   private static final String REQUEST_URL = "https://developers.curvsurf.com/FindSurface/cylinder";
   private static final String REQUEST_URL_Plane = "https://developers.curvsurf.com/FindSurface/plane"; // Plane searching server address
   /*************************************************************/
@@ -165,7 +167,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   String landmark = "landmark";
   String height = "0.0";
   String dbh = "0.0";
-  String treeType = "treetype";
+  String treeType = "tree";
   /*************************************************************/
 
 
@@ -361,6 +363,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             bottomSheet.setTreeHeight(height);
                             bottomSheet.setTreeLandMark(landmark);
                             bottomSheet.setConfirmButton(fstore, locationA);
+                            bottomSheet.setTreeType(ArActivity.this, treeType);
                             bottomSheet.show();
                           });
                         }
@@ -377,7 +380,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 });
                 httpTh.start();
                 break;
-
 
               case isFindingHeight:
                 httpTh = new Thread(() -> {
@@ -452,9 +454,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             return false;
                           }
                         });
-
                       }
-
                     } else {
                       Log.d("PlaneFinder", "request fail");
                     }
@@ -506,6 +506,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_ar);
+
+    Intent intent = getIntent();
+    ArrayList<String> recieve = intent.getStringArrayListExtra("treeInfo");
+//    이런식으로 intentd에 스트링배열루다가 넘겨서 하나하나 그냥 스트링에 입력하면 댐
+//    if (recieve != null) {
+//      teamname = recieve.get(0);
+//    }
 
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
@@ -632,42 +639,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     ));
 
     recBtn.setOnClickListener(v -> {
-      // 수종 인식: GLSurfaceView to Bitmap
-      surfToBitmap = true;
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-//			test.setImageBitmap(croppedBitmap); // 디버깅용
-      // 인식 시작
-      (new Thread(() -> {
-        if (treeRecog == false) {
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
-        final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-        final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
 
-        for (final Classifier.Recognition result : results) {
-          final RectF location = result.getLocation();
-          if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-            result.setLocation(location);
-            mappedRecognitions.add(result);
-          }
-        }
-        if (mappedRecognitions.size() > 0) {
-          Log.d("treeRecognization", "success");
-          Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
-        } else {
-          Log.d("treeRecognization", "fail");
-        }
-        treeRecog = false;
-      })).start();
-
+      // 이건 그냥 내 폰에서 distance 왜인지 안먹혀서 주석해두겟슴 ,,
       double distance = 0.1f;
       if (isPlaneFound) {
         treeHeight = curHeight;
@@ -681,13 +654,64 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           toggle.check(R.id.typeButton);
         });
 
+        // 수종 인식: GLSurfaceView to Bitmap
+        surfToBitmap = true;
+        // test.setImageBitmap(croppedBitmap); // 디버깅용
+
+        // 인식 시작
+        treeRec = new Thread(() -> {
+          while(surfToBitmap) {
+            try {
+              Thread.sleep(300);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+          final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
+
+          for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+              result.setLocation(location);
+              mappedRecognitions.add(result);
+            }
+          }
+          if (mappedRecognitions.size() > 0) {
+            Log.d("treeRecognization", "success");
+            Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
+            treeType = mappedRecognitions.get(0).getTitle();
+            switch (treeType) {
+              case "Maple":
+                treeType = "단풍";
+                break;
+              case "Ginkgo":
+                treeType = "은행";
+                break;
+            }
+          } else {
+            Log.d("treeRecognization", "fail");
+          }
+
+          treeRecog = false;
+        });
+        treeRec.start();
+        ////////////////////////////////
+
         if (isHeightDone && isCylinderDone) {
+
           runOnUiThread(() -> {
+            try {
+              treeRec.join();
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
             bottomSheet.setTeamName(teamname);
             bottomSheet.setDbhSize(dbh);
             bottomSheet.setTreeHeight(height);
             bottomSheet.setTreeLandMark(landmark);
             bottomSheet.setConfirmButton(fstore, locationA);
+            bottomSheet.setTreeType(this, treeType);
             bottomSheet.show();
           });
         }
