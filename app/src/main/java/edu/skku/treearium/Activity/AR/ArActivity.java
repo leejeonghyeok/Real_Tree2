@@ -549,7 +549,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         if (task.isSuccessful()) {
           DocumentSnapshot document = task.getResult();
           teamname = (String) document.getData().get("Team");
-          teamname = (String) document.getData().get("fName");
+          //teamname = (String) document.getData().get("fName");
+          //document.getString("Team")
           if (document.exists()) {
             Log.d(TAG, "DocumentSnapshot data: " + document.getData());
           } else {

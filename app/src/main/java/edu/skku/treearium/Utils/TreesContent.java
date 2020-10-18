@@ -114,7 +114,8 @@ public class TreesContent {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        db.collection("Team").document(document.getString("fName")).collection("Tree").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        //document.getString("Team") -> document.getString("fName")
+                        db.collection("Team").document(document.getString("Team")).collection("Tree").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 QuerySnapshot query = task.getResult();
