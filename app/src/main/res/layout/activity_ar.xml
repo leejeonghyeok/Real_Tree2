@@ -67,23 +67,42 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dbhButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DBH" />
+            android:backgroundTint="@color/colorWhite"
+            android:text="DBH"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
+            app:iconTint="@color/colorAccent"
+            app:rippleColor="@color/colorAccent"
+            app:strokeColor="@color/colorWhite" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/heightButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="높이" />
+            android:backgroundTint="@color/colorWhite"
+            android:text="높이"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
+            app:iconTint="@color/colorAccent"
+            app:rippleColor="@color/colorAccent"
+            app:strokeColor="@color/colorWhite" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/typeButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="수종" />
+            android:backgroundTint="@color/colorWhite"
+            android:text="수종"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
+            app:iconTint="@color/colorAccent"
+            app:rippleColor="@color/colorAccent"
+            app:strokeColor="@color/colorWhite" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
