@@ -20,6 +20,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -137,6 +138,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private BottomSheet bottomSheet = null;
   private TextView statTexts = null;
   private MaterialButtonToggleGroup toggle = null;
+  private Button dbhButton = null;
+  private Button heightButton = null;
+  private Button typeButton = null;
   /*************************************************************/
 
 
@@ -525,6 +529,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     statTexts = (TextView) findViewById(R.id.statsText);
     toggle = (MaterialButtonToggleGroup) findViewById(R.id.toggleGroup);
+    dbhButton = (Button) findViewById(R.id.dbhButton);
+    heightButton = (Button) findViewById(R.id.heightButton);
+    typeButton = (Button) findViewById(R.id.typeButton);
 
     // Set up renderer.
     surfaceView.setPreserveEGLContextOnPause(true);
@@ -602,12 +609,21 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           case R.id.dbhButton:
             currentMode = Mode.isFindingCylinder;
             resetArActivity(true);
+            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
+            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
             break;
           case R.id.heightButton:
             currentMode = Mode.isFindingHeight;
             resetArActivity(false);
+            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
+            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
             break;
           case R.id.typeButton:
+            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
             break;
         }
       } else {

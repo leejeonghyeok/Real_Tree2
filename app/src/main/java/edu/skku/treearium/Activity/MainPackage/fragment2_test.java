@@ -41,8 +41,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -385,7 +383,13 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         Double longitude2=point.longitude;
         mapoptions.snippet("DBH : "+dbh + ", 학종 : " + sp);
         mapoptions.position(new LatLng(latitude2,longitude2));
-        mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));
+        mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground)); //map에 tree icon 입력
+
+//        if(tList.get(i).getTreeSpecies().equals("은행나무")){
+//            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));
+//
+//        }
+
         System.out.println(latitude2);
         //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함
         Marker tr2mark=map.addMarker(mapoptions);
