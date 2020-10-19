@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -159,13 +160,19 @@
             android:textSize="15sp" />
         >
     </LinearLayout>
+
     <Button
         android:id="@+id/xbtn"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
 
-        android:text="X" />
+        android:background="@color/colorBlack"
+        android:backgroundTint="@color/colorBlack"
+        android:text="X"
+        app:iconTint="#FFFFFF"
+        app:rippleColor="#FFFFFF"
+        app:strokeColor="@color/colorBlack" />
 
 </LinearLayout>
 

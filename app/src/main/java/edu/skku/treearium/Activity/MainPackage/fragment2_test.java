@@ -63,6 +63,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
     int il = 0;
     int l;
     int Mlens=0;
+    int ff=0;
     View finalview;
     DrawerLayout drawerLayout2;
     public static List<GeoPoint> geolist = new ArrayList<>();
@@ -173,7 +174,6 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     LatLng point = new LatLng(tList.get(tList.size() - 1).getTreeLocation().getLatitude(), tList.get(tList.size() - 1).getTreeLocation().getLongitude());
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(point, 17);
                     map.moveCamera(cameraUpdate);
-                    //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함
                     il = il + 1;
                 }
             }
@@ -376,7 +376,6 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
     }
 
     public void markeron2(LatLng point,String name,String sp, Double dbh){
-        Context context=this.getContext();
         MarkerOptions mapoptions=new MarkerOptions();
         mapoptions.title("이름 : "+name);
         Double latitude2=point.latitude;
@@ -398,10 +397,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         //onMarkerClick(tr2mark);
 
         //map.setOnMarkerClickListener(this);
-        selectM();
+
         mMarkerList.add(tr2mark);
         Mlens=Mlens+1;
         mPointList.add(point);
+        selectM();
     }
     public void selectM()//ㅈ댐 이거 다 똑같이 치수가 나옴
     {
@@ -414,12 +414,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 {
                     if(mMarkerList.get(i)==marker)
                     {
+                        System.out.println("이힝"+i);
                         System.out.println("이건 몇번째 i일까"+i);
                         break;
                     }
                 }
-
-                tList.get(i);
 
                 BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(
                         getActivity(),R.style.BottomSheetDialogTheme
@@ -429,31 +428,31 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
 
 
                 EditText sp1 = bottomSheetView.findViewById(R.id.setsp1);
-                sp1.setText(tList.get(i).getTreeSpecies());
+                sp1.setText(tList.get(i%tList.size()).getTreeSpecies());
 
                 EditText he1=bottomSheetView.findViewById(R.id.sethe2);
-                he1.setText(tList.get(i).getTreeHeight());
+                he1.setText(tList.get(i%tList.size()).getTreeHeight());
 
                 EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
-                dbh1.setText(tList.get(i).getTreeDbh());
+                dbh1.setText(tList.get(i%tList.size()).getTreeDbh());
 
                 EditText ung1=bottomSheetView.findViewById(R.id.setung4);
                 ung1.setText("못구함");
 
                 EditText gung1=bottomSheetView.findViewById(R.id.setgung5);
-                if(Double.parseDouble(tList.get(i).getTreeDbh())<6)
+                if(Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())<6)
                 {
                     gung1.setText("치수");
                 }
-                else if(Double.parseDouble(tList.get(i).getTreeDbh())<16&&Double.parseDouble(tList.get(i).getTreeDbh())>6)
+                else if(Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())<16&&Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())>6)
                 {
                     gung1.setText("소경목");
                 }
-                else if(Double.parseDouble(tList.get(i).getTreeDbh())>16&&Double.parseDouble(tList.get(i).getTreeDbh())<29)
+                else if(Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())>16&&Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())<29)
                 {
                     gung1.setText("중경목");
                 }
-                else if(Double.parseDouble(tList.get(i).getTreeDbh())>=29)
+                else if(Double.parseDouble(tList.get(i%tList.size()).getTreeDbh())>=29)
                 {
                     gung1.setText("대경목");
                 }
@@ -575,7 +574,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 LatLng geoLatlng = new LatLng(tree.getTreeLocation().getLatitude(),tree.getTreeLocation().getLongitude());
                 markeron2(geoLatlng,tree.getTreeName(),tree.getTreeSpecies(),Double.parseDouble(tree.getTreeDbh()));
             }
-
+            //ff=1;
         }
     }
 
