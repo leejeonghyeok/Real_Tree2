@@ -78,7 +78,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             }
         });
 
-        /*mSearchField.addTextChangedListener(new TextWatcher() {
+        mSearchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -87,7 +87,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchText = mSearchField.getText().toString();
-                mRecyclerView.setAdapter(new TreesAdapter(filter(allTrees,searchText), SearchActivity.this));
+                mRecyclerView.setAdapter(new TreesAdapter(filter(tList,searchText), SearchActivity.this));
             }
 
             @Override
@@ -101,9 +101,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             public void onClick(View v) {
                 String searchText = mSearchField.getText().toString();
                 Toast.makeText(SearchActivity.this, "통계를 위해", Toast.LENGTH_SHORT).show();
-                mRecyclerView.setAdapter(new TreesAdapter(filter(allTrees,searchText), SearchActivity.this));
+                mRecyclerView.setAdapter(new TreesAdapter(filter(tList,searchText), SearchActivity.this));
             }
-        });*/
+        });
 
     }
 
@@ -111,8 +111,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         query = query.toLowerCase();
         final List<Trees> filterModeList = new ArrayList<>();
         for (Trees model : tr) {
-            final String text = model.getTreeName().toLowerCase();
-            if (text.contains(query)) {
+            final String text = model.getTreeSpecies().toLowerCase();
+            final String text2 = model.getTreeNearLandMark().toLowerCase();
+            if (text.contains(query) || text2.contains(query)) {
                 filterModeList.add(model);
             }
         }

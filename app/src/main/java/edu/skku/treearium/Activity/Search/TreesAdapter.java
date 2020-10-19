@@ -85,8 +85,6 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             holder.tree_image.setImageResource(R.mipmap.tree_icon_foreground);
         }
 
-
-
         holder.expandableView.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +101,6 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
                 }
             }
         });
-
-
     }
 
     @Override
@@ -126,7 +122,6 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
         RelativeLayout expandableView;
         ImageView arrowBtn, tree_image;
         CardView cardView;
-
 
 
         public TreesHolder(@NonNull View itemView) {

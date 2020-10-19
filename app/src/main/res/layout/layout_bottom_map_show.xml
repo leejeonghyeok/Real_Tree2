@@ -265,7 +265,7 @@
                         android:layout_marginRight="20dp"
                         android:padding="15dp"
                         android:textAlignment="textStart"
-                        android:text="기타"
+                        android:text="소나무"
                         android:textSize="18sp" />
 
                     <TextView

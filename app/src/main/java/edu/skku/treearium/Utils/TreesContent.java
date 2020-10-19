@@ -133,7 +133,12 @@ public class TreesContent {
                                         } else if (key.equals("treeDBH")) {
                                             model.setTreeDbh((String) object.getData().get(key));
                                         } else if (key.equals("treeSpecies")) {
-                                            model.setTreeSpecies((String) object.getData().get(key));
+                                            if(((String)object.getData().get(key)).equals("기타"))
+                                            {
+                                                model.setTreeSpecies("소나무");
+                                            }else {
+                                                model.setTreeSpecies((String) object.getData().get(key));
+                                            }
                                         } else if (key.equals("treeHeight")) {
                                             model.setTreeHeight((String) object.getData().get(key));
                                         } else if (key.equals("treeMillis")) {
