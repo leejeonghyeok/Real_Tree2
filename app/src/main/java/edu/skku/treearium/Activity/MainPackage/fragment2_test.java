@@ -384,11 +384,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         mapoptions.position(new LatLng(latitude2, longitude2));
         //지도 나무 아이콘
         if (sp.equals("은행")) {
-            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ginkgo_icon_foreground));
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ginkgo2_icon_foreground));
         } else if (sp.equals("단풍")) {
-            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maple_launcher_foreground));
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maple2_icon_foreground));
         } else if (sp.equals("벚")) {
-            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.sakura_icon_foreground));
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.sakura4_icon_foreground));
         } else if(sp.equals("메타")) {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.meta_icon_foreground));
         } else {
