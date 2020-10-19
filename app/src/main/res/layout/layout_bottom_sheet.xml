@@ -98,9 +98,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:padding="15dp"
-            android:text="DBH"
+            android:text="DBH(cm)"
             android:textAlignment="textStart"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -173,7 +173,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:padding="15dp"
-            android:text="높이"
+            android:text="높이(m)"
             android:textAlignment="textStart"
             android:textSize="18sp" />
 
