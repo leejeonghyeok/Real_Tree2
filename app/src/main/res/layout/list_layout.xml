@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_toEndOf="@+id/tree_image"
             android:fontFamily="@font/nunito_semibold"
             android:text="Landmark"
@@ -55,7 +55,7 @@
             android:layout_marginLeft="20dp"
             android:layout_toEndOf="@+id/tree_image"
             android:layout_below="@id/landmark"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/nunito_semibold"
             android:text="Species"
             android:textColor="#999999"
@@ -73,6 +73,31 @@
             android:text="Species"
             android:textColor="#555555"
             android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/smalltime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:layout_below="@id/species"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/nunito_semibold"
+            android:text="Time"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/timeTree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/smalltime"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/tree_image"
+            android:fontFamily="@font/nunito_semibold"
+            android:text="Time"
+            android:textColor="#555555"
+            android:textSize="14sp" />
 
 
 
@@ -116,6 +141,16 @@
                 android:text="DBH"
                 android:textColor="#555555"
                 android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/remeasure"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+
+                android:text="재측정" />
 
             <TextView
                 android:id="@+id/smallHeight"
@@ -171,35 +206,11 @@
 
 
             <TextView
-                android:id="@+id/smallTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/location"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/nunito_semibold"
-                android:text="Time"
-                android:textColor="#999999"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/timeTree"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/smallTime"
-                android:layout_marginLeft="20dp"
-                android:layout_alignParentLeft="true"
-                android:fontFamily="@font/nunito_bold"
-                android:text="Time"
-                android:textColor="#555555"
-                android:textSize="16sp" />
-
-            <TextView
+                android:visibility="gone"
                 android:id="@+id/smallPerson"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/timeTree"
+                android:layout_below="@+id/location"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
@@ -209,6 +220,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -14,12 +14,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -115,13 +117,14 @@ public class TreesContent {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         //document.getString("Team") -> document.getString("fName")
-                        db.collection("Team").document(document.getString("Team")).collection("Tree").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        db.collection("Team").document(document.getString("Team")).collection("Tree").orderBy("treeMillis", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 QuerySnapshot query = task.getResult();
                                 List<DocumentSnapshot> documentSnapshotList = query.getDocuments();
                                 for(DocumentSnapshot object : documentSnapshotList) {
                                     Trees model = new Trees();
+                                    model.setTreePerson(document.getString("fName"));
                                     for(String key : object.getData().keySet()){
                                         if (key.equals("treeLocation")) {
                                             model.setTreeLocation((GeoPoint) object.getData().get(key));
@@ -161,6 +164,8 @@ public class TreesContent {
                 //called when there is any error while retireving
             }
         });
+
+        Collections.sort(tList);
 
         return new TreesData(tList);
     }

@@ -2,7 +2,7 @@ package edu.skku.treearium.Activity.Search;
 
 import com.google.firebase.firestore.GeoPoint;
 
-public class Trees {
+public class Trees implements Comparable<Trees>{
     public String treeName, treeSpecies, time, treePerson, treeNearLandMark, treeDbh, treeHeight;;
     public GeoPoint treeLocation;
 
@@ -84,5 +84,15 @@ public class Trees {
 
     public void setTreeLocation(GeoPoint treeLocation) {
         this.treeLocation = treeLocation;
+    }
+
+    @Override
+    public int compareTo(Trees o) {
+        if(Integer.parseInt(this.time) < Integer.parseInt(o.getTime())){
+            return 1;
+        } else if(Integer.parseInt(this.time) > Integer.parseInt(o.getTime())) {
+            return -1;
+        }
+        return 0;
     }
 }
