@@ -72,6 +72,18 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             holder.mTime.setText(format_time1);
         }
 
+        //image
+        if (trees.get(position).getTreeSpecies().equals("은행")) {
+            holder.tree_image.setImageResource(R.mipmap.ginkgo2_icon_foreground);
+        } else if (trees.get(position).getTreeSpecies().equals("단풍")) {
+            holder.tree_image.setImageResource(R.mipmap.maple2_icon_foreground);
+        } else if (trees.get(position).getTreeSpecies().equals("벚")) {
+            holder.tree_image.setImageResource(R.mipmap.sakura4_icon_foreground);
+        } else if(trees.get(position).getTreeSpecies().equals("메타")) {
+            holder.tree_image.setImageResource(R.mipmap.meta_icon_foreground);
+        } else {
+            holder.tree_image.setImageResource(R.mipmap.tree_icon_foreground);
+        }
 
 
 
@@ -112,8 +124,9 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
         TextView mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime, mTreeLandmark, mPerson;
         EditText mTreeName;
         RelativeLayout expandableView;
-        ImageView arrowBtn;
+        ImageView arrowBtn, tree_image;
         CardView cardView;
+
 
 
         public TreesHolder(@NonNull View itemView) {
@@ -130,6 +143,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             expandableView = itemView.findViewById(R.id.expandableView);
             arrowBtn = itemView.findViewById(R.id.arrowBtn);
             cardView = itemView.findViewById(R.id.cardView);
+            tree_image = itemView.findViewById(R.id.tree_image);
         }
     }
 
