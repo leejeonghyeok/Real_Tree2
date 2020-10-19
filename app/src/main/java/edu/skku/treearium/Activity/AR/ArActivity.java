@@ -712,7 +712,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               case "Ginkgo":
                 treeType = "은행";
                 break;
+              default:
+                treeType = "기타";
+                break;
             }
+            buildTextView();
           } else {
             Log.d("treeRecognization", "fail");
           }
