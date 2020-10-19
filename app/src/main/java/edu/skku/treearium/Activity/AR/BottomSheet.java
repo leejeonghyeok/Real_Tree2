@@ -1,6 +1,7 @@
 package edu.skku.treearium.Activity.AR;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -47,6 +48,9 @@ public class BottomSheet {
 
   public void setDbhSize(String dbh) {
     dbhSize.setText(dbh);
+    if (!TextUtils.isEmpty(dbhSize.getText())) {
+      dbhMeasureButton.setText("다시");
+    }
   }
 
   public void setTreeType(ArActivity activity, String treeName) {
@@ -77,6 +81,9 @@ public class BottomSheet {
 
   public void setTreeHeight(String height) {
     treeHeight.setText(height);
+    if (!TextUtils.isEmpty(treeHeight.getText())) {
+      heightMeasureButton.setText("다시");
+    }
   }
 
   public void setTreeLandMark(String position) {
@@ -110,6 +117,10 @@ public class BottomSheet {
 
   public void setConfirmButton(FirebaseFirestore fstore, GeoPoint locationA) {
     view.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
+      if (TextUtils.isEmpty(dbhSize.getText()) || TextUtils.isEmpty(treeHeight.getText())) {
+        System.out.println("in bottomsheet confirmbutton, dbhsize or treeheight empty!");
+        return;
+      }
       Map<String, Object> tree = new HashMap<>();
       Long tsLong = System.currentTimeMillis() / 1000;
       String ts = (tsLong).toString();
@@ -140,6 +151,8 @@ public class BottomSheet {
     dbhMeasureButton.setOnClickListener(l -> {
       dialog.dismiss();
       activity.currentMode = Mode.isFindingCylinder;
+      activity.toggle.check(R.id.dbhButton);
+      activity.checkToggleType(1);
       activity.resetArActivity(true);
     });
   }
@@ -148,6 +161,8 @@ public class BottomSheet {
     heightMeasureButton.setOnClickListener(l -> {
       dialog.dismiss();
       activity.currentMode = Mode.isFindingHeight;
+      activity.toggle.check(R.id.heightButton);
+      activity.checkToggleType(2);
       activity.resetArActivity(false);
     });
   }

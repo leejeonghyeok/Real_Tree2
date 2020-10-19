@@ -133,14 +133,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private View arLayout;
   private Button popup = null;  /* <-- 이 버튼은 머임 ?*/
   private Button exit = null;
-  private Button resetBtn = null;
   private CameraButton recBtn = null;
   private BottomSheet bottomSheet = null;
-  private TextView statTexts = null;
-  private MaterialButtonToggleGroup toggle = null;
+  MaterialButtonToggleGroup toggle = null;
   private Button dbhButton = null;
   private Button heightButton = null;
   private Button typeButton = null;
+  TextView dhbText = null;
+  TextView heightText = null;
+  TextView typeText = null;
   /*************************************************************/
 
 
@@ -169,9 +170,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   /************************** 최종결과 **************************/
   String teamname = "teamname", username;
   String landmark = "landmark";
-  String height = "0.0";
-  String dbh = "0.0";
-  String treeType = "tree";
+  String height = "";
+  String dbh = "";
+  String treeType = "";
   /*************************************************************/
 
 
@@ -190,6 +191,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   boolean isCylinderDone = false;
   boolean isHeightDone = false;
   Mode currentMode = Mode.isFindingCylinder;
+  private boolean isRecording = false;
+  private boolean isStaticView = false;
+  private boolean drawSeedState = false;
   /*************************************************************/
 
 
@@ -202,19 +206,14 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   public static GeoPoint locationA;
   /*************************************************************/
 
-  private boolean isRecording = false;
-  private boolean isStaticView = false;
-  private boolean drawSeedState = false;
 
-  //수종 인식: 변수 선언
+  /************************** 수종인식 ***************************/
   private boolean treeRecog = false;
   private boolean surfToBitmap = false;
   private Classifier detector;
   private Bitmap croppedBitmap = null;
   public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
-  // Which detection model to use: by default uses Tensorflow Object Detection API frozen
-  // checkpoints.
   private enum DetectorMode {
     TF_OD_API;
   }
@@ -234,13 +233,20 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     }
   }
 
+  // 1 : dbh, 2 : height, 3 : type
+  public void checkToggleType(int num) {
+    dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 1 ? R.color.filters_buttons : R.color.colorWhite)));
+    heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 2 ? R.color.filters_buttons : R.color.colorWhite)));
+    typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 3 ? R.color.filters_buttons : R.color.colorWhite)));
+  }
+
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/name.txt";
 
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
-  ///////////////////////////////
+  /*************************************************************/
 
   private static final int REQUEST_LOCATION = 1;
 
@@ -355,22 +361,21 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
                           landmark = "일월저수지";
                           dbh = String.format("%.2f", cylinderVars.getDbh() * 200);
-                          statTexts.setText(buildTextView());
-                          toggle.check(R.id.heightButton);
-                          resetArActivity(false);
-                        });
+                          buildTextView();
 
-                        if (isHeightDone) {
-                          runOnUiThread(() -> {
-                            bottomSheet.setTeamName(teamname);
-                            bottomSheet.setDbhSize(dbh);
-                            bottomSheet.setTreeHeight(height);
-                            bottomSheet.setTreeLandMark(landmark);
-                            bottomSheet.setConfirmButton(fstore, locationA);
-                            bottomSheet.setTreeType(ArActivity.this, treeType);
-                            bottomSheet.show();
-                          });
-                        }
+                          currentMode = Mode.isFindingHeight;
+                          toggle.check(R.id.heightButton);
+                          checkToggleType(2);
+                          resetArActivity(false);
+
+                          bottomSheet.setTeamName(teamname);
+                          bottomSheet.setDbhSize(dbh);
+                          bottomSheet.setTreeHeight(height);
+                          bottomSheet.setTreeLandMark(landmark);
+                          bottomSheet.setConfirmButton(fstore, locationA);
+                          bottomSheet.setTreeType(ArActivity.this, treeType);
+                          bottomSheet.show();
+                        });
                       }
 
                       drawSeedState = false;
@@ -521,18 +526,21 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
     exit = (Button) findViewById(R.id.delete);
-    resetBtn = (Button) findViewById(R.id.resetBtn);
-    resetBtn.setEnabled(false);
     recBtn = (CameraButton) findViewById(R.id.recBtn);
     surfaceView = (GLSurfaceView) findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
-    statTexts = (TextView) findViewById(R.id.statsText);
     toggle = (MaterialButtonToggleGroup) findViewById(R.id.toggleGroup);
     dbhButton = (Button) findViewById(R.id.dbhButton);
     heightButton = (Button) findViewById(R.id.heightButton);
     typeButton = (Button) findViewById(R.id.typeButton);
 
+    dhbText = (TextView) findViewById(R.id.dbhText);
+    heightText = (TextView) findViewById(R.id.heightText);
+    typeText = (TextView) findViewById(R.id.typeText);
+    dhbText.setWidth(dbhButton.getWidth());
+    heightText.setWidth(heightButton.getWidth());
+    typeText.setWidth(typeButton.getWidth());
     // Set up renderer.
     surfaceView.setPreserveEGLContextOnPause(true);
     surfaceView.setEGLContextClientVersion(2);
@@ -600,7 +608,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     nManager.requestLocationUpdates(NETWORK_PROVIDER, minTime, minDistance, gpsListener);
     nManager.requestLocationUpdates(GPS_PROVIDER, minTime, minDistance, gpsListener);
 
-    statTexts.setText(buildTextView());
+    buildTextView();
+    checkToggleType(1);
 
     toggle.check(R.id.dbhButton);
     toggle.addOnButtonCheckedListener((group, checkedID, isChecked) -> {
@@ -609,21 +618,15 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           case R.id.dbhButton:
             currentMode = Mode.isFindingCylinder;
             resetArActivity(true);
-            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
-            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            checkToggleType(1);
             break;
           case R.id.heightButton:
             currentMode = Mode.isFindingHeight;
             resetArActivity(false);
-            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
-            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+            checkToggleType(2);
             break;
           case R.id.typeButton:
-            dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.filters_buttons)));
+            checkToggleType(3);
             break;
         }
       } else {
@@ -639,15 +642,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     exit.setOnClickListener(v -> {
       startActivity(new Intent(ArActivity.this, MainActivity.class));
-    });
-
-    resetBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        collector = new PointCollector();
-        Snackbar.make(arLayout, "Reset", Snackbar.LENGTH_LONG).show();
-        isStaticView = false;
-      }
     });
 
     bottomSheet = new BottomSheet();
@@ -667,7 +661,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           Snackbar.make(arLayout, "Height Found", Snackbar.LENGTH_LONG).show();
           landmark = "일월저수지";
           height = String.format("%.2f", treeHeight);
-          statTexts.setText(buildTextView());
+          buildTextView();
           toggle.check(R.id.typeButton);
         });
 
@@ -677,7 +671,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
         // 인식 시작
         treeRec = new Thread(() -> {
-          while(surfToBitmap) {
+          while (surfToBitmap) {
             try {
               Thread.sleep(300);
             } catch (InterruptedException e) {
@@ -715,7 +709,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         treeRec.start();
         ////////////////////////////////
 
-        if (isHeightDone && isCylinderDone) {
+        if (isHeightDone) {
 
           runOnUiThread(() -> {
             try {
@@ -739,11 +733,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           collector = new PointCollector();
           Snackbar.make(arLayout, "Collecting", Snackbar.LENGTH_LONG).show();
           isStaticView = false;
-          resetBtn.setEnabled(true);
-          resetBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_sharp_sync_25));
         } else {
-          resetBtn.setEnabled(false);
-          resetBtn.setForeground(getApplicationContext().getDrawable(R.drawable.ic_sharp_sync_24));
           (new Thread(() -> {
             if (ArActivity.this.collector != null) {
               ArActivity.this.collector.filterPoints = ArActivity.this.collector.doFilter();
@@ -772,8 +762,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     initBox();
   }
 
-  String buildTextView() {
-    return String.format("%s\n%s\ndbh:\t%s\n높이:\t%s\n%s", teamname, landmark, dbh, height, treeType);
+  void buildTextView() {
+    dhbText.setText(dbh);
+    heightText.setText(height);
+    typeText.setText(treeType);
   }
 
   @Override
@@ -974,8 +966,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
 
-      if (currentMode == Mode.isFindingCylinder) {
-        if (isCylinderDone && cylinderVars != null) {
+      if (isCylinderDone) {
+        if (cylinderVars != null) {
           GLES20.glEnable(GLES20.GL_CULL_FACE);
           //Matrix.setIdentityM(modelMatrix, 0);
           Matrix.rotateM(modelMatrix, 0, angle, 0, 1, 0);
@@ -1015,18 +1007,6 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           };
           renderer.pointDraw(GLSupport.makeFloatBuffer(treeBottom), vpMatrix, Color.valueOf(Color.CYAN), 30.0f);
           renderer.lineDraw(GLSupport.makeFloatBuffer(tmp), vpMatrix, Color.valueOf(Color.RED), 30.0f);
-        }
-        if (isCylinderDone) {
-          if (cylinderVars != null) {
-            GLES20.glEnable(GLES20.GL_CULL_FACE);
-            //Matrix.setIdentityM(modelMatrix, 0);
-            Matrix.rotateM(modelMatrix, 0, angle, 0, 1, 0);
-            //angle++;
-            virtualObject.updateModelMatrix(modelMatrix, cylinderVars.getDbh(), 0.05f, cylinderVars.getDbh());
-            virtualObject.draw(viewmtx, projmtx, colorCorrectionRgba);
-
-            GLES20.glDisable(GLES20.GL_CULL_FACE);
-          }
         }
       }
 

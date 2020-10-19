@@ -39,71 +39,106 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.906" />
 
-    <TextView
-        android:id="@+id/statsText"
+    <LinearLayout
+        android:id="@+id/toggleLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="#8CFFFFFF"
-        android:text="TextView"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButtonToggleGroup
-
-        android:id="@+id/toggleGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        app:checkedButton="@+id/dbhButton"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:singleSelection="true">
+        app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dbhButton"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorWhite"
-            android:text="DBH"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"
-            app:iconTint="@color/colorAccent"
-            app:rippleColor="@color/colorAccent"
-            app:strokeColor="@color/colorWhite" />
+            app:checkedButton="@+id/dbhButton"
+            app:singleSelection="true">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/heightButton"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorWhite"
-            android:text="높이"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"
-            app:iconTint="@color/colorAccent"
-            app:rippleColor="@color/colorAccent"
-            app:strokeColor="@color/colorWhite" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/dbhButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/typeButton"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DBH"
+                android:textColor="@color/colorBlack"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorWhite"
+                app:iconTint="@color/colorAccent"
+                app:rippleColor="@color/colorAccent"
+                app:strokeColor="@color/colorWhite" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/heightButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="높이"
+                android:textColor="@color/colorBlack"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorWhite"
+                app:iconTint="@color/colorAccent"
+                app:rippleColor="@color/colorAccent"
+                app:strokeColor="@color/colorWhite" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/typeButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="수종"
+                android:textColor="@color/colorBlack"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorWhite"
+                app:iconTint="@color/colorAccent"
+                app:rippleColor="@color/colorAccent"
+                app:strokeColor="@color/colorWhite" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorWhite"
-            android:text="수종"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"
-            app:iconTint="@color/colorAccent"
-            app:rippleColor="@color/colorAccent"
-            app:strokeColor="@color/colorWhite" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dbhText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#8CFFFFFF"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/heightText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/dbhText"
+                android:layout_weight="1"
+                android:background="#8CFFFFFF"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/typeText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/heightText"
+                android:layout_weight="1"
+                android:background="#8CFFFFFF"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -137,19 +172,9 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/resetBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="24dp"
-                android:background="#00000000"
-                android:foreground="@drawable/ic_sharp_sync_24"
-                android:foregroundTint="@color/colorWhite" />
-
-            <Button
                 android:id="@+id/popup"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="19dp"
+                android:layout_height="18dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
                 android:background="#00000000"
