@@ -387,7 +387,9 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ginkgo_icon_foreground));
         }else if(sp.equals("단풍")){
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maple_launcher_foreground));
-        }else {
+        }else if(sp.equals("벚")){
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.sakura_icon_foreground));
+        }else{
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));
         }
         System.out.println(latitude2);
