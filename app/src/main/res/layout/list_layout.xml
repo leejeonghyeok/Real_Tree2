@@ -83,7 +83,7 @@
             android:layout_below="@id/species"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/nunito_semibold"
-            android:text="Time"
+            android:text="Date"
             android:textColor="#999999"
             android:textSize="14sp" />
 
@@ -95,7 +95,7 @@
             android:layout_marginLeft="20dp"
             android:layout_toEndOf="@+id/tree_image"
             android:fontFamily="@font/nunito_semibold"
-            android:text="Time"
+            android:text="Date"
             android:textColor="#555555"
             android:textSize="14sp" />
 

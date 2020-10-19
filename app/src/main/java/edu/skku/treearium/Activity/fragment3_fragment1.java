@@ -79,7 +79,7 @@ public class fragment3_fragment1 extends Fragment {
 
         for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)
         {
-            System.out.println(tList.size());
+            //System.out.println(tList.size());
             //double geti=dbhlist.get(i);
 
             double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeDbh());
@@ -116,7 +116,7 @@ public class fragment3_fragment1 extends Fragment {
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(20f);
 
-        BarData barData=new BarData(barDataSet);
+        BarData barData = new BarData(barDataSet);
 
         barChart.setFitBars(true);
         barChart.setData(barData);
