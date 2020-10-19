@@ -142,7 +142,7 @@ public class MyFabFragment extends AAH_FabulousFragment {
 //            LinearLayout ll_scroll = (LinearLayout) layout.findViewById(R.id.ll_scroll);
 //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (metrics.heightPixels-(104*metrics.density)));
 //            ll_scroll.setLayoutParams(lp);
-            switch (position) {//머하는거지/
+            switch (position) {//머하는거지// 필터 리스트를 채운다.
                 case 0:
                     inflateLayoutWithFilters("dbh", fbl);
                     break;

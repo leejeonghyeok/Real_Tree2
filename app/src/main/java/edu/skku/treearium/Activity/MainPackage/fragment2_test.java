@@ -111,6 +111,82 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     return null;
                 }
             });
+
+
+            //----------------세중-----------------------
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+
+                    marker.getPosition();
+                    System.out.println("marker postion" + marker.getPosition());
+                    System.out.println("get snippet" + marker.getSnippet());
+
+                    int i;
+                    for(i=0;i<tList.size()-1;i++)
+                    {
+                        if(marker.getSnippet().equals(tList.get(i).getTime()) )
+                        {
+                            System.out.println("이힝"+ i);
+                            System.out.println("이건 몇번째 i일까"+i);
+                            break;
+                        }
+                    }
+
+                    BottomSheetDialog bottomSheetDialog= new BottomSheetDialog(
+                            getActivity(),R.style.BottomSheetDialogTheme
+                    );
+                    View bottomSheetView= LayoutInflater.from(getContext()).inflate(
+                            R.layout.bottom_sheet_background,(LinearLayout)getView().findViewById(R.id.bottomSheetContainer2));
+
+
+                    EditText sp1 = bottomSheetView.findViewById(R.id.setsp1);
+                    sp1.setText(tList.get(i).getTreeSpecies());
+
+                    EditText he1=bottomSheetView.findViewById(R.id.sethe2);
+                    he1.setText(tList.get(i).getTreeHeight());
+
+
+                    EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
+                    dbh1.setText(tList.get(i).getTreeDbh());
+
+                    EditText ung1=bottomSheetView.findViewById(R.id.setung4);
+                    ung1.setText("못구함");
+
+                    EditText gung1=bottomSheetView.findViewById(R.id.setgung5);
+                    if(Double.parseDouble(tList.get(i).getTreeDbh())<6)
+                    {
+                        gung1.setText("치수");
+                    }
+                    else if(Double.parseDouble(tList.get(i).getTreeDbh())<16&&Double.parseDouble(tList.get(i).getTreeDbh())>6)
+                    {
+                        gung1.setText("소경목");
+                    }
+                    else if(Double.parseDouble(tList.get(i).getTreeDbh())>16&&Double.parseDouble(tList.get(i).getTreeDbh())<29)
+                    {
+                        gung1.setText("중경목");
+                    }
+                    else if(Double.parseDouble(tList.get(i).getTreeDbh())>=29)
+                    {
+                        gung1.setText("대경목");
+                    }
+
+
+
+                    bottomSheetView.findViewById(R.id.xbtn).setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getContext(),"정보 창을 닫습니다",Toast.LENGTH_SHORT).show();
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                    bottomSheetDialog.setContentView(bottomSheetView);
+                    bottomSheetDialog.show();
+                    return true;
+                }
+            });
+            //----------------세중-----------------------
+
         }
     };
 
@@ -157,6 +233,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
     class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
+            map.clear();
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
             LatLng onLop=new LatLng(latitude,longitude);
@@ -227,7 +304,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
 
                     k = 0;
                     for (int i = 0; i < tList.size(); i++) {
-                        if(tList.get(i).getTreeSpecies().equals("벚꽃"))
+                        if(tList.get(i).getTreeSpecies().equals("벚"))
                             k++;
                     }
                     per = (float) k / (float) tList.size();
@@ -269,11 +346,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     TextView mapbottomtreedbh2 = bottomSheetView.findViewById(R.id.mapbottomtreedbh2);//중경목 16~29
                     TextView mapbottomtreedbh3 = bottomSheetView.findViewById(R.id.mapbottomtreedbh3);//대경목 29~
 
-                    int tmp = (int)((float)s / (float)tList.size())*100;
+                    int tmp = (int)(( (float)s / (float)tList.size() )*100);
                     mapbottomtreedbh1.setText(tmp + "%");
-                    tmp = (int)((float)m / (float)tList.size())*100;
+                    tmp = (int)(( (float)m / (float)tList.size() )*100);
                     mapbottomtreedbh2.setText(tmp + "%");
-                    tmp = (int)((float)l / (float)tList.size())*100;
+                    tmp = (int)(( (float)l / (float)tList.size() )*100);
                     mapbottomtreedbh3.setText(tmp + "%");
                 }
 
@@ -298,11 +375,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     TextView mapbottomtreeh2 = bottomSheetView.findViewById(R.id.mapbottomtreeh2);//5m 이상
                     TextView mapbottomtreeh3 = bottomSheetView.findViewById(R.id.mapbottomtreeh3);//~5m
 
-                    int tmp = (int)((float)lh / (float)tList.size())*100;
+                    int tmp = (int)(( (float)lh / (float)tList.size() )*100);
                     mapbottomtreeh1.setText(tmp + "%");
-                    tmp = (int)((float)mh / (float)tList.size())*100;
+                    tmp = (int)(( (float)mh / (float)tList.size() )*100);
                     mapbottomtreeh2.setText(tmp + "%");
-                    tmp = (int)((float)sh / (float)tList.size())*100;
+                    tmp = (int)(( (float)sh / (float)tList.size() )*100);
                     mapbottomtreeh3.setText(tmp + "%");
                 }
 
@@ -326,7 +403,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 17));
                 if(l==1)
                 {
-                    Toast.makeText(getContext(), "지급부터 내 위치 자동 찾기 기능을 종료합니다", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "지금부터 내 위치 자동 찾기 기능을 종료합니다", Toast.LENGTH_LONG).show();
                     l=0;
 
                 }
@@ -375,13 +452,14 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         }
     }
 
-    public void markeron2(LatLng point,String name,String sp, Double dbh) {
+    public void markeron2(LatLng point,String name,String sp, Double dbh, String time){
         MarkerOptions mapoptions = new MarkerOptions();
-        mapoptions.title("이름 : " + name);
-        Double latitude2 = point.latitude;
-        Double longitude2 = point.longitude;
-        mapoptions.snippet("DBH : " + dbh + ", 학종 : " + sp);
-        mapoptions.position(new LatLng(latitude2, longitude2));
+        mapoptions.title("이름 : "+name);
+        Double latitude2=point.latitude;
+        Double longitude2=point.longitude;
+        mapoptions.snippet(time);
+        mapoptions.position(new LatLng(latitude2,longitude2));
+
         //지도 나무 아이콘
         if (sp.equals("은행")) {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ginkgo2_icon_foreground));
@@ -396,7 +474,8 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         }
         System.out.println(latitude2);
         //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함
-        Marker tr2mark=map.addMarker(mapoptions);
+
+        Marker tr2mark = map.addMarker(mapoptions);
         //map.setOnMarkerClickListener(this);
         //onMarkerClick(tr2mark);
         //onMarkerClick(tr2mark);
@@ -404,22 +483,22 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         //map.setOnMarkerClickListener(this);
 
         mMarkerList.add(tr2mark);
-        Mlens=Mlens+1;
-        mPointList.add(point);
-        selectM();
+        //Mlens=Mlens+1;
+        //mPointList.add(point);
+        //selectM(tr2mark);
     }
-    public void selectM()//ㅈ댐 이거 다 똑같이 치수가 나옴
+    public void selectM(Marker tr2mark)//ㅈ댐 이거 다 똑같이 치수가 나옴
     {
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
             @Override
             public boolean onMarkerClick(Marker marker) {
-
                 int i;
-                for(i=0;i<Mlens-1;i++)
+
+                for(i=0;i<mMarkerList.size();i++)
                 {
-                    if(mMarkerList.get(i)==marker)
+                    if(mMarkerList.get(i) == tr2mark )
                     {
-                        System.out.println("이힝"+i);
+                        System.out.println("이힝"+ i);
                         System.out.println("이건 몇번째 i일까"+i);
                         break;
                     }
@@ -436,12 +515,16 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
 
                 EditText sp1 = bottomSheetView.findViewById(R.id.setsp1);
                 sp1.setText(tList.get(i%tList.size()).getTreeSpecies());
+                //sp1.setText(tList.get(i).getTreeSpecies());
 
                 EditText he1=bottomSheetView.findViewById(R.id.sethe2);
                 he1.setText(tList.get(i%tList.size()).getTreeHeight());
+                //he1.setText(tList.get(i).getTreeSpecies());
+
 
                 EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
                 dbh1.setText(tList.get(i%tList.size()).getTreeDbh());
+                //dbh1.setText(tList.get(i).getTreeSpecies());
 
                 EditText ung1=bottomSheetView.findViewById(R.id.setung4);
                 ung1.setText("못구함");
@@ -574,7 +657,8 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
             for(int i=0; i<tList.size(); i++){
                 Trees tree = tList.get(i);
                 LatLng geoLatlng = new LatLng(tree.getTreeLocation().getLatitude(),tree.getTreeLocation().getLongitude());
-                markeron2(geoLatlng,tree.getTreeName(),tree.getTreeSpecies(),Double.parseDouble(tree.getTreeDbh()));
+                System.out.println("in for");
+                markeron2(geoLatlng,tree.getTreeName(),tree.getTreeSpecies(),Double.parseDouble(tree.getTreeDbh()),tree.getTime());
             }
             //ff=1;
         }
@@ -699,6 +783,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
             onstat(view);
 
             //System.out.print("2LIST : "+geolist);
+
         }
     }
 

@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +57,8 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
 
 
         tData = TreesContent.getTrees();
-        tList = tData.getAllTrees();
+        tList = TreesContent.getTrees().getAllTrees();
+        Collections.sort(tList);
 
 
         mRecyclerView.setHasFixedSize(true);
@@ -149,11 +151,13 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
                     Log.d("k9res", "new size: " + filteredList.size());
                     tList.clear(); //비우고
                     tList.addAll(filteredList);// 필터해서
+                    Collections.sort(tList);//정렬
                     adapter.notifyDataSetChanged(); //나타내기
 
 
                 } else {
                     tList.addAll(tData.getAllTrees()); //다 넣고
+                    Collections.sort(tList);//정렬
                     adapter.notifyDataSetChanged(); //나타내기
                 }
             }

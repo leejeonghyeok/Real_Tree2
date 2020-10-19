@@ -142,6 +142,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   TextView dhbText = null;
   TextView heightText = null;
   TextView typeText = null;
+  PopupActivity popupActivity = null;
   /*************************************************************/
 
 
@@ -194,6 +195,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   private boolean isRecording = false;
   private boolean isStaticView = false;
   private boolean drawSeedState = false;
+  public boolean heightForTheFirstTime = true;
   /*************************************************************/
 
 
@@ -233,20 +235,21 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     }
   }
 
-  // 1 : dbh, 2 : height, 3 : type
-  public void checkToggleType(int num) {
-    dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 1 ? R.color.filters_buttons : R.color.colorWhite)));
-    heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 2 ? R.color.filters_buttons : R.color.colorWhite)));
-    typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 3 ? R.color.filters_buttons : R.color.colorWhite)));
-  }
-
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/name.txt";
 
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
+
   /*************************************************************/
+
+  // 1 : dbh, 2 : height, 3 : type
+  public void checkToggleType(int num) {
+    dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 1 ? R.color.filters_buttons : R.color.colorWhite)));
+    heightButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 2 ? R.color.filters_buttons : R.color.colorWhite)));
+    typeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 3 ? R.color.filters_buttons : R.color.colorWhite)));
+  }
 
   private static final int REQUEST_LOCATION = 1;
 
@@ -364,6 +367,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                           buildTextView();
 
                           currentMode = Mode.isFindingHeight;
+                          if (heightForTheFirstTime) {
+                            popupActivity.startDialog(R.layout.activity_popup2);
+                            heightForTheFirstTime = false;
+                          }
                           toggle.check(R.id.heightButton);
                           checkToggleType(2);
                           resetArActivity(false);
@@ -579,8 +586,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
     //Intent intent = new Intent(ArActivity.this, PopupActivity.class);
     //startActivityForResult(intent, 1);
-    PopupActivity popupActivity = new PopupActivity(ArActivity.this);
-    popupActivity.startDialog();
+    popupActivity = new PopupActivity(ArActivity.this);
+    popupActivity.startDialog(R.layout.activity_popup);
 
     installRequested = false;
 
@@ -623,6 +630,10 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             break;
           case R.id.heightButton:
             currentMode = Mode.isFindingHeight;
+            if (heightForTheFirstTime) {
+              popupActivity.startDialog(R.layout.activity_popup2);
+              heightForTheFirstTime = false;
+            }
             resetArActivity(false);
             checkToggleType(2);
             break;
@@ -638,11 +649,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     });
 
     popup.setOnClickListener(v -> {
-      popupActivity.startDialog();
+      popupActivity.startDialog(currentMode == Mode.isFindingCylinder ? R.layout.activity_popup : R.layout.activity_popup2);
     });
 
     exit.setOnClickListener(v -> {
       startActivity(new Intent(ArActivity.this, MainActivity.class));
+      finish();
     });
 
     bottomSheet = new BottomSheet();
@@ -700,7 +712,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
               case "Ginkgo":
                 treeType = "은행";
                 break;
+              default:
+                treeType = "기타";
+                break;
             }
+            buildTextView();
           } else {
             Log.d("treeRecognization", "fail");
           }

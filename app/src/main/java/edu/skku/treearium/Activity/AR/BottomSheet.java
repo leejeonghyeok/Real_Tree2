@@ -137,6 +137,10 @@ public class BottomSheet {
 
   public void setConfirmButton(FirebaseFirestore fstore, GeoPoint locationA) {
     view.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
+      if (locationA == null) {
+        System.out.println("in bottomsheet confirmbutton, locationA empty!");
+        return;
+      }
       if (TextUtils.isEmpty(dbhSize.getText()) || TextUtils.isEmpty(treeHeight.getText())) {
         System.out.println("in bottomsheet confirmbutton, dbhsize or treeheight empty!");
         return;
@@ -182,6 +186,10 @@ public class BottomSheet {
     heightMeasureButton.setOnClickListener(l -> {
       dialog.dismiss();
       activity.currentMode = Mode.isFindingHeight;
+      if (activity.heightForTheFirstTime) {
+        activity.popupActivity.startDialog(R.layout.activity_popup2);
+        activity.heightForTheFirstTime = false;
+      }
       activity.toggle.check(R.id.heightButton);
       activity.checkToggleType(2);
       activity.resetArActivity(false);

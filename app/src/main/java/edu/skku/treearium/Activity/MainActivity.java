@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intentAr = new Intent(MainActivity.this, ArActivity.class);
                 try {
                     startActivity(intentAr);
+                    finish();
                 } catch (ActivityNotFoundException e) {
                     System.out.println("error");
                 }
@@ -156,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this , SearchActivity.class));
+                finish();
             }
         });
         if (savedInstanceState == null) {

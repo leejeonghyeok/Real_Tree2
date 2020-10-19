@@ -56,7 +56,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/bottomnameask"
@@ -83,50 +84,6 @@
             android:padding="15dp"
             android:textSize="15sp" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/bottomdbhask"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:padding="15dp"
-            android:text="DBH"
-            android:textAlignment="textStart"
-            android:textSize="18sp" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/bottomdbh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/et_custom"
-                android:hint="DBH"
-                android:inputType="numberDecimal"
-                android:padding="15dp"
-                android:textSize="15sp" />
-
-            <Button
-                android:id="@+id/bottomdbhmeasure"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/bottomdbh"
-                android:layout_marginEnd="5dp"
-                android:text="측정" />
-        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -166,6 +123,85 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/bottomspeciesask"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:text="수종"
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+
+            />
+
+
+        <Spinner
+            android:id="@+id/bottomspecies"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom"
+            android:padding="15dp"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/bottomdbhask"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:text="DBH(cm)"
+            android:textAlignment="textStart"
+            android:textSize="16sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/bottomdbh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/et_custom"
+                android:hint="DBH"
+                android:inputType="numberDecimal"
+                android:padding="15dp"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/bottomdbhmeasure"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/bottomdbh"
+                android:layout_marginEnd="5dp"
+                android:text="측정" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
             android:id="@+id/bottomheightask"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
@@ -173,7 +209,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:padding="15dp"
-            android:text="높이"
+            android:text="높이(m)"
             android:textAlignment="textStart"
             android:textSize="18sp" />
 
@@ -205,38 +241,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/bottomspeciesask"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:padding="15dp"
-            android:text="수종"
-            android:textAlignment="textStart"
-            android:textSize="18sp"
-
-            />
-
-
-        <Spinner
-            android:id="@+id/bottomspecies"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/et_custom"
-            android:padding="15dp"
-            android:textSize="15sp" />
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/confirmBtn"
