@@ -382,7 +382,14 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         Double longitude2=point.longitude;
         mapoptions.snippet("DBH : "+dbh + ", 학종 : " + sp);
         mapoptions.position(new LatLng(latitude2,longitude2));
-        mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));
+        //지도 나무 아이콘
+        if(sp.equals("은행나무")){
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground)); //지도 나무 이미지
+        }else if(sp.equals("단풍나무")){
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground)); //지도 나무 이미지
+        }else {
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground)); //지도 나무 이미지
+        }
         System.out.println(latitude2);
         //map.animateCamera(CameraUpdateFactory.newLatLng(point));//마지막에만 카메라 이동하도록 고쳐야함
         Marker tr2mark=map.addMarker(mapoptions);
@@ -452,11 +459,6 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 {
                     gung1.setText("대경목");
                 }
-
-
-
-
-
 
                 bottomSheetView.findViewById(R.id.xbtn).setOnClickListener(new View.OnClickListener(){
                     @Override
