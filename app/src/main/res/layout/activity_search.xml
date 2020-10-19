@@ -57,6 +57,17 @@
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_search_black_24dp" />
 
+    <TextView
+        android:id="@+id/numberoftree"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/recycler_view"
+        android:layout_marginBottom="-35dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:layout_marginLeft="10dp"
+        android:textSize="16dp"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"

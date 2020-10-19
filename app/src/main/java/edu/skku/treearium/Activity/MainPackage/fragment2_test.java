@@ -298,10 +298,17 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
 
                 TextView mapbottomtreespec1 = bottomSheetView.findViewById(R.id.mapbottomtreespec1);//1순위 퍼센트
                 TextView mapbottomtreespec2 = bottomSheetView.findViewById(R.id.mapbottomtreespec2);//2순위 퍼센트
-                TextView mapbottomtreespec3 = bottomSheetView.findViewById(R.id.mapbottomtreespec3);//기타
+                TextView mapbottomtreespec3 = bottomSheetView.findViewById(R.id.mapbottomtreespec3);//3순위 퍼센트
 
                 TextView mapbottomtreespecask1 = bottomSheetView.findViewById(R.id.mapbottomtreespecask1);//1순위 나무 이름
                 TextView mapbottomtreespecask2 = bottomSheetView.findViewById(R.id.mapbottomtreespecask2);//2순위 나무 이름
+                TextView mapbottomtreespecask3 = bottomSheetView.findViewById(R.id.mapbottomtreespecask3);//2순위 나무 이름
+
+                LinearLayout firsttree = bottomSheetView.findViewById(R.id.firsttree);//1순위 리스트
+                LinearLayout secondtree = bottomSheetView.findViewById(R.id.secondtree);//1순위 리스트
+                LinearLayout thirdtree = bottomSheetView.findViewById(R.id.thirdtree);//1순위 리스트
+
+
 
                 mapbottomtreenum.setText(tList.size()+"그루");
                 if(tList.size()!=0) {
@@ -320,10 +327,11 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                         }
                     }
 
+
                     int maxIndex = 0;
-                    for(int i=0; i<items.length-1; i++)
+                    for(int i=0; i<items.length; i++)
                     {
-                        if(maxIndex < values[i]) {
+                        if(values[maxIndex] < values[i]) {
                             maxIndex = i;
                         }
                     }
@@ -333,24 +341,53 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     mapbottomtreespec1.setText((int)per + "%");
                     mapbottomtreespecask1.setText(items[maxIndex]);
 
-                    int secondMaxIndex = 0;
-                    for(int i=0; i<items.length-1; i++)
+                    if((int)per==0)
                     {
+                        firsttree.setVisibility(View.GONE);
+                    }
+
+                    int secondMaxIndex = 0;
+                    for(int i=0; i<items.length; i++)
+                    {
+
                         if(i != maxIndex) {
-                            if(secondMaxIndex < values[i])
+                            if(values[secondMaxIndex] < values[i]) {
                                 secondMaxIndex = i;
+                            }
                         }
                     }
 
-                    per = values[secondMaxIndex] / (float) tList.size();
-                    per = per * 100;
-                    mapbottomtreespec2.setText((int)per + "%");
+
+
+                    float secondper = values[secondMaxIndex] / (float) tList.size();
+                    secondper = secondper * 100;
+                    mapbottomtreespec2.setText((int)secondper + "%");
                     mapbottomtreespecask2.setText(items[secondMaxIndex]);
 
+                    if((int)secondper==0)
+                    {
+                        secondtree.setVisibility(View.GONE);
+                    }
 
-                    per = values[items.length-1] / (float) tList.size();
-                    per = per * 100;
-                    mapbottomtreespec3.setText((int)per + "%");
+
+                    int thirdMaxIndex = 0;
+                    for(int i=0; i<items.length; i++)
+                    {
+                        if(i != maxIndex && i != secondMaxIndex) {
+                            if(values[thirdMaxIndex] < values[i])
+                                thirdMaxIndex = i;
+                        }
+                    }
+
+                    float thirdper = values[thirdMaxIndex] / (float) tList.size();
+                    thirdper = thirdper * 100;
+                    mapbottomtreespecask3.setText(items[thirdMaxIndex]);
+                    mapbottomtreespec3.setText((int)thirdper + "%");
+
+                    if((int)thirdper==0)
+                    {
+                        thirdtree.setVisibility(View.GONE);
+                    }
 
                 } else {
                     mapbottomtreespec1.setText("");

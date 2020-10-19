@@ -45,4 +45,8 @@
         <item name="behavior_peekHeight">200dp</item>
     </style>
 
+    <style name="tab_text" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
