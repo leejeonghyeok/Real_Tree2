@@ -40,7 +40,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -144,11 +149,14 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                     sp1.setText(tList.get(i).getTreeSpecies());
 
                     EditText he1=bottomSheetView.findViewById(R.id.sethe2);
-                    he1.setText(tList.get(i).getTreeHeight());
+
+                    String tmp = String.format("%.2f",Float.parseFloat(tList.get(i).getTreeHeight()));
+                    he1.setText(tmp + " m");
 
 
                     EditText dbh1=bottomSheetView.findViewById(R.id.setdbh3);
-                    dbh1.setText(tList.get(i).getTreeDbh());
+                    tmp = String.format("%.2f",Float.parseFloat(tList.get(i).getTreeDbh()));
+                    dbh1.setText(tmp + " cm");
 
                     EditText ung1=bottomSheetView.findViewById(R.id.setung4);
                     ung1.setText("못구함");
@@ -285,41 +293,65 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
 
                 TextView mapbottomname = bottomSheetView.findViewById(R.id.mapbottomname);//지역
                 TextView mapbottomlocation = bottomSheetView.findViewById(R.id.mapbottomlocation);//위도경도
+
                 TextView mapbottomtreenum = bottomSheetView.findViewById(R.id.mapbottomtreenum);//몇그루
-                TextView mapbottomtreespec1 = bottomSheetView.findViewById(R.id.mapbottomtreespec1);//은행
-                TextView mapbottomtreespec2 = bottomSheetView.findViewById(R.id.mapbottomtreespec2);//벚꽃
+
+                TextView mapbottomtreespec1 = bottomSheetView.findViewById(R.id.mapbottomtreespec1);//1순위 퍼센트
+                TextView mapbottomtreespec2 = bottomSheetView.findViewById(R.id.mapbottomtreespec2);//2순위 퍼센트
                 TextView mapbottomtreespec3 = bottomSheetView.findViewById(R.id.mapbottomtreespec3);//기타
+
+                TextView mapbottomtreespecask1 = bottomSheetView.findViewById(R.id.mapbottomtreespecask1);//1순위 나무 이름
+                TextView mapbottomtreespecask2 = bottomSheetView.findViewById(R.id.mapbottomtreespecask2);//2순위 나무 이름
+
                 mapbottomtreenum.setText(tList.size()+"그루");
                 if(tList.size()!=0) {
 
-                    int k = 0;
-                    for (int i = 0; i < tList.size(); i++) {
-                        if(tList.get(i).getTreeSpecies().equals("은행"))
-                            k++;
+                    String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};//기타가 무조건 마지막
+                    int[] values = new int[items.length];
+
+                    for(int j=0; j< tList.size(); j++) {
+                        for(int i=0; i<items.length; i++)
+                        {
+                            if(tList.get(j).getTreeSpecies().equals(items[i]))
+                            {
+                                values[i]++;
+                                break;
+                            }
+                        }
                     }
-                    float per = (float) k / (float) tList.size();
+
+                    int maxIndex = 0;
+                    for(int i=0; i<items.length-1; i++)
+                    {
+                        if(maxIndex < values[i]) {
+                            maxIndex = i;
+                        }
+                    }
+
+                    float per = values[maxIndex] / (float) tList.size();
                     per = per * 100;
                     mapbottomtreespec1.setText((int)per + "%");
+                    mapbottomtreespecask1.setText(items[maxIndex]);
 
-
-                    k = 0;
-                    for (int i = 0; i < tList.size(); i++) {
-                        if(tList.get(i).getTreeSpecies().equals("벚"))
-                            k++;
+                    int secondMaxIndex = 0;
+                    for(int i=0; i<items.length-1; i++)
+                    {
+                        if(i != maxIndex) {
+                            if(secondMaxIndex < values[i])
+                                secondMaxIndex = i;
+                        }
                     }
-                    per = (float) k / (float) tList.size();
+
+                    per = values[secondMaxIndex] / (float) tList.size();
                     per = per * 100;
                     mapbottomtreespec2.setText((int)per + "%");
+                    mapbottomtreespecask2.setText(items[secondMaxIndex]);
 
 
-                    k = 0;
-                    for (int i = 0; i < tList.size(); i++) {
-                        if(tList.get(i).getTreeSpecies().equals("기타"))
-                            k++;
-                    }
-                    per = (float) k / (float) tList.size();
+                    per = values[items.length-1] / (float) tList.size();
                     per = per * 100;
                     mapbottomtreespec3.setText((int)per + "%");
+
                 } else {
                     mapbottomtreespec1.setText("");
                     mapbottomtreespec2.setText("");

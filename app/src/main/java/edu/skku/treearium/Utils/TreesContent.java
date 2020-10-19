@@ -181,7 +181,7 @@ public class TreesContent {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         db.collection("Team")
-                                .document(document.getString("fName"))
+                                .document(document.getString("Team"))
                                 .collection("Tree")
                                 .document(treeID)
                                 .update("treeName", memo).addOnCompleteListener(new OnCompleteListener<Void>() {

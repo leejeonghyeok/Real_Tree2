@@ -57,9 +57,9 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             holder.mTreeLandmark.setText(trees.get(position).getTreeNearLandMark());
         }
         if(trees.get(position).getTreeLocation()!=null) {
-            holder.mTreeLocation.setText(String.format("%.4f",trees.get(position).getTreeLocation().getLatitude())
+            holder.mTreeLocation.setText(String.format("%.8f",trees.get(position).getTreeLocation().getLatitude())
                     + "     "
-                    + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
+                    + String.format("%.8f",trees.get(position).getTreeLocation().getLongitude()));
         }
         if(trees.get(position).getTreePerson() != null) {
             holder.mPerson.setText(trees.get(position).getTreePerson());

@@ -376,7 +376,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                           resetArActivity(false);
 
                           bottomSheet.setAlertText(1);
-                          bottomSheet.setTeamName(teamname);
+                          bottomSheet.setTeamName("");
                           bottomSheet.setDbhSize(dbh);
                           bottomSheet.setTreeHeight(height);
                           bottomSheet.setTreeLandMark(landmark);

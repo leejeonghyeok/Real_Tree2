@@ -477,16 +477,7 @@
                         />
 
                 </LinearLayout>
-                <TextView
-                    android:id="@+id/mapbottomtreefinalask"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:padding="15dp"
-                    android:textAlignment="textStart"
-                    android:text="최종통계: "
-                    android:textSize="18sp" />
+
 
             </LinearLayout>
 

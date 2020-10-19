@@ -35,7 +35,7 @@ public class TreesData {
         List<Trees> tempList = new ArrayList<>();
         for (Trees tree : mList) {
             for (String h : height) {
-                if (Float.parseFloat(tree.getTreeDbh()) >= Float.parseFloat(h.replace(">",""))) {
+                if (Float.parseFloat(tree.getTreeHeight()) >= Float.parseFloat(h.replace(">",""))) {
                     tempList.add(tree);
                 }
             }
@@ -71,12 +71,17 @@ public class TreesData {
 
     public List<String> getUniqueDBHKeys() {
         List<String> dbhs = new ArrayList<>();
-        for (Trees tree : tList) {
+        /*for (Trees tree : tList) {
             int dbh = (int) Math.floor(Float.parseFloat(tree.getTreeDbh()));
             String stringDbh = "> " + dbh;
             if (!dbhs.contains(stringDbh)) {
                 dbhs.add(stringDbh);
             }
+        }*/
+        for( int i=10; i<=90; i+=10 )
+        {
+            String stringDbh ="> " + i;
+            dbhs.add(stringDbh);
         }
         Collections.sort(dbhs);
         return dbhs;
@@ -84,14 +89,28 @@ public class TreesData {
 
     public List<String> getUniqueHeightKeys() {
         List<String> heights = new ArrayList<>();
-        for (Trees tree : tList) {
-            int dbh = (int) Math.floor(Float.parseFloat(tree.getTreeHeight()));
-            String stringHeight = "> " + dbh;
+        /*for (Trees tree : tList) {
+            int height = (int) Math.floor(Float.parseFloat(tree.getTreeHeight()));
+            String stringHeight = "> " + height;
             if (!heights.contains(stringHeight)) {
                 heights.add(stringHeight);
             }
+        }*/
+
+        List<Integer> tmpheights = new ArrayList<>();
+        for( int i=1; i<=19; i+=2 )
+        {
+            int stringHeight = i;
+            tmpheights.add(stringHeight);
         }
-        Collections.sort(heights);
+        Collections.sort(tmpheights);
+
+        for(int i=0; i<tmpheights.size(); i++ )
+        {
+            String stringHeight ="> " + tmpheights.get(i);
+            heights.add(stringHeight);
+        }
+
         return heights;
     }
 
