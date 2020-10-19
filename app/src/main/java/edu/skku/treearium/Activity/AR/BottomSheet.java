@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.DocumentReference;
@@ -18,12 +19,13 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.skku.treearium.Activity.Search.SearchActivity;
+import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.R;
 
 public class BottomSheet {
   /*================= Buttom Sheet Stuffs =================*/
   private View view;
+  private TextView alertText;
   private EditText teamName;
   private EditText dbhSize;
   private EditText treeLandMark;
@@ -79,6 +81,23 @@ public class BottomSheet {
     treeType.setAdapter(adapter);
   }
 
+  // 1 : dbh, 2 : height
+  public void setAlertText(int doneType) {
+    if (doneType == 1) {
+      if (TextUtils.isEmpty(treeHeight.getText())) {
+        alertText.setText("흉고직경을 측정했어요!");
+      } else {
+        alertText.setText("측정이 완료되었어요!");
+      }
+    } else if (doneType == 2) {
+      if (TextUtils.isEmpty(dbhSize.getText())) {
+        alertText.setText("높이를 측정했어요!");
+      } else {
+        alertText.setText("측정이 완료되었어요!");
+      }
+    }
+  }
+
   public void setTreeHeight(String height) {
     treeHeight.setText(height);
     if (!TextUtils.isEmpty(treeHeight.getText())) {
@@ -99,6 +118,7 @@ public class BottomSheet {
             (LinearLayout) activity.findViewById(R.id.bottomSheetContainer)
     );
 
+    alertText = view.findViewById(R.id.treeAlertText);
     teamName = view.findViewById(R.id.bottomname);
     dbhSize = view.findViewById(R.id.bottomdbh);
     treeLandMark = view.findViewById(R.id.bottomnearbylm);
@@ -121,6 +141,7 @@ public class BottomSheet {
         System.out.println("in bottomsheet confirmbutton, dbhsize or treeheight empty!");
         return;
       }
+
       Map<String, Object> tree = new HashMap<>();
       Long tsLong = System.currentTimeMillis() / 1000;
       String ts = (tsLong).toString();
@@ -143,7 +164,7 @@ public class BottomSheet {
       });
       dialog.dismiss();
 
-      v1.getContext().startActivity(new Intent(v1.getContext(), SearchActivity.class));
+      v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
     });
   }
 
