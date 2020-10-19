@@ -375,21 +375,23 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
         }
     }
 
-    public void markeron2(LatLng point,String name,String sp, Double dbh){
-        MarkerOptions mapoptions=new MarkerOptions();
-        mapoptions.title("이름 : "+name);
-        Double latitude2=point.latitude;
-        Double longitude2=point.longitude;
-        mapoptions.snippet("DBH : "+dbh + ", 학종 : " + sp);
-        mapoptions.position(new LatLng(latitude2,longitude2));
+    public void markeron2(LatLng point,String name,String sp, Double dbh) {
+        MarkerOptions mapoptions = new MarkerOptions();
+        mapoptions.title("이름 : " + name);
+        Double latitude2 = point.latitude;
+        Double longitude2 = point.longitude;
+        mapoptions.snippet("DBH : " + dbh + ", 학종 : " + sp);
+        mapoptions.position(new LatLng(latitude2, longitude2));
         //지도 나무 아이콘
-        if(sp.equals("은행")){
+        if (sp.equals("은행")) {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ginkgo_icon_foreground));
-        }else if(sp.equals("단풍")){
+        } else if (sp.equals("단풍")) {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maple_launcher_foreground));
-        }else if(sp.equals("벚")){
+        } else if (sp.equals("벚")) {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.sakura_icon_foreground));
-        }else{
+        } else if(sp.equals("메타")) {
+            mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.meta_icon_foreground));
+        } else {
             mapoptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.tree_icon_foreground));
         }
         System.out.println(latitude2);
