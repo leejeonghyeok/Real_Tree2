@@ -25,6 +25,16 @@
         android:scaleType="centerInside"
         app:srcCompat="@drawable/target"
         />
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/circle_background"
+        android:layout_below="@+id/filterBtnMap"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="17dp"
+        android:layout_marginRight="17dp"/>
+
 
     <ImageButton
         android:id="@+id/statisticalbtn"
@@ -50,8 +60,6 @@
         android:src="@drawable/ic_filter"
         app:backgroundTint="@color/colorWhite"
         />
-
-
 
 
 

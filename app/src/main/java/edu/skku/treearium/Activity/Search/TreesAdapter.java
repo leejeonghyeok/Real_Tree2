@@ -61,6 +61,9 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
                     + "     "
                     + String.format("%.4f",trees.get(position).getTreeLocation().getLongitude()));
         }
+        if(trees.get(position).getTreePerson() != null) {
+            holder.mPerson.setText(trees.get(position).getTreePerson());
+        }
 
         //time
         SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy년 MM월 dd일 HH시 mm분");
@@ -68,6 +71,8 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             String format_time1 = format1.format (1000*(Long.parseLong(trees.get(position).getTime())));
             holder.mTime.setText(format_time1);
         }
+
+
 
 
         holder.expandableView.setVisibility(View.GONE);
@@ -104,7 +109,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
 
     public class TreesHolder extends RecyclerView.ViewHolder {
 
-        TextView mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime, mTreeLandmark;
+        TextView mTreeDBH, mTreeHeight, mTreeSpecies, mTreeLocation, mTime, mTreeLandmark, mPerson;
         EditText mTreeName;
         RelativeLayout expandableView;
         ImageView arrowBtn;
@@ -114,6 +119,7 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
         public TreesHolder(@NonNull View itemView) {
             super(itemView);
 
+            mPerson = itemView.findViewById(R.id.person);
             mTreeName = itemView.findViewById(R.id.name);
             mTreeDBH = itemView.findViewById(R.id.dbh);
             mTreeHeight  = itemView.findViewById(R.id.height);

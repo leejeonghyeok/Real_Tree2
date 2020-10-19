@@ -654,6 +654,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     exit.setOnClickListener(v -> {
       startActivity(new Intent(ArActivity.this, MainActivity.class));
+      finish();
     });
 
     bottomSheet = new BottomSheet();

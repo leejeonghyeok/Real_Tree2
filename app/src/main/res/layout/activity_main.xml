@@ -63,6 +63,7 @@
                     android:src="@drawable/ic_baseline_menu_24" />
 
                 <ImageButton
+                    android:visibility="gone"
                     android:id="@+id/search_go_btn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
