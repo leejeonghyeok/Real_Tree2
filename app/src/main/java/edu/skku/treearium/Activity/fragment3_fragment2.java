@@ -165,6 +165,7 @@ public class fragment3_fragment2 extends Fragment {
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.BLACK);
         pieDataSet.setValueTextSize(18f);
+        pieDataSet.setValueFormatter(new MyValueFormatter());
         PieData pieData=new PieData(pieDataSet);
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);

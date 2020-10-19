@@ -116,7 +116,9 @@ public class fragment3_fragment3 extends Fragment {
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(16f);
+        barDataSet.setValueFormatter(new MyValueFormatter());
         BarData barData=new BarData(barDataSet);
+
 
         barChart.setFitBars(true);
         barChart.setData(barData);

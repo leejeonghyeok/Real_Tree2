@@ -306,7 +306,7 @@ public class fragment2_test extends Fragment implements  AAH_FabulousFragment.Ca
                 mapbottomtreenum.setText(tList.size()+"그루");
                 if(tList.size()!=0) {
 
-                    String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};//기타가 무조건 마지막
+                    String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "소나무"};//기타가 무조건 마지막
                     int[] values = new int[items.length];
 
                     for(int j=0; j< tList.size(); j++) {

@@ -115,6 +115,7 @@ public class fragment3_fragment1 extends Fragment {
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(20f);
+        barDataSet.setValueFormatter(new MyValueFormatter());
 
         BarData barData = new BarData(barDataSet);
 
@@ -123,6 +124,7 @@ public class fragment3_fragment1 extends Fragment {
         barChart.getDescription().setText("TREE DBH");
         barChart.animateY(2000);
         return v;
+
     }
     public void makech(int a,int b, int c, int d)
     {
