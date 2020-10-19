@@ -164,12 +164,14 @@ public class fragment3_fragment2 extends Fragment {
         PieDataSet pieDataSet=new PieDataSet(visitor,"TREE");
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.BLACK);
-        pieDataSet.setValueTextSize(16f);
+        pieDataSet.setValueTextSize(18f);
         PieData pieData=new PieData(pieDataSet);
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
         pieChart.animate();
         pieChart.setCenterText("수종");
+        pieChart.setCenterTextSize(20f);
+
         return v;
     }
     private void makech(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a0) {

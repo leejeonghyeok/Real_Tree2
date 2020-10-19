@@ -110,10 +110,12 @@ public class fragment3_fragment1 extends Fragment {
             }
         }
 
-        BarDataSet barDataSet=new BarDataSet(visitor,"DBH");
+        BarDataSet barDataSet=new BarDataSet(visitor,"| 치수 | 소경목 | 중경목 | 대경목 |");
+
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(16f);
+        barDataSet.setValueTextSize(20f);
+
         BarData barData=new BarData(barDataSet);
 
         barChart.setFitBars(true);
