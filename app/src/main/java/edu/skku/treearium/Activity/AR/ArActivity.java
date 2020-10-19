@@ -368,6 +368,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                           checkToggleType(2);
                           resetArActivity(false);
 
+                          bottomSheet.setAlertText(1);
                           bottomSheet.setTeamName(teamname);
                           bottomSheet.setDbhSize(dbh);
                           bottomSheet.setTreeHeight(height);
@@ -717,6 +718,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
+            bottomSheet.setAlertText(2);
             bottomSheet.setTeamName(teamname);
             bottomSheet.setDbhSize(dbh);
             bottomSheet.setTreeHeight(height);
