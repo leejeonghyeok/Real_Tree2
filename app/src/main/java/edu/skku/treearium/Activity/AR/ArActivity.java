@@ -237,7 +237,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
-  private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416-treearium.tflite";
+  private static final String TF_OD_API_MODEL_FILE = "yolov4-416-treearium.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/name.txt";
 
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
@@ -706,14 +706,38 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
             treeType = mappedRecognitions.get(0).getTitle();
             switch (treeType) {
-              case "Maple":
-                treeType = "단풍";
+              case "cherry":
+                treeType = "벚";
                 break;
-              case "Ginkgo":
+              case "fringe":
+                treeType = "이팝";
+                break;
+              case "crape":
+                treeType = "배롱";
+                break;
+              case "ginkgo":
                 treeType = "은행";
                 break;
+              case "hibiscus":
+                treeType = "무궁화";
+                break;
+              case "tulip":
+                treeType = "백합";
+                break;
+              case "maple":
+                treeType = "단풍";
+                break;
+              case "meta":
+                treeType = "메타";
+                break;
+              case "pine":
+                treeType = "소";
+                break;
+              case "zelkova":
+                treeType = "느티";
+                break;
               default:
-                treeType = "기타";
+                treeType = "은행";
                 break;
             }
             buildTextView();
