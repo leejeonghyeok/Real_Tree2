@@ -183,6 +183,70 @@
                         />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/storageName"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:padding="15dp"
+                        android:textAlignment="textStart"
+                        android:text="Co2 저장량: "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/storage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:padding="15dp"
+                        android:textSize="23sp"
+                        android:text="(kg/tree)"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/colorBlack"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/absorptionName"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:padding="15dp"
+                        android:textAlignment="textStart"
+                        android:text="Co2 흡수량: "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/absorption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:padding="15dp"
+                        android:textSize="23sp"
+                        android:text="(kg/tree/y)"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/colorBlack"
+                        />
+
+                </LinearLayout>
+
+
                 <TextView
                     android:id="@+id/mapbottomtreespecask"
                     android:layout_width="120dp"
@@ -480,6 +544,49 @@
                         />
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/lumber"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:padding="15dp"
+                    android:textAlignment="textStart"
+                    android:text="재목: "
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/doyle"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:padding="15dp"
+                        android:textAlignment="textStart"
+                        android:text="산출량"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/boardFeet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp" android:padding="15dp"
+                        android:textSize="23sp"
+                        android:text="0"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/colorBlack"
+                        />
+
+                </LinearLayout>
+
+
 
 
             </LinearLayout>

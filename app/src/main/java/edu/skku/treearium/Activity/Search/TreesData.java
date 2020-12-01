@@ -22,7 +22,10 @@ public class TreesData {
     public List<Trees> getDBHFilteredtrees(List<String> dbh, List<Trees> mList) {
         List<Trees> tempList = new ArrayList<>();
         for (Trees tree : mList) {
-            for (String d : dbh) {
+            for (String d : dbh) {//d : >10
+                if(d.equals("목재"))
+                    d = "> 24";//기준
+
                 if (Float.parseFloat(tree.getTreeDbh()) >= Float.parseFloat(d.replace(">",""))) {
                     tempList.add(tree);
                 }
@@ -83,6 +86,9 @@ public class TreesData {
             String stringDbh ="> " + i;
             dbhs.add(stringDbh);
         }
+        String wood = "목재";
+        dbhs.add(wood);
+
         Collections.sort(dbhs);
         return dbhs;
     }
