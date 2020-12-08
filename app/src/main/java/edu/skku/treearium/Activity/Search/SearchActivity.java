@@ -1,6 +1,7 @@
 package edu.skku.treearium.Activity.Search;
 
 import android.content.res.Configuration;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;

@@ -168,7 +168,8 @@ public class BottomSheet {
       });
       dialog.dismiss();
 
-      v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
+      //세중 잠시 주석
+      //v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
     });
   }
 

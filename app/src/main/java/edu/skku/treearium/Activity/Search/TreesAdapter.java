@@ -1,8 +1,11 @@
 package edu.skku.treearium.Activity.Search;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +61,29 @@ public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder>
             holder.mTreeLandmark.setText(trees.get(position).getTreeNearLandMark());
         }
         if(trees.get(position).getTreeLocation()!=null) {
-            holder.mTreeLocation.setText(String.format("%.8f",trees.get(position).getTreeLocation().getLatitude())
+            /*holder.mTreeLocation.setText(String.format("%.8f",trees.get(position).getTreeLocation().getLatitude())
                     + "     "
-                    + String.format("%.8f",trees.get(position).getTreeLocation().getLongitude()));
+                    + String.format("%.8f",trees.get(position).getTreeLocation().getLongitude()));*/
+
+            Geocoder mGeocoder = new Geocoder(context);
+            try {
+                List<Address> mResultList = mGeocoder.getFromLocation(
+                        trees.get(position).getTreeLocation().getLatitude(),
+                        trees.get(position).getTreeLocation().getLongitude(),
+                        10
+                );
+                if(mResultList!=null){
+                    holder.mTreeLocation.setText(mResultList.get(0).getAddressLine(0).toString());
+                } else {
+                    holder.mTreeLocation.setText(String.format("%.8f",trees.get(position).getTreeLocation().getLatitude())
+                            + "     "
+                            + String.format("%.8f",trees.get(position).getTreeLocation().getLongitude()));
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+
         }
         if(trees.get(position).getTreePerson() != null) {
             holder.mPerson.setText(trees.get(position).getTreePerson());
