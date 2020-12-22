@@ -1,5 +1,6 @@
 package edu.skku.treearium.Utils;
 
+//matrix class
 public class MatrixUtil {
     public static float[] crossMatrix(float a1, float a2, float a3, float b1, float b2, float b3){
 

@@ -40,6 +40,7 @@ public class PointCollector {
         }
     }
 
+    //filter points
     public FloatBuffer doFilter() {
 
         int numPoints = 0;

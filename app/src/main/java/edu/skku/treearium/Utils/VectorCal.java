@@ -1,11 +1,13 @@
 package edu.skku.treearium.Utils;
 
+//vector의 외적.내적 등 계산법을 담아둔 class
 public class VectorCal {
 
     static public float vectorSize(float[] a){
         return (float)Math.sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
     }
 
+    //inner product
     static public float inner(float[] a, float[] b){
         return (a[0]*b[0]) + (a[1]*b[1]) + (a[2]*b[2]);
     }
@@ -13,6 +15,7 @@ public class VectorCal {
         return (a[0]*b[0+i]) + (a[1]*b[1+i]) + (a[2]*b[2+i]);
     }
 
+    //outer product
     static public float[] outer(float[] a, float[] b){
         float[] result = new float[3];
         result[0] = a[1]*b[2] - a[2]*b[1];
@@ -22,13 +25,15 @@ public class VectorCal {
         return result;
     }
 
+    //normalize
     static public void normalize(float[] a){
         a[0] /= VectorCal.vectorSize(a);
         a[1] /= VectorCal.vectorSize(a);
         a[2] /= VectorCal.vectorSize(a);
     }
 
-    static public float[] IDP(float[] a, float[] b, int m, int n){  // 내분점 : internally dividing point
+    // 내분점 : internally dividing point
+    static public float[] IDP(float[] a, float[] b, int m, int n){
         float[] idp = new float[]{0,0,0};
         int mn = m+n;
 
