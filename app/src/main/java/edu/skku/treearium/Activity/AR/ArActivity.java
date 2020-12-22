@@ -40,8 +40,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -137,7 +135,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
     /************************* 인터페이스용 ************************/
     private View arLayout;
-    private Button popup = null;  /* <-- 이 버튼은 머임 ?*/
+    private Button popup = null;  /* <-- 이 버튼은 머임?*/
     private Button exit = null;
     private CameraButton recBtn = null;
     private BottomSheet bottomSheet = null;
@@ -279,6 +277,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         TF_OD_API;
     }
 
+    //yolov4 tensorflow init
     private void initBox() {
         try {
             detector =
@@ -294,6 +293,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
     }
 
+    //yolov4 model file
     private static final int TF_OD_API_INPUT_SIZE = 416;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
     private static final String TF_OD_API_MODEL_FILE = "yolov4-416-treearium.tflite";
@@ -794,6 +794,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                             mappedRecognitions.add(result);
                         }
                     }
+                    //수종인식: mark to treeType
                     if (mappedRecognitions.size() > 0) {
                         Log.d("treeRecognization", "success");
                         Log.d("treeRecognization", mappedRecognitions.get(0).getTitle());
@@ -1259,6 +1260,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         return result;
     }
 
+    // 화면의 한 점을 실제 world ray로 바꿔주는 함수.
     float[] screenPointToWorldRay(float xPx, float yPx, Frame frame) {
         // ray[0~2] : camera pose
         // ray[3~5] : Unit vector of ray

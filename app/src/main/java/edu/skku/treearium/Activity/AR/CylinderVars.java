@@ -1,10 +1,10 @@
 package edu.skku.treearium.Activity.AR;
 
+//원기둥 class
 public class CylinderVars {
     private float dbh = -1.0f;
     private float[] nVec;
     private float[] Pose;
-
 
     public CylinderVars(float dbh, float[] nVec, float[] pose) {
         this.dbh = dbh;
