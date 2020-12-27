@@ -43,28 +43,33 @@ public class BottomSheet {
   /*=======================================================*/
 
 
+  // setting team name
   void setTeamName(String teamName) {
 //		if (!TextUtils.isEmpty(this.teamName.getText())) return;
     this.teamName.setText(teamName);
   }
 
+  // setting dbh
   public void setDbhSize(String dbh) {
     dbhSize.setText(dbh);
+    // handling exceptions
     if (!TextUtils.isEmpty(dbhSize.getText())) {
       dbhMeasureButton.setText("다시");
     }
   }
 
+  // set tree type
   public void setTreeType(ArActivity activity, String treeName) {
     boolean found = false;
     int parameterIDX = -1;
+
+    // to certain tree name to go on the top of the list
     for (int i = 0; i < items.length; i++) {
       if (treeName.equals(items[i])) {
         found = true;
         parameterIDX = i;
       }
     }
-
     if (found) {
       String tmp = items[parameterIDX];
       items[parameterIDX] = items[0];
@@ -82,6 +87,7 @@ public class BottomSheet {
   }
 
   // 1 : dbh, 2 : height
+  // set alert text
   public void setAlertText(int doneType) {
     if (doneType == 1) {
       if (TextUtils.isEmpty(treeHeight.getText())) {
@@ -98,17 +104,21 @@ public class BottomSheet {
     }
   }
 
+  // set height
   public void setTreeHeight(String height) {
     treeHeight.setText(height);
+    // handling exceptions
     if (!TextUtils.isEmpty(treeHeight.getText())) {
       heightMeasureButton.setText("다시");
     }
   }
 
+  // set landmark
   public void setTreeLandMark(String position) {
     treeLandMark.setText(position);
   }
 
+  // initialiating stuffs
   public void init(ArActivity activity, BottomSheetDialog dialog) {
     this.dialog = dialog;
 
@@ -134,6 +144,7 @@ public class BottomSheet {
     heightMeasureButton = view.findViewById(R.id.bottomheightmeasure);
     setHeightMeasureButton(activity);
   }
+
 
   public void setConfirmButton(FirebaseFirestore fstore, GeoPoint locationA) {
     view.findViewById(R.id.confirmBtn).setOnClickListener(v1 -> {
@@ -171,6 +182,8 @@ public class BottomSheet {
       v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
     });
   }
+
+  // set buttons with reset
 
   private void setDbhMeasureButton(ArActivity activity) {
     dbhMeasureButton.setOnClickListener(l -> {

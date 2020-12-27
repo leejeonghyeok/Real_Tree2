@@ -4,12 +4,15 @@ public class CylinderVars {
     private float dbh = -1.0f;
     private float[] nVec;
     private float[] Pose;
+    final public float[] bottom;
+    final public float[] top;
 
-
-    public CylinderVars(float dbh, float[] nVec, float[] pose) {
+    public CylinderVars(float dbh, float[] nVec, float[] pose, float[] bottom, float[] top) {
         this.dbh = dbh;
         this.nVec = nVec;
-        Pose = pose;
+        this.Pose = pose;
+        this.bottom = bottom;
+        this.top = top;
     }
 
     public float getDbh() {

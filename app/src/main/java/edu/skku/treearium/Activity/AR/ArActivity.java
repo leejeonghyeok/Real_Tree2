@@ -18,6 +18,7 @@ package edu.skku.treearium.Activity.AR;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -25,6 +26,10 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -107,7 +112,7 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 
-public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
+public class ArActivity extends AppCompatActivity implements GLSurfaceView.Renderer, SensorEventListener {
   /*********************** 건들 일 없는 것 ***********************/
   private static final String TAG = ArActivity.class.getSimpleName();
 
@@ -244,6 +249,13 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   /*************************************************************/
 
+  /*************************** GYRO ****************************/
+  private static SensorManager mSensorManager;
+  private Sensor mGravity, mGeomagnetic, mLinearAcceleration;
+  float[] fGravity, fGeo, fLinear;
+
+  /*************************************************************/
+
   // 1 : dbh, 2 : height, 3 : type
   public void checkToggleType(int num) {
     dbhButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(num == 1 ? R.color.filters_buttons : R.color.colorWhite)));
@@ -256,6 +268,28 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private final float[] anchorMatrix = new float[16];
 
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+    if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+      fGravity = event.values;
+    }
+
+    if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+      fGeo = event.values;
+    }
+
+    if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+      fLinear = event.values;
+    }
+  }
+
+  @Override
+  public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+  }
+
+  // when touch after point_cloud gathering finished.
   View.OnTouchListener surfaceViewTouchListener = new View.OnTouchListener() {
     @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     @Override
@@ -280,6 +314,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           FloatBuffer targetPoints = collector.filterPoints;
           targetPoints.rewind();
 
+          // pick the point that is closest to the ray
           int pickIndex = PointUtil.pickPoint(targetPoints, ray, rayOrigin);
           float[] seedPoint = PointUtil.getSeedPoint();
 
@@ -293,7 +328,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
           if (pickIndex >= 0 && !Thread.currentThread().isInterrupted()) {
             switch (currentMode) {
+              // if user is trying to measure dbh
               case isFindingCylinder:
+                // make a thread to find a cylinder
                 httpTh = new Thread(() -> {
                   isCylinderDone = false;
                   RequestForm rf = new RequestForm();
@@ -324,6 +361,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                         tmp[2] = -tmp[2];
                         Log.d("tmp", "바뀜");
                       }
+
+                      // making a model_matrix based on cylinder's geometric information
                       modelMatrix[4] = tmp[0];
                       modelMatrix[5] = tmp[1];
                       modelMatrix[6] = tmp[2];
@@ -349,7 +388,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                       Log.d("modelMatrix: ", modelMatrix[2] + " " + modelMatrix[6] + " " + modelMatrix[10] + " " + modelMatrix[14]);
                       Log.d("modelMatrix: ", modelMatrix[3] + " " + modelMatrix[7] + " " + modelMatrix[11] + " " + modelMatrix[15]);
 
-                      cylinderVars = new CylinderVars(param.r, tmp, centerPose);
+                      cylinderVars = new CylinderVars(param.r, tmp, centerPose, param.b, param.t);
                       Log.d("CylinderFinder", "request success code: " + parseInt(valueOf(resp.getResultCode())) +
                               ", Radius: " + param.r + ", Normal Vector: " + Arrays.toString(tmp) +
                               ", RMS: " + resp.getRMS());
@@ -359,6 +398,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                         isCylinderDone = true;
                       }
 
+                      // if cylinder is built without any errors, bottom_sheet pops out
                       if (isCylinderDone) {
                         runOnUiThread(() -> {
                           Snackbar.make(arLayout, "Cylinder Found", Snackbar.LENGTH_LONG).show();
@@ -398,7 +438,9 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                 httpTh.start();
                 break;
 
+              // if user is trying to find height, and plane has found
               case isFindingHeight:
+                // make thread like one above
                 httpTh = new Thread(() -> {
                   RequestForm rf = new RequestForm();
 
@@ -420,20 +462,54 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                               param.ll, param.lr, param.ur, param.ul, camera.getPose().getZAxis()
                       );
 
-                      float a = plane.normal[0], b = plane.normal[1], c = plane.normal[2];
-                      float d = -a * plane.ll[0] - b * plane.ll[1] - c * plane.ll[2];
-                      double planeConstant = java.lang.Math.sqrt((a * a) + (b * b) + (c * c));
+                      plane.normal[0] = 0.0f;
+                      plane.normal[1] = 1.0f;
+                      plane.normal[2] = 0.0f;
 
+                      // using orthogonal formula
                       treeBottom = new float[4];
                       if (cylinderVars != null) {
-                        double distance = Math.abs((a * cylinderVars.getPose()[0]) + (b * cylinderVars.getPose()[1]) + (c * cylinderVars.getPose()[2]) + d) / planeConstant;
-                        treeBottom[0] = cylinderVars.getPose()[0] - (a * (float) distance);
-                        treeBottom[1] = cylinderVars.getPose()[1] - (b * (float) distance);
-                        treeBottom[2] = cylinderVars.getPose()[2] - (c * (float) distance);
+                        float[] p1_to_p3 = new float[]{
+                                plane.ll[0] - cylinderVars.top[0],
+                                plane.ll[1] - cylinderVars.top[1],
+                                plane.ll[2] - cylinderVars.top[2]
+                        };
+
+                        float[] p1_to_p2 = new float[]{
+                                cylinderVars.bottom[0] - cylinderVars.top[0],
+                                cylinderVars.bottom[1] - cylinderVars.top[1],
+                                cylinderVars.bottom[2] - cylinderVars.top[2]
+                        };
+
+                        float n_p1_p3 = VectorCal.inner(plane.normal, p1_to_p3);
+                        float n_p1_p2 = VectorCal.inner(plane.normal, p1_to_p2);
+                        float const_u = n_p1_p3 / n_p1_p2;
+
+                        float[] p = new float[]{
+                                cylinderVars.top[0] + const_u * p1_to_p2[0],
+                                cylinderVars.top[1] + const_u * p1_to_p2[1],
+                                cylinderVars.top[2] + const_u * p1_to_p2[2],
+                        };
+
+                        treeBottom[0] = p[0];
+                        treeBottom[1] = p[1];
+                        treeBottom[2] = p[2];
                         treeBottom[3] = 1.0f;
+
+                        // our new normal
+                        float[] bot_to_top = new float[]{
+                                cylinderVars.top[0] - cylinderVars.bottom[0],
+                                cylinderVars.top[1] - cylinderVars.bottom[1],
+                                cylinderVars.top[2] - cylinderVars.bottom[2]
+                        };
+
+                        plane.normal[0] = bot_to_top[0];
+                        plane.normal[1] = bot_to_top[1];
+                        plane.normal[2] = bot_to_top[2];
 
                         isPlaneFound = true;
                       } else {
+                        // if user is trying to find height, and plane hasn't found
                         runOnUiThread(new Runnable() {
                           @Override
                           public void run() {
@@ -441,6 +517,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
                           }
                         });
 
+                        // doing same thing that has been done when finding cylinder
                         surfaceView.setOnTouchListener(new View.OnTouchListener() {
                           @Override
                           public boolean onTouch(View v, MotionEvent motionEvent) {
@@ -450,12 +527,16 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
                             float[] ray = screenPointToWorldRay(tx, ty, frame);
 
+                            float a = plane.normal[0], b = plane.normal[1], c = plane.normal[2];
+                            float d = -a * plane.ll[0] - b * plane.ll[1] - c * plane.ll[2];
+                            float a1 = (a * a) + (b * b) + (c * c);
+                            double planeConstant = java.lang.Math.sqrt(a1);
                             double distance = Math.abs((a * ray[0]) + (b * ray[1]) + (c * ray[2]) + d) / planeConstant;
 
                             float cosTheta = (float) Math.abs(
                                     (a * ray[3] + b * ray[4] + c * ray[5])
                                             /
-                                            (Math.sqrt(a * a + b * b + c * c) * Math.sqrt(ray[3] * ray[3] + ray[4] * ray[4] + ray[5] * ray[5]))
+                                            (Math.sqrt(a1) * Math.sqrt(ray[3] * ray[3] + ray[4] * ray[4] + ray[5] * ray[5]))
                             );
 
                             double vecSize = distance / cosTheta;
@@ -485,6 +566,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
           }
 
 
+          // when failed to find plane
           ArActivity.this.runOnUiThread(() -> {
             Snackbar.make(arLayout, "Please Wait...", Snackbar.LENGTH_LONG).show();
             try {
@@ -505,6 +587,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     }
   };
 
+  // reset this activity
   @SuppressLint("ClickableViewAccessibility")
   public void resetArActivity(boolean needToDeleteCylinder) {
     isPlaneFound = false;
@@ -518,6 +601,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   }
 
 
+  // when create, initiate things that has to be initiated.
   @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -531,6 +615,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 //      teamname = recieve.get(0);
 //    }
 
+    // initiating stuffs...
     arLayout = findViewById(R.id.arLayout);
     popup = (Button) findViewById(R.id.popup);
     exit = (Button) findViewById(R.id.delete);
@@ -556,6 +641,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     surfaceView.setRenderer(this);
     surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     surfaceView.setWillNotDraw(false);
+
+    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+    mGeomagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
     modelMatrix[3] = 0.0f;
     modelMatrix[7] = 0.0f;
@@ -619,10 +709,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     buildTextView();
     checkToggleType(1);
 
+    // initiating the 3 buttons that is on top of this activity
     toggle.check(R.id.dbhButton);
     toggle.addOnButtonCheckedListener((group, checkedID, isChecked) -> {
       if (isChecked) {
         switch (checkedID) {
+          // change current mode and reset
           case R.id.dbhButton:
             currentMode = Mode.isFindingCylinder;
             resetArActivity(true);
@@ -662,10 +754,11 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             ArActivity.this, R.style.BottomSheetDialogTheme
     ));
 
+    // initiating record button
     recBtn.setOnClickListener(v -> {
-
-      // 이건 그냥 내 폰에서 distance 왜인지 안먹혀서 주석해두겟슴 ,,
       double distance = 0.1f;
+
+      // to give bottom_sheet information
       if (isPlaneFound) {
         treeHeight = curHeight;
         isHeightDone = true;
@@ -727,7 +820,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         ////////////////////////////////
 
         if (isHeightDone) {
-
+          // setting bottom_sheet information, and make it pop
           runOnUiThread(() -> {
             try {
               treeRec.join();
@@ -746,6 +839,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
 
       } else {
+        // when pressed again, turn of recording mode
         isRecording = !isRecording;
         if (isRecording) {
           collector = new PointCollector();
@@ -771,6 +865,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     resetArActivity(true);
     surfaceView.setOnTouchListener(surfaceViewTouchListener);
 
+    // require permissions
     for (String permission : REQUIRED_PERMISSSIONS) {
       if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSSIONS, PERMISSION_REQUEST_CODE);
@@ -793,7 +888,12 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
 
   @Override
   protected void onResume() {
+    // (nothing special.. only things that needs to be done)
+
     super.onResume();
+    mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_UI);
+    mSensorManager.registerListener(this, mGeomagnetic, SensorManager.SENSOR_DELAY_UI);
+    mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_UI);
 
     if (session == null) {
       Exception exception = null;
@@ -815,7 +915,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
 
         // Create the session.
-        session = new Session(/* context= */ this);
+        session = new Session(this);
 
         // ARCore 세부 설정
         Config config = new Config(session);
@@ -869,6 +969,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
   @Override
   public void onPause() {
     super.onPause();
+    mSensorManager.unregisterListener(this);
     if (session != null) {
       // Note that the order matters - GLSurfaceView is paused first so that it does not try
       // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
@@ -965,6 +1066,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
       final float[] colorCorrectionRgba = new float[4];
       frame.getLightEstimate().getColorCorrection(colorCorrectionRgba, 0);
 
+      // draw gathered point_clouds while recording
       if (!isStaticView) {
         PointUtil.resetSeedPoint();
         try (PointCloud pointCloud = frame.acquirePointCloud()) {
@@ -984,6 +1086,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
 
+      // when cylinder is found, draw small cylinder
       if (isCylinderDone) {
         if (cylinderVars != null) {
           GLES20.glEnable(GLES20.GL_CULL_FACE);
@@ -997,6 +1100,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
         }
       }
 
+      // when finding height, draw a line based on phone's angle
       if (currentMode == Mode.isFindingHeight) {
         if (isPlaneFound) {
           if (treeBottom != null && !isHeightDone) {
@@ -1005,6 +1109,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
             float[] ray = screenPointToWorldRay(width / 2.0f, height / 2.0f, frame);
             float[] rayVec = new float[]{ray[3], ray[4], ray[5]};
             float[] bigPlaneVec = VectorCal.outer(rayVec, VectorCal.outer(plane.normal, rayVec));
+
+            // applying orthogonal formula
             float u = ((bigPlaneVec[0] * (ray[0] - treeBottom[0])) + (bigPlaneVec[1] * (ray[1] - treeBottom[1])) + (bigPlaneVec[2] * (ray[2] - treeBottom[2])))
                     /
                     ((bigPlaneVec[0] * plane.normal[0]) + (bigPlaneVec[1] * plane.normal[1]) + (bigPlaneVec[2] * plane.normal[2]));
@@ -1073,6 +1179,7 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     }
   }
 
+  // not used.
   public static double haversine(double lat1, double lon1, double lat2, double lon2) {
     final double R = 6372.8; // In kilometers
     double dLat = Math.toRadians(lat2 - lat1);
@@ -1094,6 +1201,8 @@ public class ArActivity extends AppCompatActivity implements GLSurfaceView.Rende
     ray_clip[1] = 1.0f - 2.0f * yPx / surfaceView.getMeasuredHeight();
     ray_clip[2] = -1.0f; // +z is forwards (remember clip, not camera)
     ray_clip[3] = 1.0f; // w (homogenous coordinates)
+
+    // multiply inverse proj, inverse view, to get world coordinate
 
     float[] ProMatrices = new float[32];  // {proj, inverse proj}
     frame.getCamera().getProjectionMatrix(ProMatrices, 0, 0.1f, 100.0f);
