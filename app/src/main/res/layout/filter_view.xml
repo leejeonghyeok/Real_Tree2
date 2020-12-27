@@ -19,6 +19,7 @@
         tools:ignore="MissingPrefix">
 
         <com.google.android.material.tabs.TabLayout
+            app:tabTextAppearance="@style/tab_text"
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="#f5f5f5"
             android:background="@color/colorPrimary"
@@ -41,7 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="56dp"
-            android:elevation="-4dp" />
+            android:elevation="-4dp" >
+
+        </androidx.viewpager.widget.ViewPager>
 
         <LinearLayout
             android:id="@+id/ll_buttons"

@@ -1,6 +1,7 @@
 package edu.skku.treearium.Activity.Search;
 
 import android.content.res.Configuration;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,6 +38,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
     private EditText mSearchField;
     private ImageButton mSearchBtn;
     private RecyclerView mRecyclerView;
+    private TextView mNumberTree;
     RecyclerView.LayoutManager layoutManager;
 
     TreesAdapter adapter;
@@ -54,6 +57,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         mSearchField = (EditText) findViewById(R.id.search_field);
         mSearchBtn = (ImageButton) findViewById(R.id.search_btn);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mNumberTree = (TextView) findViewById(R.id.numberoftree);
 
 
         tData = TreesContent.getTrees();
@@ -78,7 +82,8 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             }
         });
 
-        /*mSearchField.addTextChangedListener(new TextWatcher() {
+
+        mSearchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -87,7 +92,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchText = mSearchField.getText().toString();
-                mRecyclerView.setAdapter(new TreesAdapter(filter(allTrees,searchText), SearchActivity.this));
+                List<Trees> tmp = filter(tList,searchText);
+                mRecyclerView.setAdapter(new TreesAdapter(filter(tList,searchText), SearchActivity.this));
+                mNumberTree.setText("총 "+tmp.size() + " 그루");
             }
 
             @Override
@@ -101,9 +108,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
             public void onClick(View v) {
                 String searchText = mSearchField.getText().toString();
                 Toast.makeText(SearchActivity.this, "통계를 위해", Toast.LENGTH_SHORT).show();
-                mRecyclerView.setAdapter(new TreesAdapter(filter(allTrees,searchText), SearchActivity.this));
+                mRecyclerView.setAdapter(new TreesAdapter(filter(tList,searchText), SearchActivity.this));
             }
-        });*/
+        });
 
     }
 
@@ -111,8 +118,9 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         query = query.toLowerCase();
         final List<Trees> filterModeList = new ArrayList<>();
         for (Trees model : tr) {
-            final String text = model.getTreeName().toLowerCase();
-            if (text.contains(query)) {
+            final String text = model.getTreeSpecies().toLowerCase();
+            final String text2 = model.getTreeNearLandMark().toLowerCase();
+            if (text.contains(query) || text2.contains(query)) {
                 filterModeList.add(model);
             }
         }

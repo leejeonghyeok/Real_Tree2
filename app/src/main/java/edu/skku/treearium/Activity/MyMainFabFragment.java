@@ -114,16 +114,17 @@ public class MyMainFabFragment extends AAH_FabulousFragment {
 //            ll_scroll.setLayoutParams(lp);
             switch (position) {//머하는거지/
                 case 0:
-                    inflateLayoutWithFilters("dbh", fbl);
+                    inflateLayoutWithFilters("landmark", fbl);
                     break;
                 case 1:
-                    inflateLayoutWithFilters("height", fbl);
-                    break;
-                case 2:
                     inflateLayoutWithFilters("species", fbl);
                     break;
+                case 2:
+                    inflateLayoutWithFilters("dbh", fbl);
+                    break;
                 case 3:
-                    inflateLayoutWithFilters("landmark", fbl);
+                    inflateLayoutWithFilters("height", fbl);
+
                     break;
             }
             collection.addView(layout);
@@ -145,13 +146,13 @@ public class MyMainFabFragment extends AAH_FabulousFragment {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "DBH";
-                case 1:
-                    return "HEIGHT";
-                case 2:
-                    return "수종";
-                case 3:
                     return "지역";
+                case 1:
+                    return "수종";
+                case 2:
+                    return "DBH";
+                case 3:
+                    return "HEIGHT";
 
             }
             return "";
@@ -166,18 +167,20 @@ public class MyMainFabFragment extends AAH_FabulousFragment {
     private void inflateLayoutWithFilters(final String filter_category, FlexboxLayout fbl) {
         List<String> keys = new ArrayList<>();
         switch (filter_category) {
+            case "landmark":
+                keys = tData.getUniqueLandmarkKeys();
+                break;
+            case "species":
+                keys = tData.getUniqueSpeciesKeys();
+                break;
             case "dbh":
                 keys = tData.getUniqueDBHKeys();
                 break;
             case "height":
                 keys = tData.getUniqueHeightKeys();
                 break;
-            case "species":
-                keys = tData.getUniqueSpeciesKeys();
-                break;
-            case "landmark":
-                keys = tData.getUniqueLandmarkKeys();
-                break;
+
+
         }
 
         for (int i = 0; i < keys.size(); i++) {
@@ -218,6 +221,7 @@ public class MyMainFabFragment extends AAH_FabulousFragment {
                 tv.setBackgroundResource(R.drawable.chip_unselected);
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.filters_chips));
             }
+
             textviews.add(tv);
 
             fbl.addView(subchild);

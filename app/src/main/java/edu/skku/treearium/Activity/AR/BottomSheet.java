@@ -39,7 +39,7 @@ public class BottomSheet {
 
 
   /*==================== Inner Variable ===================*/
-  String[] items = new String[]{"은행", "이팝", "배롱", "무궁화", "느티", "벚", "단풍", "백합", "메타", "기타"};
+  String[] items = new String[]{"벚", "이팝", "배롱", "은행", "무궁화", "백합", "단풍", "메타", "소", "느티"};
   /*=======================================================*/
 
 
@@ -179,7 +179,8 @@ public class BottomSheet {
       });
       dialog.dismiss();
 
-      v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
+      //세중 잠시 주석
+      //v1.getContext().startActivity(new Intent(v1.getContext(), MainActivity.class));
     });
   }
 

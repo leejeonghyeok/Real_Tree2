@@ -16,7 +16,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:textColor="@color/filters_chips"
-        android:textSize="14sp"
+        android:textSize="18sp"
         tools:text="Filter 1" />
 
 </LinearLayout>

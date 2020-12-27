@@ -1,7 +1,5 @@
 package edu.skku.treearium.Utils;
 
-import android.util.Log;
-
 import java.nio.FloatBuffer;
 
 
@@ -10,6 +8,7 @@ public class PointUtil {
 
     public PointUtil() {}
 
+    //filter points
     public static int pickPoint(FloatBuffer filterPoints, float[] camera, float[] ray){ // camera: 위치(x,y,z), ray : ray의 방향벡터
 
         //float thresholdDistance = 0.01f; // 10cm = 0.1m * 0.1m = 0.01f

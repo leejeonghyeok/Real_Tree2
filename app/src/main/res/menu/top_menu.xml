@@ -19,12 +19,12 @@
         <menu >
             <item
                 android:id="@+id/saveImage"
-                android:title="saveImage"
+                android:title="Save Image"
                 app:actionLayout="@layout/switch_item"
                 app:showAsAction="always" />
             <item
                 android:id="@+id/unit"
-                android:title="unit"
+                android:title="Camera Type"
                 app:actionLayout="@layout/radio_button"
                 app:showAsAction="always"></item>
         </menu>

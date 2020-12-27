@@ -79,7 +79,7 @@ public class fragment3_fragment1 extends Fragment {
 
         for(int i=0;i</*datasize*/tData.getAllTrees().size();i++)
         {
-            System.out.println(tList.size());
+            //System.out.println(tList.size());
             //double geti=dbhlist.get(i);
 
             double geti=Double.parseDouble(tData.getAllTrees().get(i).getTreeDbh());
@@ -110,17 +110,21 @@ public class fragment3_fragment1 extends Fragment {
             }
         }
 
-        BarDataSet barDataSet=new BarDataSet(visitor,"DBH");
+        BarDataSet barDataSet=new BarDataSet(visitor,"| 치수 | 소경목 | 중경목 | 대경목 |");
+
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(16f);
-        BarData barData=new BarData(barDataSet);
+        barDataSet.setValueTextSize(20f);
+        barDataSet.setValueFormatter(new MyValueFormatter());
+
+        BarData barData = new BarData(barDataSet);
 
         barChart.setFitBars(true);
         barChart.setData(barData);
         barChart.getDescription().setText("TREE DBH");
         barChart.animateY(2000);
         return v;
+
     }
     public void makech(int a,int b, int c, int d)
     {
