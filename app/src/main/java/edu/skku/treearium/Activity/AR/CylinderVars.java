@@ -1,5 +1,6 @@
 package edu.skku.treearium.Activity.AR;
 
+// cylinder의 정보를 담고 있는 class. DBH, 위치 등으로 렌더링에 활용됨.
 public class CylinderVars {
     private float dbh = -1.0f;
     private float[] nVec;

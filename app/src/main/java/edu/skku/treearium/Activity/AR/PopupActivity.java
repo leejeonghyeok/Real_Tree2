@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import edu.skku.treearium.R;
 
+// ARActivity 시작 시 팝업창이 뜨게 함.
 class PopupActivity {
   Activity activity;
   Button dialogButton;
