@@ -26,6 +26,7 @@ import java.util.List;
 import edu.skku.treearium.R;
 import edu.skku.treearium.Utils.TreesContent;
 
+/******************* Histroy Page에서 사용한 Adapter ***********************/
 public class TreesAdapter extends RecyclerView.Adapter<TreesAdapter.TreesHolder> {
 
     private List<Trees> trees;

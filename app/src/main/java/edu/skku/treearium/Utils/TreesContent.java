@@ -31,9 +31,9 @@ import edu.skku.treearium.Activity.Search.TreesData;
 import edu.skku.treearium.R;
 
 
+/******************* Firebase에서 데이터를 받아오기 위한 class ***********************/
+
 public class TreesContent {
-
-
 
     public static TreesData getTrees()
     {

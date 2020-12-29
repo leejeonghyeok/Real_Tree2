@@ -33,7 +33,10 @@ import java.util.Map;
 import edu.skku.treearium.R;
 import edu.skku.treearium.Utils.TreesContent;
 
+
+/********************* History Page class ***********************/
 public class SearchActivity extends AppCompatActivity implements AAH_FabulousFragment.Callbacks, AAH_FabulousFragment.AnimationListener{
+
 
     private EditText mSearchField;
     private ImageButton mSearchBtn;
@@ -83,6 +86,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
         });
 
 
+        /******************* 검색 시 변경 ***********************/
         mSearchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -114,6 +118,7 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
 
     }
 
+    /******************* 검색 필터 ***********************/
     private List<Trees> filter(List<Trees> tr, String query) {
         query = query.toLowerCase();
         final List<Trees> filterModeList = new ArrayList<>();
@@ -144,15 +149,15 @@ public class SearchActivity extends AppCompatActivity implements AAH_FabulousFra
                         switch (entry.getKey()) {
                             case "dbh":
                                 filteredList = tData.getDBHFilteredtrees(entry.getValue(), filteredList);
-                                //System.out.println("dbh로 필터 리스트 채움");
+                                //dbh로 필터 리스트 채움
                                 break;
                             case "height":
                                 filteredList = tData.getHeightFilteredtrees(entry.getValue(), filteredList);
-                                //System.out.println("height로 필터 리스트 채움");
+                                //height로 필터 리스트 채움
                                 break;
                             case "species":
                                 filteredList = tData.getSpeciesFilteredtrees(entry.getValue(), filteredList);
-                                //System.out.println("종으로 필터 리스트 채움");
+                                //종으로 필터 리스트 채움
                                 break;
                         }
                     }

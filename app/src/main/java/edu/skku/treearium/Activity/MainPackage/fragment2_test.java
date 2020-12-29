@@ -62,6 +62,8 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 
 //implements OnMarkerClickListener
 //GoogleMap.OnMarkerClickListener,<--이거 오류나면 imp해야함
+
+/******************* Map View class ***********************/
 public class fragment2_test extends Fragment implements AAH_FabulousFragment.Callbacks, AAH_FabulousFragment.AnimationListener {
     GoogleMap map;
     int len;
@@ -81,16 +83,14 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
     static Marker currentMarker = null;
 
 
-    //세중추가------------------------------------------
-
     MyMainFabFragment dialogFrag;
 
     public static TreesData tData;
     public static List<Trees> tList = new ArrayList<>();
     public static ArrayMap<String, List<String>> applied_filters = new ArrayMap<>();
 
-    //--------------------------------------------------
 
+    //make map
     public OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
@@ -118,7 +118,8 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
             });
 
 
-            //----------------세중-----------------------
+            //Run when marker is clicked
+            //Information is uploaded to the bottom sheet
             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
@@ -184,12 +185,11 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
                     return true;
                 }
             });
-            //----------------세중-----------------------
+
 
         }
     };
 
-    //Button mybtn=(Button)findViewById(R.id.mybtn);
 
     private void startLocationService() {
         Context context = this.getContext();
@@ -227,6 +227,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
     }
 
 
+    //GPS 사용
     class GPSListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
@@ -265,6 +266,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
         }
     }
 
+    //Tree Information Class for CO2 Calculator
     class WoodForCo2 {
         public boolean isShrub;
         //교목 or 관목
@@ -313,6 +315,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
         }
     }
 
+    //Calculate the tree's board feet using dbh and height
     public int boardFeetCalculator(float dbh, float height) {
         float in = (float) (dbh * 0.393701);//cm to inch
         float ft = (float) (height * 3.28084); //meter to ft
@@ -372,6 +375,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
     }
 
 
+    //Statistics calculation and display.
     public void onstat(View view) {
         ImageButton imageButton2 = (ImageButton) view.findViewById(R.id.statisticalbtn);
         imageButton2.setOnClickListener(new View.OnClickListener() {
@@ -425,6 +429,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
                     }
 
 
+                    //Count the top 3 trees
                     int maxIndex = 0;
                     for (int i = 0; i < items.length; i++) {
                         if (values[maxIndex] < values[i]) {
@@ -487,6 +492,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
                     mapbottomtreespec3.setText("");
                 }
 
+                //Calculation of small hardwood, medium hardwood, and large hardwood
                 if (tList.size() != 0) {
                     int s = 0;
                     int m = 0;
@@ -513,6 +519,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
                 }
 
 
+                //Classification by tree height
                 if (tList.size() != 0) {
                     int sh = 0;
                     int mh = 0;
@@ -629,10 +636,10 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
                     }
 
                     if (S < 1000) {
-                        storage.setText(String.format("%.0f", S) + " kg/tree");
+                        storage.setText(String.format("%.0f", S) + " kgCO2");
                     } else if (S > 1000) {
                         S = S / 1000.0f;
-                        storage.setText(String.format("%.1f", S) + " t/tree");
+                        storage.setText(String.format("%.1f", S) + " tCO2");
                     }
 
 
@@ -663,17 +670,12 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
 
 
                     if (A < 1000)
-                        absorption.setText(String.format("%.0f", A) + " kg/tree/y");
+                        absorption.setText(String.format("%.0f", A) + " kgCO2/y");
                     else if (A > 1000) {
                         A = A / 1000.0f;
-                        absorption.setText(String.format("%.1f", A) + " t/tree/y");
+                        absorption.setText(String.format("%.1f", A) + " tCO2/y");
                     }
 
-
-                    /*wood[0] = new WoodForCo2(true,true,0,0);//관목 침엽수
-                    wood[1] = new WoodForCo2(true,false,0,0);//관목 활엽수 : 무궁화
-                    wood[2] = new WoodForCo2(false,true,0,0);//교목 침엽수 : 은행, 메타, 소나무
-                    wood[3] = new WoodForCo2(false,false,0,0);//교목 활엽수 : 이팝, 배롱, 느티, 벚, 단풍, 백합*/
 
                     int numberOfLumber = 0;
                     for (int i = 0; i < tList.size(); i++) {
@@ -691,6 +693,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
         });
     }
 
+    //Implement a button to automatically find my location
     public boolean btnbool(View view, LatLng curPoint) {
         ImageButton imageButton = (ImageButton) view.findViewById(R.id.mybtn);
 
@@ -718,7 +721,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
         }
     }
 
-
+    //Go to my current location
     private void showCurrentLocation(Double latitude, Double longitude) {
         LatLng curPoint = new LatLng(latitude, longitude);
 
@@ -743,6 +746,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
         }
     }
 
+    //Create a marker
     public void markeron2(LatLng point, String name, String sp, Double dbh, String time) {
         MarkerOptions mapoptions = new MarkerOptions();
         mapoptions.title("이름 : " + name);
@@ -780,6 +784,7 @@ public class fragment2_test extends Fragment implements AAH_FabulousFragment.Cal
     }
 
 
+    //Mark on the map
     public void maketree() {
         System.out.println("들어가서 팅기나?");
 

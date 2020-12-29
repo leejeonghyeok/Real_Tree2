@@ -33,6 +33,8 @@ import edu.skku.treearium.R;
  * Created by krupenghetiya on 23/06/17.
  */
 
+/******************* History Page의 필터 ***********************/
+
 public class MyFabFragment extends AAH_FabulousFragment {
 
     ArrayMap<String, List<String>> applied_filters = new ArrayMap<>();
@@ -142,7 +144,7 @@ public class MyFabFragment extends AAH_FabulousFragment {
 //            LinearLayout ll_scroll = (LinearLayout) layout.findViewById(R.id.ll_scroll);
 //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (metrics.heightPixels-(104*metrics.density)));
 //            ll_scroll.setLayoutParams(lp);
-            switch (position) {//머하는거지// 필터 리스트를 채운다.
+            switch (position) {// 필터 리스트를 채운다.
                 case 0:
                     inflateLayoutWithFilters("dbh", fbl);
                     break;

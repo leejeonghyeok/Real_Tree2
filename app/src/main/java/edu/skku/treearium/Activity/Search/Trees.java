@@ -2,7 +2,9 @@ package edu.skku.treearium.Activity.Search;
 
 import com.google.firebase.firestore.GeoPoint;
 
+/******************* Tree 정보를 담는 class ***********************/
 public class Trees implements Comparable<Trees>{
+
     public String treeName, treeSpecies, time, treePerson, treeNearLandMark, treeDbh, treeHeight;;
     public GeoPoint treeLocation;
 

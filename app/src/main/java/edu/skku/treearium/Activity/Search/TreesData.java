@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class TreesData {
+    /******************* Map View의 필터 요소 관리 ***********************/
+
+
     private List<Trees> tList = new ArrayList<>();
 
     public TreesData(List<Trees> tList) {

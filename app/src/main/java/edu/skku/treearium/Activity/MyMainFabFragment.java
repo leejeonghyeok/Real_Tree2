@@ -33,7 +33,7 @@ import edu.skku.treearium.Activity.MainActivity;
 import edu.skku.treearium.R;
 
 public class MyMainFabFragment extends AAH_FabulousFragment {
-
+    /******************* Map View의 필터 관리 ***********************/
 
     List<TextView> textviews = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class MyMainFabFragment extends AAH_FabulousFragment {
 //            LinearLayout ll_scroll = (LinearLayout) layout.findViewById(R.id.ll_scroll);
 //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (metrics.heightPixels-(104*metrics.density)));
 //            ll_scroll.setLayoutParams(lp);
-            switch (position) {//머하는거지/
+            switch (position) {
                 case 0:
                     inflateLayoutWithFilters("landmark", fbl);
                     break;
