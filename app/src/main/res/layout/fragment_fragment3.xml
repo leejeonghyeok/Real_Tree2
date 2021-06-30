@@ -6,7 +6,7 @@
 
 
 
-    <edu.skku.treearium.helpers.VerticalViewPager
+    <edu.imtl.BlueKare.helpers.VerticalViewPager
         android:layout_marginTop="?actionBarSize"
         android:id="@+id/viewpager"
         android:layout_width="match_parent"

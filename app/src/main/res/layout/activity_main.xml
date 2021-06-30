@@ -6,7 +6,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.skku.treearium.Activity.MainActivity"
+    tools:context="edu.imtl.BlueKare.Activity.MainActivity"
     >
 
     <androidx.drawerlayout.widget.DrawerLayout

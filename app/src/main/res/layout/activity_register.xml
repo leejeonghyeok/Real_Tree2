@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.skku.treearium.Activity.login.RegisterActivity">
+    tools:context="edu.imtl.BlueKare.Activity.login.RegisterActivity">
 
 
     <TextView

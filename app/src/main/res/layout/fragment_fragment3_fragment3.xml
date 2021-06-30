@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.skku.treearium.Activity.fragment3_fragment3">
+    tools:context="edu.imtl.BlueKare.Activity.fragment3_fragment3">
 
     <TextView
         android:id="@+id/Typetitle"
