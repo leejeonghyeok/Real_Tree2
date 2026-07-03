@@ -2,6 +2,9 @@
 
 🏆 제7회 ICT 스마트 디바이스 공모전 일반부문 우수상
 
+<p align="center">
+        <img src="docs/TreeARium_Logo.png" width="250" alt="TreeARium Logo">
+</p>
 
 > 모바일 증강현실(AR) 기술을 활용한 차세대 산림자원 측정 및 관리 플랫폼
 
@@ -133,83 +136,43 @@ This enables:
 
 ## 🏗 System Architecture
 
-```text
-Smartphone Camera
-        │
-        ▼
-     ARCore
-        │
-        ▼
-3D Point Cloud Extraction
-        │
-        ▼
-Object Detection
-        │
- ┌──────┴──────┐
- ▼             ▼
-DBH       Height
-Measurement Measurement
-        │
-        ▼
- Cloud Database
-        │
-        ▼
- Map Visualization
-```
+<p align="center">
+        <img src="docs/TreeARium_Architecture.png" width="900" alt="TreeARium Architecture">
+</p>
+
+                  Smartphone Camera
+                          │
+                          ▼
+                       ARCore
+                          │
+                          ▼
+             3D Point Cloud Extraction
+                          │
+                          ▼
+                 Object Detection
+                          │
+      ┌───────────────────┼───────────────────┐
+      ▼                   ▼                   ▼
+ DBH Measurement   Height Measurement   Species Recognition
+      │                   │                   │
+      └───────────────────┴───────────────────┘
+                          │
+                          ▼
+                   Cloud Database
+                          │
+            ┌─────────────┴─────────────┐
+            ▼                           ▼
+      Map Visualization       Forest Analytics
 
 ---
 
 ## 🌟 TreeARium의 기능
 
-### 📏 산림자원 측정
-
-✅ AR 기반 나무 흉고직경(DBH) 측정
-
-✅ AR 기반 나무 높이 자동 측정
-
-✅ 실시간 3D 렌더링
-
-✅ 측정 정확도 최적화
-
-### 🗂 데이터 관리
-
-✅ 실시간 Cloud Database 연동
-
-✅ GPS 기반 위치 정보 저장
-
-✅ 수종 및 측정 데이터 관리
-
-✅ 측정 이력 기록
-
-### 🗺 시각화 및 분석
-
-✅ 지도(Map View) 기반 수목 데이터 시각화
-
-✅ 수종별 분포 분석
-
-✅ 산림자원 통계 대시보드
-
-✅ 구역별 산림자원 관리
-
-### 🌲 검색 및 분류
-
-✅ 수목 검색 기능
-
-✅ 수종 분류 기능
-
-✅ 목재 활용 가능 수목 검색
-
-✅ 산림자원 데이터 탐색
-
-### 📱 사용자 경험
-
-✅ 로그인 및 사용자 관리
-
-✅ 뉴스 피드 제공
-
-✅ 직관적인 모바일 UI/UX
-
-✅ 실시간 측정 결과 확인
+- **산림자원 측정** : AR 기반 DBH 측정, 나무 높이 자동 측정, 실시간 3D 렌더링
+- **데이터 관리** : GPS 기반 위치 저장, Cloud Database 연동, 측정 이력 관리
+- **시각화 및 분석** : 지도 기반 수목 시각화, 수종별 분포 분석, 통계 대시보드
+- **검색 및 분류** : 수목 검색, 수종 분류, 목재 활용 가능 수목 탐색
+- **사용자 경험** : 로그인, 뉴스 피드, 직관적인 UI/UX, 실시간 결과 확인
 
 ---
 
