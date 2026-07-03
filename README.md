@@ -140,29 +140,8 @@ This enables:
         <img src="docs/TreeARium_Architecture.png" width="900" alt="TreeARium Architecture">
 </p>
 
-                  Smartphone Camera
-                          │
-                          ▼
-                       ARCore
-                          │
-                          ▼
-             3D Point Cloud Extraction
-                          │
-                          ▼
-                 Object Detection
-                          │
-      ┌───────────────────┼───────────────────┐
-      ▼                   ▼                   ▼
- DBH Measurement   Height Measurement   Species Recognition
-      │                   │                   │
-      └───────────────────┴───────────────────┘
-                          │
-                          ▼
-                   Cloud Database
-                          │
-            ┌─────────────┴─────────────┐
-            ▼                           ▼
-      Map Visualization       Forest Analytics
+TreeARium은 ARCore와 CurvSurf FindSurface SDK를 활용하여 스마트폰 카메라 입력으로부터 3차원 포인트 클라우드(Point Cloud)를 생성하고, 이를 기반으로 나무의 흉고직경(DBH), 높이, 수종을 인식합니다.
+수집된 데이터는 FireBase 데이터베이스에 저장되며, 지도 기반 시각화와 산림자원 분석 기능을 통해 효율적인 산림 관리 및 의사결정을 지원합니다.
 
 ---
 
